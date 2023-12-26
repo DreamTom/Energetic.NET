@@ -1,6 +1,5 @@
 ﻿namespace Energetic.NET.Infrastructure
 {
-    public record DbConnectionConfigOptions(string ConnectionString, string DbType, bool ToUnderline, int FieldDefaultLength)
-    {
-    }
+    public record DbConnectionConfigOptions(string ConnectionString, string DbType,
+        bool ToUnderline, int FieldDefaultLength, bool EnableSoftDeletionFilter);
 }

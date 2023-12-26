@@ -6,20 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.ConfigureEnergeticNetServices();
-var services = builder.Services;
-services.RunModuleInitializers(ReflectionHelper.GetAllReferencedAssemblies());
-var dbConnection = App.GetConfigOptions<DbConnectionConfigOptions>();
-services.AddDbContext<BasicDbContext>(option =>
-{
-    option.UseMySql(dbConnection.ConnectionString, ServerVersion.AutoDetect(dbConnection.ConnectionString), builder =>
-    {
-    });
-});
+//var services = builder.Services;
+//services.RunModuleInitializers(ReflectionHelper.GetAllReferencedAssemblies());
 
 var app = builder.Build();
 
 app.UseEnergeticNetDefault();
-
-app.MapControllers();
 
 app.Run();

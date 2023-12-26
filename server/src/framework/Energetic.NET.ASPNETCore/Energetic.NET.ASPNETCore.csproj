@@ -8,13 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Energetic.NET.Infrastructure\Energetic.NET.Infrastructure.csproj" />
-    <ProjectReference Include="..\Energetic.NET.Jwt\Energetic.NET.Jwt.csproj" />
-    <ProjectReference Include="..\Energetic.NET.SharedKernel\Energetic.NET.SharedKernel.csproj" />
+    <Compile Remove="Attributes\**" />
+    <Content Remove="Attributes\**" />
+    <EmbeddedResource Remove="Attributes\**" />
+    <None Remove="Attributes\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Attributes\" />
+    <ProjectReference Include="..\Energetic.NET.Infrastructure\Energetic.NET.Infrastructure.csproj" />
+    <ProjectReference Include="..\Energetic.NET.Jwt\Energetic.NET.Jwt.csproj" />
   </ItemGroup>
 
   <ItemGroup>

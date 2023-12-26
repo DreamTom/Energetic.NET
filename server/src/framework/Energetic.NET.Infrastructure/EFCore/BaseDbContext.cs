@@ -1,5 +1,6 @@
 ﻿using Energetic.NET.SharedKernel.IModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Energetic.NET.Infrastructure.EFCore
@@ -19,6 +20,8 @@ namespace Energetic.NET.Infrastructure.EFCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var config = App.GetConfigOptions<DbConnectionConfigOptions>();
+            if (config.EnableSoftDeletionFilter)
+                modelBuilder.EnableSoftDeletionGlobalFilter();
             if (!config.ToUnderline)
                 return;
             foreach (var entity in modelBuilder.Model.GetEntityTypes())

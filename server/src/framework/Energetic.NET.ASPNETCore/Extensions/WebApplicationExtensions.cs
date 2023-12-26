@@ -3,11 +3,16 @@ using Energetic.NET.Infrastructure;
 
 namespace Energetic.NET.ASPNETCore
 {
-    public static class ApplicationBuilderExtensions
+    public static class WebApplicationExtensions
     {
-        public static IApplicationBuilder UseEnergeticNetDefault(this IApplicationBuilder app)
+        /// <summary>
+        /// 框架内置中间件启用
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static WebApplication UseEnergeticNetDefault(this WebApplication app)
         {
-            App.InitServiceProvider(app.ApplicationServices);
+            App.InitServiceProvider(app.Services);
             var envirment =  App.GetRequiredService<IWebHostEnvironment>();
             var config = App.GetConfigOptions<SwaggerConfigOptions>();
             if (envirment.IsDevelopment() || (!envirment.IsDevelopment() && config.EnableInProduction))
@@ -20,12 +25,13 @@ namespace Energetic.NET.ASPNETCore
                     options.RoutePrefix = string.Empty;
                 });
             }
-            //app.UseEventBus();
+            app.UseStaticFiles();
+            app.UseRouting();
             app.UseCors();//启用Cors
             app.UseForwardedHeaders();
-            //app.UseHttpsRedirection();//不能与ForwardedHeaders很好的工作，而且webapi项目也没必要配置这个
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapControllers();
             return app;
         }
     }

@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Energetic.NET.ASPNETCore")]
 namespace Energetic.NET.Infrastructure
 {
+    /// <summary>
+    /// 全局应用配置
+    /// </summary>
     public sealed class App
     {
         private static IServiceProvider? _serviceProvider;
