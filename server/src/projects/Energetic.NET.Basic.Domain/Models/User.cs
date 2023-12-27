@@ -2,10 +2,6 @@
 {
     public class User : BaseAuditableEntity
     {
-        public User(string userName) : base()
-        {
-            UserName = userName;
-        }
 
         public string UserName { get; init; }
 

@@ -4,11 +4,6 @@ namespace Energetic.NET.SharedKernel.BaseModels
 {
     public abstract class BaseEntity : IEntity
     {
-        public BaseEntity()
-        {
-            Id = 1;
-        }
-
-        public long Id { get; }
+        public long Id { get; private set; }
     }
 }

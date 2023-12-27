@@ -1,7 +1,8 @@
 ﻿using Energetic.NET.SharedKernel.IModels;
+using Microsoft.EntityFrameworkCore;
 using static System.Linq.Expressions.Expression;
 
-namespace Microsoft.EntityFrameworkCore.Metadata
+namespace Energetic.NET.Infrastructure.EFCore
 {
     public static class EFCoreExtensions
     {
