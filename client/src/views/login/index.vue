@@ -21,10 +21,10 @@
               🎯 Sign in
             </div>
             <lay-tab type="brief" v-model="method">
-              <lay-tab-item title="用户名" id="1">
+              <lay-tab-item title="账号密码" id="1">
                 <div style="height: 250px">
                   <lay-form-item :label-width="0">
-                    <lay-input :allow-clear="true" prefix-icon="layui-icon-username" placeholder="用户名"
+                    <lay-input :allow-clear="true" prefix-icon="layui-icon-username" placeholder="用户名或手机号或邮箱"
                       v-model="loginForm.account"></lay-input>
                   </lay-form-item>
                   <lay-form-item :label-width="0">
@@ -48,7 +48,17 @@
                   </lay-form-item>
                 </div>
               </lay-tab-item>
-              <lay-tab-item title="二维码" id="2">
+              <lay-tab-item title="验证码" id="2">
+                <div style="width: 200px; height: 250px; margin: 0 auto">
+                  <lay-qrcode text="http://www.layui-vue.com" :width="200" color="#000"
+                    style="margin: 10px 0 20px"></lay-qrcode>
+                  <div style="text-align: center; cursor: pointer" @click="toRefreshQrcode">
+                    <lay-icon type="layui-icon-refresh-three"> </lay-icon>
+                    刷新二维码
+                  </div>
+                </div>
+              </lay-tab-item>
+              <lay-tab-item title="二维码" id="3">
                 <div style="width: 200px; height: 250px; margin: 0 auto">
                   <lay-qrcode text="http://www.layui-vue.com" :width="200" color="#000"
                     style="margin: 10px 0 20px"></lay-qrcode>
