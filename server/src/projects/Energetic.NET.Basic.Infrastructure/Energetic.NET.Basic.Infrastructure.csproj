@@ -8,11 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\framework\Energetic.NET.Infrastructure\Energetic.NET.Infrastructure.csproj" />
-    <ProjectReference Include="..\Energetic.NET.Basic.Domain\Energetic.NET.Basic.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Responsitories\" />
+    <ProjectReference Include="..\Energetic.NET.Basic.Application\Energetic.NET.Basic.Application.csproj" />
   </ItemGroup>
 
 </Project>

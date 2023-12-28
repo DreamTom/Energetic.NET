@@ -1,5 +1,6 @@
 ﻿using Energetic.NET.ASPNETCore.ConfigOptions;
 using Energetic.NET.Infrastructure;
+using Serilog;
 
 namespace Energetic.NET.ASPNETCore
 {
@@ -13,9 +14,9 @@ namespace Energetic.NET.ASPNETCore
         public static WebApplication UseEnergeticNetDefault(this WebApplication app)
         {
             App.InitServiceProvider(app.Services);
-            var envirment =  App.GetRequiredService<IWebHostEnvironment>();
+            //app.UseExceptionHandler();
             var config = App.GetConfigOptions<SwaggerConfigOptions>();
-            if (envirment.IsDevelopment() || (!envirment.IsDevelopment() && config.EnableInProduction))
+            if (app.Environment.IsDevelopment() || (!app.Environment.IsDevelopment() && config.EnableInProduction))
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -26,6 +27,7 @@ namespace Energetic.NET.ASPNETCore
                 });
             }
             app.UseStaticFiles();
+            app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseCors();//启用Cors
             app.UseForwardedHeaders();

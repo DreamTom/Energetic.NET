@@ -8,18 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Attributes\**" />
-    <Content Remove="Attributes\**" />
-    <EmbeddedResource Remove="Attributes\**" />
-    <None Remove="Attributes\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Energetic.NET.Infrastructure\Energetic.NET.Infrastructure.csproj" />
     <ProjectReference Include="..\Energetic.NET.Jwt\Energetic.NET.Jwt.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 

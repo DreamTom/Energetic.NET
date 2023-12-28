@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Energetic.NET.Infrastructure.EFCore
 {
-    public class AuditableEntitySaveChangesInterceptor(ICurrentUserService currentUserService, IDateTimeService dateTimeService) : SaveChangesInterceptor
+    public class AuditableEntitySaveChangesInterceptor(ICurrentUserService currentUserService,
+         IDateTimeService dateTimeService) : SaveChangesInterceptor
     {
         private readonly ICurrentUserService _currentUserService = currentUserService;
         private readonly IDateTimeService _dateTimeService = dateTimeService;
@@ -27,6 +28,13 @@ namespace Energetic.NET.Infrastructure.EFCore
             if (dbContext == null) return;
             string realName = _currentUserService.CurrentUser == null ? string.Empty : _currentUserService.CurrentUser.RealName;
             long userId = _currentUserService.CurrentUser == null ? 0 : _currentUserService.CurrentUser.Id;
+            foreach (var entry in dbContext.ChangeTracker.Entries<ICreatedEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.Created(userId, realName, _dateTimeService.Now);
+                }
+            }
             foreach (var entry in dbContext.ChangeTracker.Entries<ICreatedEntity>())
             {
                 if (entry.State == EntityState.Added)

@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Energetic.NET.Basic.Infrastructure\Energetic.NET.Basic.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

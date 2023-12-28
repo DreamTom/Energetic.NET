@@ -12,7 +12,9 @@ namespace Energetic.NET.ASPNETCore.Security
 
         public IUserInfo? GetCurrentUserInfo()
         {
-            var httpContext = _contextAccessor.HttpContext ?? throw new InvalidOperationException($"非http请求过程中{nameof(_contextAccessor.HttpContext)}实例");
+            var httpContext = _contextAccessor?.HttpContext;
+            if (httpContext  == null) 
+                return null;
 
             var identity = httpContext.User.Identity;
             if (identity is { IsAuthenticated: false })

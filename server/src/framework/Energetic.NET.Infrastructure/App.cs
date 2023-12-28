@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using IdGen;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
 
@@ -60,6 +61,11 @@ namespace Energetic.NET.Infrastructure
                 configOptions = configuration.GetSection(key).Get<TOptions>();
             }
             return configOptions ?? throw new ArgumentNullException($"{key} not found in appsettings.json");
+        }
+
+        public static long CreateSnowflakeId()
+        {
+            return GetRequiredService<IIdGenerator<long>>().CreateId();
         }
     }
 }

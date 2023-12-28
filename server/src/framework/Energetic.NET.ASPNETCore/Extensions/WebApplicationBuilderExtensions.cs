@@ -1,12 +1,18 @@
 ﻿using Energetic.NET.ASPNETCore.ConfigOptions;
+using Energetic.NET.ASPNETCore.Filters;
+using Energetic.NET.ASPNETCore.Handlers;
 using Energetic.NET.ASPNETCore.Security;
 using Energetic.NET.Common.Helpers;
 using Energetic.NET.Common.JsonConverters;
 using Energetic.NET.Infrastructure;
 using Energetic.NET.Jwt;
 using Energetic.NET.SharedKernel;
+using EnergeticCms.WebApi.Filters;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Energetic.NET.ASPNETCore.Extensions
 {
@@ -18,11 +24,17 @@ namespace Energetic.NET.ASPNETCore.Extensions
         /// <param name="builder"></param>
         public static void ConfigureEnergeticNetServices(this WebApplicationBuilder builder)
         {
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                        .ReadFrom.Configuration(context.Configuration)
+                        .ReadFrom.Services(services)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Console());
+
             var services = builder.Services;
             IConfiguration configuration = builder.Configuration;
 
             App.InitConfiguration(configuration);
-
+            services.AddControllers();
             services.AddConfigOptions<DbConnectionConfigOptions>();
             services.AddConfigOptions<SwaggerConfigOptions>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -38,13 +50,24 @@ namespace Energetic.NET.ASPNETCore.Extensions
                     policy.WithOrigins(corsConfig.AllowOrigins).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                 });
             });
-            services.AddControllers();
+            services.AddFluentValidationAutoValidation();
             services.Configure<JsonOptions>(options =>
             {
                 // 设置时间格式。而非“2008-08-08T08:08:08”这样的格式
                 options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter(DateTimeTemplate.DateWithSeconds));
             });
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add<ApiExceptionFilter>();
+                options.Filters.Add<UnitOfWorkFilter>();
+            });
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = action => action.ModelState.Formatter();
+            });
+            //services.AddExceptionHandler<ApiExceptionHandler>();
             var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
+            services.AddValidatorsFromAssemblies(assemblies);
             services.AddAllDbContexts(assemblies);
             services.RunModuleInitializers(assemblies);
         }

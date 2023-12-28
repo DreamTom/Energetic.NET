@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="IResponsitories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\framework\Energetic.NET.SharedKernel\Energetic.NET.SharedKernel.csproj" />
   </ItemGroup>
 

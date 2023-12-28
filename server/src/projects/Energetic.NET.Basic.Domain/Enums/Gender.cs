@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Energetic.NET.Infrastructure
+namespace Energetic.NET.Basic.Domain.Enums
 {
-    public class PagedQuery
+    public enum Gender
     {
+        Male,
 
+        Female
     }
 }

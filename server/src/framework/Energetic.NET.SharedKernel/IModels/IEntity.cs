@@ -9,5 +9,7 @@ namespace Energetic.NET.SharedKernel.IModels
     public interface IEntity
     {
         long Id { get; }
+
+        public void SetId(long id);
     }
 }

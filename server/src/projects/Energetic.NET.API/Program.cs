@@ -1,10 +1,24 @@
 using Energetic.NET.ASPNETCore.Extensions;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.ConfigureEnergeticNetServices();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-var app = builder.Build();
+try
+{
+    Log.Information("Starting web application");
+    var builder = WebApplication.CreateBuilder(args);
+    builder.ConfigureEnergeticNetServices();
 
-app.UseEnergeticNetDefault();
+    var app = builder.Build();
 
-app.Run();
+    app.UseEnergeticNetDefault();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally { }

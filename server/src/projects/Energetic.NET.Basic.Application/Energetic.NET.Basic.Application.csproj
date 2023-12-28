@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Energetic.NET.Basic.Domain\Energetic.NET.Basic.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
