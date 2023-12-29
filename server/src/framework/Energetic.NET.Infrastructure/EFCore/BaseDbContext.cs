@@ -149,7 +149,7 @@ namespace Energetic.NET.Infrastructure.EFCore
         {
             if (!_dbConnectionConfig.EnableUsingSnowflakeId)
                 return;
-            if (entity is IEntity addEntity && addEntity.Id != default)
+            if (entity is IEntity addEntity && addEntity.Id == default)
                 addEntity.SetId(_idGenerator.CreateId());
         }
 

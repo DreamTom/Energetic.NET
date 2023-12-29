@@ -1,7 +1,6 @@
 ﻿using Energetic.NET.Basic.Application.User.Dto;
 using Energetic.NET.Basic.Domain.Enums;
-using Energetic.NET.Basic.Domain.Models;
-using Energetic.NET.Basic.Infrastructure;
+using Energetic.NET.Basic.Domain.IResponsitories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers
@@ -11,30 +10,49 @@ namespace Energetic.NET.API.Controllers
     /// </summary>
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/users")]
-    public class UsersController : BaseController
+    public class UsersController(IUserDomainRepository userDomainRepository,
+        IEasyCachingProvider easyCaching,
+        BasicDbContext basicDbContext) : BaseController
     {
-        private readonly BasicDbContext _basicDbContext;
-
-        public UsersController(BasicDbContext basicDbContext)
-        {
-            _basicDbContext = basicDbContext;
-        }
-
+        /// <summary>
+        /// 用户注册
+        /// </summary>
+        /// <param name="regRequest"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
-        public ActionResult Register(RegRequest regRequest)
+        public async Task<ActionResult> Register(RegRequest regRequest)
         {
+            var user = new User(regRequest.RegisterWay, regRequest.NickName);
             if (regRequest.RegisterWay == RegisterWay.UserName)
             {
-                var user = new User(regRequest.RegisterWay, regRequest.NickName);
-                user.RealName = user.NickName;
-                user.EmailAddress = regRequest.EmailAddress;
-                user.PhoneNumber = regRequest.PhoneNumber;
-                user.Gender = regRequest.Gender;
-                user.ChangePassword(regRequest.Password);
-                _basicDbContext.Users.Add(user);
+                var existsUser = await userDomainRepository.FindByUserNameAsync(regRequest.UserName);
+                if (existsUser != null)
+                    return ValidateFailed("用户名已存在");
+                user.AddByUserName(regRequest.UserName, regRequest.Password, regRequest.Gender);
             }
-            return Ok();
+            else if (regRequest.RegisterWay == RegisterWay.EmailAddress)
+            {
+                var code = await easyCaching.GetAsync<string>($"register_by_emailAddress_{regRequest.EmailAddress}");
+                if (code.Value != regRequest.VerificationCode)
+                    return ValidateFailed("验证码不正确");
+                var existsUser = await userDomainRepository.FindByEmailAdressAsync(regRequest.EmailAddress);
+                if (existsUser != null)
+                    return ValidateFailed("邮箱已存在");
+                user.SetEmailAddress(regRequest.EmailAddress);
+            }
+            else if (regRequest.RegisterWay == RegisterWay.PhoneNumber)
+            {
+                var code = await easyCaching.GetAsync<string>($"register_by_phoneNumber_{regRequest.EmailAddress}");
+                if (code.Value != regRequest.VerificationCode)
+                    return ValidateFailed("验证码不正确");
+                var existsUser = await userDomainRepository.FindByEmailAdressAsync(regRequest.EmailAddress);
+                if (existsUser != null)
+                    return ValidateFailed("邮箱已存在");
+                user.SetPhoneNumber(regRequest.PhoneNumber);
+            }
+            await basicDbContext.AddAsync(user);
+            return Ok(user.Id);
         }
     }
 }

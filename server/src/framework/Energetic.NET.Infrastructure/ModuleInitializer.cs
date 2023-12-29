@@ -16,6 +16,10 @@ namespace Energetic.NET.Infrastructure
             {
 
             });
+            services.AddEasyCaching(option =>
+            {
+                option.UseInMemory();
+            });
         }
     }
 }

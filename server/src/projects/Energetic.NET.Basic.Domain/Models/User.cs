@@ -5,21 +5,21 @@ namespace Energetic.NET.Basic.Domain.Models
 {
     public class User(RegisterWay registerWay, string nickName) : BaseAuditableEntity, IAggregateRoot
     {
-        public string? UserName { get; set; }
+        public string? UserName { get; private set; }
 
         public string NickName { get; init; } = nickName;
 
-        public string? RealName { get; set; }
+        public string? RealName { get; private set; }
 
-        private string? PasswordHash;
+        public string? PasswordHash { get; set; }
 
-        public string? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; private set; }
 
-        public string? EmailAddress { get; set; }
+        public string? EmailAddress { get; private set; }
 
-        public Gender Gender { get; set; }
+        public Gender Gender { get; private set; }
 
-        public Guid? AvatarId { get; set; }
+        public long? AvatarId { get; private set; }
 
         public bool IsAdmin { get; private set; }
 
@@ -27,32 +27,24 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public List<Role> Roles { get; } = [];
 
-        public void ChangePhone(string phoneNumber)
+        public void AddByUserName(string userName, string password, Gender gender)
+        {
+            UserName = userName;
+            Gender = gender;
+            SetPassword(password);
+        }
+
+        public void SetEmailAddress(string emailAddress)
+        {
+            EmailAddress = emailAddress;
+        }
+
+        public void SetPhoneNumber(string phoneNumber)
         {
             PhoneNumber = phoneNumber;
         }
 
-        public void ChangeEmail(string emailAdress)
-        {
-            EmailAddress = emailAdress;
-        }
-
-        public void ChangePassword(string password)
-        {
-            PasswordHash = password.ComputeMd5Hash();
-        }
-
-        public bool CheckPassword(string password)
-        {
-            return PasswordHash == password.ComputeMd5Hash();
-        }
-
-        public void ChangeAvatar(Guid avatarId)
-        {
-            AvatarId = avatarId;
-        }
-
-        public void AddOrUpdate(string? realName, string? phoneNumber, string? emailAddress, Gender gender, Guid? avatarId)
+        public void AddOrUpdate(string? realName, string? phoneNumber, string? emailAddress, Gender gender, long? avatarId)
         {
             RealName = realName;
             PhoneNumber = phoneNumber;
@@ -68,6 +60,16 @@ namespace Energetic.NET.Basic.Domain.Models
                 if(!Roles.Contains(role))
                     Roles.Add(role);
             });
+        }
+
+        public void SetPassword(string password)
+        {
+            PasswordHash = password.ComputeMd5Hash();
+        }
+
+        public bool CheckPassword(string password)
+        {
+            return PasswordHash == password.ComputeMd5Hash();
         }
     }
 }
