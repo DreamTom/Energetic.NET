@@ -9,10 +9,10 @@
         <div class="login-container">
           <div class="login-side">
             <div class="login-bg-title">
-              <h1>layui vue admin</h1>
+              <h1>Energetic.NET</h1>
 
               <h3 style="margin: 20px auto">
-                开 箱 即 用 的 layui vue 企 业 级 前 端 模 板
+                让 .NET 生 态 更 加 充 满 活 力
               </h3>
             </div>
           </div>
@@ -42,6 +42,8 @@
                     </div>
                   </lay-form-item>
                   <lay-checkbox value="" name="like" v-model="remember" skin="primary" label="1">记住密码</lay-checkbox>
+                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">注册</a>
+
                   <lay-form-item :label-width="0">
                     <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
                       loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
@@ -101,10 +103,59 @@
       </div>
     </div>
   </div>
+
+  <!--注册-->
+  <lay-layer v-model="showRegister" :shade="false" :title="false" :btn="registerActions">
+    <div style="padding-right: 20px;">
+      <lay-tab type="brief" v-model="registerMethod">
+          <lay-tab-item title="用户名注册" id="0">
+            <lay-form :model="registerModel" ref="layFormRef11" required>
+              <lay-form-item label="昵称" prop="nickName">
+                <lay-input v-model="registerModel.nickName"></lay-input>
+              </lay-form-item>
+              <lay-form-item label="性别" prop="gender">
+                <lay-select v-model="registerModel.gender" placeholder="请选择">
+                  <lay-select-option :value="0" label="男"></lay-select-option>
+                  <lay-select-option :value="1" label="女"></lay-select-option>
+                </lay-select>
+              </lay-form-item>
+              <lay-form-item label="用户名" prop="userName">
+                <lay-input v-model="registerModel.userName"></lay-input>
+              </lay-form-item>
+              <lay-form-item label="密码" prop="password">
+                <lay-input v-model="registerModel.password" type="password" password></lay-input>
+              </lay-form-item>
+            </lay-form>
+          </lay-tab-item>
+          <lay-tab-item title="手机号注册" id="1">
+            <lay-form :model="registerModel" ref="layFormRef11" required>
+              <lay-form-item label="手机号" prop="phoneNumber">
+                <lay-input v-model="registerModel.phoneNumber"></lay-input>
+              </lay-form-item>
+              <lay-form-item label="验证码" prop="verificationCode" mode="inline">
+                <lay-input style="width: 120px;" v-model="registerModel.verificationCode"></lay-input>
+                <lay-button style="margin-left: 5px;" @click="send(1)">发送</lay-button>
+              </lay-form-item>
+            </lay-form>
+          </lay-tab-item>
+          <lay-tab-item title="邮箱注册" id="2">
+            <lay-form :model="registerModel" ref="layFormRef11" required>
+              <lay-form-item label="邮箱" prop="emailAddress">
+                <lay-input v-model="registerModel.emailAddress"></lay-input>
+              </lay-form-item>
+              <lay-form-item label="验证码" prop="verificationCode" mode="inline">
+                <lay-input style="width: 120px;" v-model="registerModel.verificationCode"></lay-input>
+                <lay-button style="margin-left: 5px;" @click="send(2)">发送</lay-button>
+              </lay-form-item>
+            </lay-form>
+          </lay-tab-item>
+      </lay-tab>
+    </div>
+  </lay-layer>
 </template>
 
 <script lang="ts">
-import { login } from '../../api/module/user'
+import { login, register } from '../../api/module/user'
 import { verificationImg, loginQrcode } from '../../api/module/commone'
 import { defineComponent, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -116,6 +167,7 @@ export default defineComponent({
     const router = useRouter()
     const userStore = useUserStore()
     const method = ref('1')
+    const registerMethod = ref('0');
     const verificationImgUrl = ref('')
     const loging = ref(false);
     const loginQrcodeText = ref('')
@@ -125,6 +177,18 @@ export default defineComponent({
       password: '123456',
       vercode: 'DqJFN'
     })
+    const showRegister = ref(false);
+    const registerModel = reactive({
+      userName: '',
+      password: '',
+      nickName: '',
+      phoneNumber: '',
+      emailAddress: '',
+      verificationCode: '',
+      gender: 0,
+      registerWay: 0
+    })
+    const layFormRef11 = ref();
 
     onMounted(() => {
       // toRefreshImg()
@@ -158,6 +222,7 @@ export default defineComponent({
         layer.msg(msg, { icon: 2 })
       }
     }
+
     const toRefreshQrcode = async () => {
       let { data, code, msg } = await loginQrcode()
       if (code == 200) {
@@ -167,14 +232,47 @@ export default defineComponent({
       }
     }
 
+    const openRegister = () =>{
+      showRegister.value = true;
+    }
+
+    const send = async (type: number) =>{
+      
+    }
+
+    const registerActions = ref([
+      {
+          text: "确认",
+          callback: async () => {
+              var res = await register(registerModel);
+              if (res){
+                layer.msg('注册成功', {icon: 1});
+                showRegister.value = false;
+              }
+          }
+      },
+      {
+          text: "取消",
+          callback: () => {
+              showRegister.value = false;
+          }
+      }
+    ])
+
     return {
       toRefreshQrcode,
       toRefreshImg,
       loginSubmit,
+      openRegister,
+      send,
       loginForm,
       remember,
       method,
-      loging
+      loging,
+      registerModel,
+      showRegister,
+      registerActions,
+      registerMethod
     }
   }
 })

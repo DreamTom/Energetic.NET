@@ -1,7 +1,8 @@
 import axios, { AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useUserStore } from "../store/user";
 import { layer } from '@layui/layui-vue';
-import router from '../router'
+import router from '../router';
+import errCodeDic from './errCode';
 
 type TAxiosOption = {
     timeout: number;
@@ -10,7 +11,7 @@ type TAxiosOption = {
  
 const config: TAxiosOption = {
     timeout: 5000,
-    baseURL: "http://localhost:8080"
+    baseURL: "http://localhost:5004/api"
 }
  
 class Http {
@@ -22,7 +23,8 @@ class Http {
         this.service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const userInfoStore = useUserStore();
             if (userInfoStore.token) {
-                (config.headers as AxiosRequestHeaders).token = userInfoStore.token as string
+                //(config.headers as AxiosRequestHeaders).token = userInfoStore.token as string
+                (config.headers as AxiosRequestHeaders).Authorization = 'Bearer ' + userInfoStore.token as string
             } else {
                 if(router.currentRoute.value.path!=='/login') {
                     router.push('/login');
@@ -35,24 +37,33 @@ class Http {
 
         /* 响应拦截 */
         this.service.interceptors.response.use((response: AxiosResponse<any>) => {
-            switch (response.data.code) {
-                case 200:
-                    return response.data;
-                case 500:
-                    return response.data;
-                case 99998:
-                    layer.confirm(
-                    '会话超时, 请重新登录', 
-                    { icon : 2, yes: function(){
-                        router.push('/login');
-                        layer.closeAll()
-                    }});
-                    return response.data;
-                default:
-                    break;
-            }
+            return response.data;
         }, error => {
-            return Promise.reject(error)
+            let errResponse = error.response;
+            if(errResponse && errResponse.status){
+                let message = errResponse.data.errorCode == 0 ? errResponse.data.message : errCodeDic[errResponse.data.errorCode];
+                switch (errResponse.status) {
+                    case 401:
+                        layer.msg(
+                            message, 
+                            { icon : 3}, function(){
+                                router.push('/login');
+                                layer.closeAll()
+                            });
+                            return;
+                    case 400:
+                    case 403:
+                    case 404:
+                    case 500:
+                        console.log(errResponse.data);
+                        layer.msg(message, {icon : 2});
+                        return;
+                    default:
+                        break;
+                }
+            }
+            layer.msg(error.message,{icon : 2})
+            return Promise.reject(error);
         })
     }
 
