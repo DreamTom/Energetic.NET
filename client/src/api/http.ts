@@ -40,8 +40,9 @@ class Http {
             return response.data;
         }, error => {
             let errResponse = error.response;
+            let message = error.message;
             if(errResponse && errResponse.status){
-                let message = errResponse.data.errorCode == 0 ? errResponse.data.message : errCodeDic[errResponse.data.errorCode];
+                message = errResponse.data.errorCode == 0 ? errResponse.data.message : errCodeDic[errResponse.data.errorCode];
                 switch (errResponse.status) {
                     case 401:
                         layer.msg(
@@ -50,20 +51,13 @@ class Http {
                                 router.push('/login');
                                 layer.closeAll()
                             });
-                            return;
-                    case 400:
-                    case 403:
-                    case 404:
-                    case 500:
-                        console.log(errResponse.data);
-                        layer.msg(message, {icon : 2});
                         return;
                     default:
                         break;
                 }
             }
-            layer.msg(error.message,{icon : 2})
-            return Promise.reject(error);
+            layer.msg(message,{icon : 2})
+            return;
         })
     }
 

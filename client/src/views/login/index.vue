@@ -25,7 +25,7 @@
                 <div style="height: 250px">
                   <lay-form-item :label-width="0">
                     <lay-input :allow-clear="true" prefix-icon="layui-icon-username" placeholder="用户名或手机号或邮箱"
-                      v-model="loginForm.account"></lay-input>
+                      v-model="loginForm.userName"></lay-input>
                   </lay-form-item>
                   <lay-form-item :label-width="0">
                     <lay-input :allow-clear="true" prefix-icon="layui-icon-password" placeholder="密码" password
@@ -34,11 +34,11 @@
                   <lay-form-item :label-width="0">
                     <div style="width: 264px; display: inline-block">
                       <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
-                        v-model="loginForm.vercode"></lay-input>
+                        v-model="loginForm.verificationCode"></lay-input>
                     </div>
 
                     <div class="login-captach" @click="toRefreshImg">
-                      <img style="width: 100%" src="../../assets/login/login-yzm.jpg" alt="获取验证码" />
+                      <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
                     </div>
                   </lay-form-item>
                   <lay-checkbox value="" name="like" v-model="remember" skin="primary" label="1">记住密码</lay-checkbox>
@@ -109,7 +109,7 @@
     <div style="padding-right: 20px;">
       <lay-tab type="brief" v-model="registerMethod">
           <lay-tab-item title="用户名注册" id="0">
-            <lay-form :model="registerModel" ref="layFormRef11" required>
+            <lay-form :model="registerModel" ref="layFormRef" required>
               <lay-form-item label="昵称" prop="nickName">
                 <lay-input v-model="registerModel.nickName"></lay-input>
               </lay-form-item>
@@ -128,7 +128,7 @@
             </lay-form>
           </lay-tab-item>
           <lay-tab-item title="手机号注册" id="1">
-            <lay-form :model="registerModel" ref="layFormRef11" required>
+            <lay-form :model="registerModel" ref="layFormRef" required>
               <lay-form-item label="手机号" prop="phoneNumber">
                 <lay-input v-model="registerModel.phoneNumber"></lay-input>
               </lay-form-item>
@@ -139,7 +139,7 @@
             </lay-form>
           </lay-tab-item>
           <lay-tab-item title="邮箱注册" id="2">
-            <lay-form :model="registerModel" ref="layFormRef11" required>
+            <lay-form :model="registerModel" ref="layFormRef" required>
               <lay-form-item label="邮箱" prop="emailAddress">
                 <lay-input v-model="registerModel.emailAddress"></lay-input>
               </lay-form-item>
@@ -154,128 +154,113 @@
   </lay-layer>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { login, register } from '../../api/module/user'
-import { verificationImg, loginQrcode } from '../../api/module/commone'
-import { defineComponent, onMounted, reactive, ref } from 'vue'
+import { verificationImg, loginQrcode } from '../../api/module/common'
+import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../store/user'
 import { layer } from '@layui/layer-vue'
 
-export default defineComponent({
-  setup() {
-    const router = useRouter()
-    const userStore = useUserStore()
-    const method = ref('1')
-    const registerMethod = ref('0');
-    const verificationImgUrl = ref('')
-    const loging = ref(false);
-    const loginQrcodeText = ref('')
-    const remember = ref(false)
-    const loginForm = reactive({
-      account: 'admin',
-      password: '123456',
-      vercode: 'DqJFN'
-    })
-    const showRegister = ref(false);
-    const registerModel = reactive({
-      userName: '',
-      password: '',
-      nickName: '',
-      phoneNumber: '',
-      emailAddress: '',
-      verificationCode: '',
-      gender: 0,
-      registerWay: 0
-    })
-    const layFormRef11 = ref();
-
-    onMounted(() => {
-      // toRefreshImg()
-      // toRefreshQrcode()
-    })
-
-    const loginSubmit = async () => {
-      loging.value = true;
-      login(loginForm).then(({ data, code, msg }) => {
-        setTimeout(() => {
-          loging.value = false;
-          if (code == 200) {
-            layer.msg(msg, { icon: 1 }, async () => {
-              userStore.token = data.token
-              await userStore.loadMenus()
-              await userStore.loadPermissions()
-              router.push('/')
-            })
-          } else {
-            layer.msg(msg, { icon: 2 })
-          }
-        }, 1000)
-      })
-    }
-
-    const toRefreshImg = async () => {
-      let { data, code, msg } = await verificationImg()
-      if (code == 200) {
-        verificationImgUrl.value = data.data
-      } else {
-        layer.msg(msg, { icon: 2 })
-      }
-    }
-
-    const toRefreshQrcode = async () => {
-      let { data, code, msg } = await loginQrcode()
-      if (code == 200) {
-        loginQrcodeText.value = data.data
-      } else {
-        layer.msg(msg, { icon: 2 })
-      }
-    }
-
-    const openRegister = () =>{
-      showRegister.value = true;
-    }
-
-    const send = async (type: number) =>{
-      
-    }
-
-    const registerActions = ref([
-      {
-          text: "确认",
-          callback: async () => {
-              var res = await register(registerModel);
-              if (res){
-                layer.msg('注册成功', {icon: 1});
-                showRegister.value = false;
-              }
-          }
-      },
-      {
-          text: "取消",
-          callback: () => {
-              showRegister.value = false;
-          }
-      }
-    ])
-
-    return {
-      toRefreshQrcode,
-      toRefreshImg,
-      loginSubmit,
-      openRegister,
-      send,
-      loginForm,
-      remember,
-      method,
-      loging,
-      registerModel,
-      showRegister,
-      registerActions,
-      registerMethod
-    }
-  }
+const router = useRouter()
+const userStore = useUserStore()
+const method = ref('1')
+const registerMethod = ref('0');
+const verificationImgUrl = ref('')
+const loging = ref(false);
+const loginQrcodeText = ref('')
+const remember = ref(false)
+const loginForm = reactive({
+  userName: 'admin',
+  password: '123456',
+  verificationCode: '',
+  captchaId: '',
+  loginWay: 0
 })
+const showRegister = ref(false);
+const registerModel = reactive({
+  userName: '',
+  password: '',
+  nickName: '',
+  phoneNumber: '',
+  emailAddress: '',
+  verificationCode: '',
+  gender: 0,
+  registerWay: 0
+})
+const layFormRef = ref();
+
+onMounted(() => {
+  toRefreshImg()
+  // toRefreshQrcode()
+})
+
+const loginSubmit = async () => {
+  loging.value = true;
+  let res = await login(loginForm);
+  if (res)
+  {
+    setTimeout(() => {
+      loging.value = false;
+      layer.msg('登录成功', { icon: 1 }, async () => {
+          userStore.token = res.token
+          await userStore.loadMenus()
+          await userStore.loadPermissions()
+          router.push('/')
+        })
+    }, 1000);
+  }
+  else
+  {
+    loging.value = false;
+    toRefreshImg();
+  }
+}
+
+const toRefreshImg = async () => {
+  let res = await verificationImg();
+  if (res){
+    verificationImgUrl.value = 'data:image/gif;base64,' + res.img;
+    loginForm.captchaId = res.captchaId;
+  }
+}
+
+const toRefreshQrcode = async () => {
+  let { data, code, msg } = await loginQrcode()
+  if (code == 200) {
+    loginQrcodeText.value = data.data
+  } else {
+    layer.msg(msg, { icon: 2 })
+  }
+}
+
+const openRegister = () =>{
+  showRegister.value = true;
+}
+
+const send = async (type: number) =>{
+  
+}
+
+const registerActions = ref([
+  {
+      text: "确认",
+      callback: async () => {
+        var res = await register(registerModel);
+        if (res){
+          layer.msg('注册成功', {icon: 1});
+          showRegister.value = false;
+        }
+      }
+  },
+  {
+      text: "取消",
+      callback: () => {
+          showRegister.value = false;
+      }
+  }
+])
+
 </script>
 
 <style scoped>

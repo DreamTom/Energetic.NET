@@ -1,7 +1,7 @@
 import Http from '../http';
 
 export const login = function(loginForm: any) {
-    return Http.post('/user/login', loginForm)
+    return Http.post('/users/login', loginForm)
 }
 
 export const register = function(registerForm: any) {
