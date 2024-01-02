@@ -1,6 +1,8 @@
 ﻿using Energetic.NET.Basic.Application.User.Dto;
 using Energetic.NET.Basic.Domain.Enums;
 using Energetic.NET.Basic.Domain.IResponsitories;
+using Energetic.NET.Basic.Domain.Services;
+using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers
@@ -12,7 +14,8 @@ namespace Energetic.NET.API.Controllers
     [Route("api/users")]
     public class UsersController(IUserDomainRepository userDomainRepository,
         IEasyCachingProvider easyCaching,
-        BasicDbContext basicDbContext) : BaseController
+        BasicDbContext basicDbContext,
+        UserDomainService userDomainService) : BaseController
     {
         /// <summary>
         /// 用户注册
@@ -53,6 +56,30 @@ namespace Energetic.NET.API.Controllers
             }
             await basicDbContext.AddAsync(user);
             return Ok(user.Id);
+        }
+
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponse>> Login([FromServices] ICaptcha captcha, LoginRequest loginRequest)
+        {
+            if (loginRequest.LoginWay == RegisterWay.UserName)
+            {
+                if (!captcha.Validate(loginRequest.CaptchaId, loginRequest.VerificationCode))
+                    return ValidateFailed("验证码错误");
+                var (IsSuccess, Token) = await userDomainService.LoginByUserNameAndPasswordAsync(loginRequest.UserName, loginRequest.Password);
+                if (!IsSuccess)
+                    return ValidateFailed("用户名或密码错误");
+                return Ok(new LoginResponse
+                {
+                    UserName = loginRequest.UserName,
+                    Token = Token
+                });
+            }
+            return Ok();
         }
     }
 }

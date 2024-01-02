@@ -1,6 +1,13 @@
 ﻿namespace Energetic.NET.Jwt
 {
-    public record JwtConfigOptions(string SecretKey, string Issuer, string Audience, int Expiry)
+    public class JwtConfigOptions
     {
+        public string SecretKey { get; set; } = null!;
+
+        public string Issuer { get; set; } = null!;
+
+        public string Audience { get; set; } = null!;
+
+        public int Expiry { get; set; }
     }
 }

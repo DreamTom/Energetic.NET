@@ -2,6 +2,8 @@
 using Energetic.NET.Infrastructure.EFCore;
 using Energetic.NET.SharedKernel;
 using IdGen.DependencyInjection;
+using Mapster;
+using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Energetic.NET.Infrastructure
@@ -20,6 +22,9 @@ namespace Energetic.NET.Infrastructure
             {
                 option.UseInMemory();
             });
+            services.AddSingleton(new TypeAdapterConfig());
+            services.AddScoped<IMapper, ServiceMapper>();
+            services.AddCaptcha();
         }
     }
 }

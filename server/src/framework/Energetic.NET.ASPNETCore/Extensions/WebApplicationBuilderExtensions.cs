@@ -37,6 +37,7 @@ namespace Energetic.NET.ASPNETCore.Extensions
             services.AddControllers();
             services.AddConfigOptions<DbConnectionConfigOptions>();
             services.AddConfigOptions<SwaggerConfigOptions>();
+            services.AddConfigOptions<JwtConfigOptions>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
             services.AddJwtAuthentication(App.GetConfigOptions<JwtConfigOptions>());

@@ -11,7 +11,7 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public string? RealName { get; private set; }
 
-        public string? PasswordHash { get; set; }
+        private string? passwordHash;
 
         public string? PhoneNumber { get; private set; }
 
@@ -64,12 +64,12 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public void SetPassword(string password)
         {
-            PasswordHash = password.ComputeMd5Hash();
+            passwordHash = password.ComputeMd5Hash();
         }
 
         public bool CheckPassword(string password)
         {
-            return PasswordHash == password.ComputeMd5Hash();
+            return passwordHash == password.ComputeMd5Hash();
         }
     }
 }
