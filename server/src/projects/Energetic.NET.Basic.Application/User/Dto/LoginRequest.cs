@@ -2,7 +2,7 @@
 
 namespace Energetic.NET.Basic.Application.User.Dto
 {
-    public class LoginRequest
+    public record LoginRequest(string VerificationCode, string CaptchaId)
     {
         public string? UserName { get; set; }
 
@@ -12,9 +12,7 @@ namespace Energetic.NET.Basic.Application.User.Dto
 
         public string? PhoneNumber { get; set; }
 
-        public string? VerificationCode { get; set; }
-
-        public string? CaptchaId { get; set; }
+        public string? SecondCode { get; set; }
 
         public RegisterWay LoginWay { get; set; }
     }

@@ -26,5 +26,20 @@ namespace Energetic.NET.Common.Helpers
             }
             return code;
         }
+
+        /// <summary>
+        /// 生成随机数字验证码
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static string GenNumberCode(int num)
+        {
+            string rndNumber = string.Empty;
+            for (int i = 0;i < num; i++)
+            {
+                rndNumber += Random.Shared.Next(0, 9);
+            }
+            return rndNumber;
+        }
     }
 }

@@ -57,7 +57,7 @@ class Http {
                 }
             }
             layer.msg(message,{icon : 2})
-            return;
+            return { hasError: true, message: message };
         })
     }
 

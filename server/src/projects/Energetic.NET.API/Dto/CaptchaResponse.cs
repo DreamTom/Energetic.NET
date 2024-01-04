@@ -1,6 +1,6 @@
-﻿namespace Energetic.NET.API.Models
+﻿namespace Energetic.NET.API.Dto
 {
-    public class CaptchaResponseDto
+    public class CaptchaResponse
     {
         public string CaptchaId { get; set; }
 

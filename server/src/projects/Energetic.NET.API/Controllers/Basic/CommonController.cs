@@ -1,4 +1,6 @@
-﻿using Energetic.NET.API.Models;
+﻿using Energetic.NET.API.Dto;
+using Energetic.NET.Basic.Application.User.Dto;
+using Energetic.NET.Common.Helpers;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
 
@@ -8,24 +10,58 @@ namespace Energetic.NET.API.Controllers
     /// 通用服务
     /// </summary>
     /// <param name="captcha"></param>
+    [AllowAnonymous]
     [Route("api/common")]
-    public class CommonController(ICaptcha captcha) : BaseController
+    public class CommonController(ICaptcha captcha, IEasyCachingProvider cachingProvider) : BaseController
     {
         /// <summary>
         /// 图形验证码生成
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet("verificationImg")]
-        public ActionResult<CaptchaResponseDto> VerificationImg()
+        public ActionResult<CaptchaResponse> VerificationImg()
         {
             string captchaId = Guid.NewGuid().ToString("N");
             var captchaInfo = captcha.Generate(captchaId);
-            return Ok(new CaptchaResponseDto
+            return Ok(new CaptchaResponse
             {
                 Img = captchaInfo.Base64,
                 CaptchaId = captchaId,
             });
+        }
+
+        /// <summary>
+        /// 发送短信验证码
+        /// </summary>
+        /// <param name="smsVerificationCodeRequest"></param>
+        /// <returns></returns>
+        [HttpPost("sendSmsVerificationCode")]
+        public async Task<ActionResult> SendSmsVerificationCode(SendSmsVerificationCodeRequest smsVerificationCodeRequest)
+        {
+            if (!captcha.Validate(smsVerificationCodeRequest.CaptchaId, smsVerificationCodeRequest.VerificationCode, removeIfSuccess: false))
+                return ValidateFailed("验证码错误");
+            var rndNumber = RandomHelper.GenNumberCode(4);
+            await cachingProvider.SetAsync($"{smsVerificationCodeRequest.OperationType}_By_PhoneNumber_{smsVerificationCodeRequest.PhoneNumber}",
+                rndNumber, TimeSpan.FromSeconds(120));
+            // TODO 短信发送
+            return Ok(rndNumber);
+        }
+
+        /// <summary>
+        /// 发送邮箱验证码
+        /// </summary>
+        /// <param name="emailVerificationCodeRequest"></param>
+        /// <returns></returns>
+        [HttpPost("sendEmailVerificationCode")]
+        public async Task<ActionResult> SendEmailVerificationCode(SendEmailVerificationCodeRequest emailVerificationCodeRequest)
+        {
+            if (!captcha.Validate(emailVerificationCodeRequest.CaptchaId, emailVerificationCodeRequest.VerificationCode))
+                return ValidateFailed("验证码错误");
+            var rndNumber = RandomHelper.GenNumberCode(4);
+            await cachingProvider.SetAsync($"{emailVerificationCodeRequest.OperationType}_By_PhoneNumber_{emailVerificationCodeRequest.EmailAddress}",
+                rndNumber, TimeSpan.FromSeconds(120));
+            // TODO 短信发送
+            return Ok(rndNumber);
         }
     }
 }

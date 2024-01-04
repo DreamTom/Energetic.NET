@@ -12,7 +12,7 @@
               <h1>Energetic.NET</h1>
 
               <h3 style="margin: 20px auto">
-                让 .NET 生 态 更 加 充 满 活 力
+                让 国 内 .NET 生 态 充 满 活 力
               </h3>
             </div>
           </div>
@@ -21,28 +21,28 @@
               🎯 Sign in
             </div>
             <lay-tab type="brief" v-model="method">
-              <lay-tab-item title="账号密码" id="1">
+              <lay-tab-item title="用户名密码" id="0">
                 <div style="height: 250px">
                   <lay-form-item :label-width="0">
-                    <lay-input :allow-clear="true" prefix-icon="layui-icon-username" placeholder="用户名或手机号或邮箱"
-                      v-model="loginForm.userName"></lay-input>
+                    <lay-input :allow-clear="true" prefix-icon="layui-icon-username" placeholder="用户名"
+                      v-model="userNameLoginForm.userName"></lay-input>
                   </lay-form-item>
                   <lay-form-item :label-width="0">
                     <lay-input :allow-clear="true" prefix-icon="layui-icon-password" placeholder="密码" password
-                      type="password" v-model="loginForm.password"></lay-input>
+                      type="password" v-model="userNameLoginForm.password"></lay-input>
                   </lay-form-item>
                   <lay-form-item :label-width="0">
                     <div style="width: 264px; display: inline-block">
                       <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
-                        v-model="loginForm.verificationCode"></lay-input>
+                        v-model="userNameLoginForm.verificationCode"></lay-input>
                     </div>
 
                     <div class="login-captach" @click="toRefreshImg">
                       <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
                     </div>
                   </lay-form-item>
-                  <lay-checkbox value="" name="like" v-model="remember" skin="primary" label="1">记住密码</lay-checkbox>
-                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">注册</a>
+                  <lay-checkbox v-if="method == '0'" value="" name="like" v-model="remember" skin="primary" label="1">记住密码</lay-checkbox>
+                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
 
                   <lay-form-item :label-width="0">
                     <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
@@ -50,24 +50,64 @@
                   </lay-form-item>
                 </div>
               </lay-tab-item>
-              <lay-tab-item title="验证码" id="2">
-                <div style="width: 200px; height: 250px; margin: 0 auto">
-                  <lay-qrcode text="http://www.layui-vue.com" :width="200" color="#000"
-                    style="margin: 10px 0 20px"></lay-qrcode>
-                  <div style="text-align: center; cursor: pointer" @click="toRefreshQrcode">
-                    <lay-icon type="layui-icon-refresh-three"> </lay-icon>
-                    刷新二维码
-                  </div>
+              <lay-tab-item title="手机号" id="1">
+                <div style="height: 250px;">
+                  <lay-form-item :label-width="0">
+                    <lay-input prefix-icon="layui-icon-cellphone" placeholder="手机号"
+                      v-model="phoneNumberloginForm.phoneNumber"></lay-input>
+                  </lay-form-item>
+                  <lay-form-item :label-width="0">
+                    <div style="width: 264px; display: inline-block">
+                      <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
+                        v-model="phoneNumberloginForm.verificationCode"></lay-input>
+                    </div>
+
+                    <div class="login-captach" @click="toRefreshImg">
+                      <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
+                    </div>
+                  </lay-form-item>
+                  <lay-form-item :label-width="0">
+                    <lay-input prefix-icon="layui-icon-vercode" placeholder="请输入短信验证码"
+                        v-model="phoneNumberloginForm.secondCode">
+                        <template #append><span style="cursor: pointer;" @click="send(1)">发送验证码</span></template>
+                    </lay-input>
+                  </lay-form-item>
+                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
+
+                  <lay-form-item :label-width="0">
+                    <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
+                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
+                  </lay-form-item>
                 </div>
               </lay-tab-item>
-              <lay-tab-item title="二维码" id="3">
-                <div style="width: 200px; height: 250px; margin: 0 auto">
-                  <lay-qrcode text="http://www.layui-vue.com" :width="200" color="#000"
-                    style="margin: 10px 0 20px"></lay-qrcode>
-                  <div style="text-align: center; cursor: pointer" @click="toRefreshQrcode">
-                    <lay-icon type="layui-icon-refresh-three"> </lay-icon>
-                    刷新二维码
-                  </div>
+              <lay-tab-item title="邮箱" id="2">
+                <div style="height: 250px;">
+                  <lay-form-item :label-width="0">
+                    <lay-input prefix-icon="layui-icon-email" placeholder="邮箱"
+                      v-model="emailLoginForm.emailAddress"></lay-input>
+                  </lay-form-item>
+                  <lay-form-item :label-width="0">
+                    <div style="width: 264px; display: inline-block">
+                      <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
+                        v-model="emailLoginForm.verificationCode"></lay-input>
+                    </div>
+
+                    <div class="login-captach" @click="toRefreshImg">
+                      <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
+                    </div>
+                  </lay-form-item>
+                  <lay-form-item :label-width="0">
+                    <lay-input prefix-icon="layui-icon-vercode" placeholder="请输入邮箱验证码"
+                        v-model="emailLoginForm.secondCode">
+                        <template #append><span style="cursor: pointer;" @click="send(1)">发送验证码</span></template>
+                    </lay-input>
+                  </lay-form-item>
+                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
+
+                  <lay-form-item :label-width="0">
+                    <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
+                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
+                  </lay-form-item>
                 </div>
               </lay-tab-item>
             </lay-tab>
@@ -103,92 +143,48 @@
       </div>
     </div>
   </div>
-
-  <!--注册-->
-  <lay-layer v-model="showRegister" :shade="false" :title="false" :btn="registerActions">
-    <div style="padding-right: 20px;">
-      <lay-tab type="brief" v-model="registerMethod">
-          <lay-tab-item title="用户名注册" id="0">
-            <lay-form :model="registerModel" ref="layFormRef" required>
-              <lay-form-item label="昵称" prop="nickName">
-                <lay-input v-model="registerModel.nickName"></lay-input>
-              </lay-form-item>
-              <lay-form-item label="性别" prop="gender">
-                <lay-select v-model="registerModel.gender" placeholder="请选择">
-                  <lay-select-option :value="0" label="男"></lay-select-option>
-                  <lay-select-option :value="1" label="女"></lay-select-option>
-                </lay-select>
-              </lay-form-item>
-              <lay-form-item label="用户名" prop="userName">
-                <lay-input v-model="registerModel.userName"></lay-input>
-              </lay-form-item>
-              <lay-form-item label="密码" prop="password">
-                <lay-input v-model="registerModel.password" type="password" password></lay-input>
-              </lay-form-item>
-            </lay-form>
-          </lay-tab-item>
-          <lay-tab-item title="手机号注册" id="1">
-            <lay-form :model="registerModel" ref="layFormRef" required>
-              <lay-form-item label="手机号" prop="phoneNumber">
-                <lay-input v-model="registerModel.phoneNumber"></lay-input>
-              </lay-form-item>
-              <lay-form-item label="验证码" prop="verificationCode" mode="inline">
-                <lay-input style="width: 120px;" v-model="registerModel.verificationCode"></lay-input>
-                <lay-button style="margin-left: 5px;" @click="send(1)">发送</lay-button>
-              </lay-form-item>
-            </lay-form>
-          </lay-tab-item>
-          <lay-tab-item title="邮箱注册" id="2">
-            <lay-form :model="registerModel" ref="layFormRef" required>
-              <lay-form-item label="邮箱" prop="emailAddress">
-                <lay-input v-model="registerModel.emailAddress"></lay-input>
-              </lay-form-item>
-              <lay-form-item label="验证码" prop="verificationCode" mode="inline">
-                <lay-input style="width: 120px;" v-model="registerModel.verificationCode"></lay-input>
-                <lay-button style="margin-left: 5px;" @click="send(2)">发送</lay-button>
-              </lay-form-item>
-            </lay-form>
-          </lay-tab-item>
-      </lay-tab>
-    </div>
-  </lay-layer>
+  <registerDialog ref="registerDialogRef"/>
 </template>
 
 <script setup lang="ts">
-import { login, register } from '../../api/module/user'
-import { verificationImg, loginQrcode } from '../../api/module/common'
+import { login } from '../../api/module/user'
+import { verificationImg, loginQrcode, sendSmsVerificationCode,sendEmailVerificationCode } from '../../api/module/common'
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../../store/user'
 import { layer } from '@layui/layer-vue'
+import registerDialog  from './component/registerDialog.vue';
 
+let captchaId = ''
+const registerDialogRef = ref();
 const router = useRouter()
 const userStore = useUserStore()
-const method = ref('1')
-const registerMethod = ref('0');
+const method = ref('0')
 const verificationImgUrl = ref('')
 const loging = ref(false);
 const loginQrcodeText = ref('')
 const remember = ref(false)
-const loginForm = reactive({
+const userNameLoginForm = reactive({
   userName: 'admin',
   password: '123456',
   verificationCode: '',
   captchaId: '',
   loginWay: 0
 })
-const showRegister = ref(false);
-const registerModel = reactive({
-  userName: '',
-  password: '',
-  nickName: '',
+const phoneNumberloginForm = reactive({
   phoneNumber: '',
+  verificationCode: '',
+  captchaId: '',
+  secondCode: '',
+  loginWay: 1
+})
+const emailLoginForm = reactive({
   emailAddress: '',
   verificationCode: '',
-  gender: 0,
-  registerWay: 0
+  captchaId: '',
+  secondCode: '',
+  loginWay: 2
 })
-const layFormRef = ref();
 
 onMounted(() => {
   toRefreshImg()
@@ -196,9 +192,23 @@ onMounted(() => {
 })
 
 const loginSubmit = async () => {
+  const loginWay = Number(method.value);
+  if (loginWay == 0){
+    userNameLoginForm.captchaId = captchaId;
+    await loginAction(userNameLoginForm);
+  }else if (loginWay == 1){
+    phoneNumberloginForm.captchaId = captchaId;
+    await loginAction(phoneNumberloginForm);
+  }else{
+    emailLoginForm.captchaId = captchaId;
+    await loginAction(emailLoginForm);
+  }
+}
+
+const loginAction = async (loginForm:any) => {
   loging.value = true;
   let res = await login(loginForm);
-  if (res)
+  if (!res.hasError)
   {
     setTimeout(() => {
       loging.value = false;
@@ -219,9 +229,9 @@ const loginSubmit = async () => {
 
 const toRefreshImg = async () => {
   let res = await verificationImg();
-  if (res){
+  if (!res.hasError){
     verificationImgUrl.value = 'data:image/gif;base64,' + res.img;
-    loginForm.captchaId = res.captchaId;
+    captchaId = res.captchaId;
   }
 }
 
@@ -235,31 +245,26 @@ const toRefreshQrcode = async () => {
 }
 
 const openRegister = () =>{
-  showRegister.value = true;
+  registerDialogRef.value.openDialog();
 }
 
 const send = async (type: number) =>{
-  
-}
-
-const registerActions = ref([
-  {
-      text: "确认",
-      callback: async () => {
-        var res = await register(registerModel);
-        if (res){
-          layer.msg('注册成功', {icon: 1});
-          showRegister.value = false;
-        }
-      }
-  },
-  {
-      text: "取消",
-      callback: () => {
-          showRegister.value = false;
-      }
+  if(phoneNumberloginForm.verificationCode == '' && type == 1)
+    layer.msg("手机验证码不能为空", { icon : 2})
+  if(emailLoginForm.verificationCode == '' && type == 2)
+    layer.msg("邮箱验证码不能为空", { icon : 2})
+  let sendForm = { 
+    captchaId: captchaId,
+    verificationCode: phoneNumberloginForm.verificationCode,
+    operationType: 0,
+    phoneNumber: phoneNumberloginForm.phoneNumber
   }
-])
+  console.log(sendForm);
+  var res = await sendSmsVerificationCode(sendForm);
+  if (!res.hasError){
+    layer.msg('发送成功')
+  }
+}
 
 </script>
 

@@ -9,5 +9,9 @@ namespace Energetic.NET.Basic.Domain.IResponsitories
         Task<User?> FindByEmailAdressAsync(string emailAdress);
 
         Task<User?> FindByPhoneNumberAsync(string phoneNumber);
+
+        Task<User> RegisterByPhoneNumberAsync(string phoneNumber);
+
+        Task<User> RegisterByEmailAddressAsync(string emailAddress);
     }
 }
