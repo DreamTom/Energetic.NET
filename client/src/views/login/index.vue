@@ -43,7 +43,6 @@
                   </lay-form-item>
                   <lay-checkbox v-if="method == '0'" value="" name="like" v-model="remember" skin="primary" label="1">记住密码</lay-checkbox>
                   <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
-
                   <lay-form-item :label-width="0">
                     <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
                       loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
@@ -69,14 +68,13 @@
                   <lay-form-item :label-width="0">
                     <lay-input prefix-icon="layui-icon-vercode" placeholder="请输入短信验证码"
                         v-model="phoneNumberloginForm.secondCode">
-                        <template #append><span style="cursor: pointer;" @click="send(1)">发送验证码</span></template>
+                        <template #append><span style="cursor: pointer;color: #16baaa;" @click="sendSms">发送验证码</span></template>
                     </lay-input>
                   </lay-form-item>
-                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
-
+                  <div style="height: 19.2px;"></div>
                   <lay-form-item :label-width="0">
                     <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
-                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
+                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录/注册</lay-button>
                   </lay-form-item>
                 </div>
               </lay-tab-item>
@@ -99,14 +97,13 @@
                   <lay-form-item :label-width="0">
                     <lay-input prefix-icon="layui-icon-vercode" placeholder="请输入邮箱验证码"
                         v-model="emailLoginForm.secondCode">
-                        <template #append><span style="cursor: pointer;" @click="send(1)">发送验证码</span></template>
+                        <template #append><span style="cursor: pointer;color: #16baaa;" @click="sendEmail">发送验证码</span></template>
                     </lay-input>
                   </lay-form-item>
-                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
-
+                  <div style="height: 19.2px;"></div>
                   <lay-form-item :label-width="0">
                     <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
-                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
+                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录/注册</lay-button>
                   </lay-form-item>
                 </div>
               </lay-tab-item>
@@ -248,21 +245,24 @@ const openRegister = () =>{
   registerDialogRef.value.openDialog();
 }
 
-const send = async (type: number) =>{
-  if(phoneNumberloginForm.verificationCode == '' && type == 1)
-    layer.msg("手机验证码不能为空", { icon : 2})
-  if(emailLoginForm.verificationCode == '' && type == 2)
-    layer.msg("邮箱验证码不能为空", { icon : 2})
+const sendSms = async () =>{
+}
+
+/**
+ * 发送邮件验证码
+ */
+const sendEmail = async ()=>{
   let sendForm = { 
     captchaId: captchaId,
-    verificationCode: phoneNumberloginForm.verificationCode,
+    verificationCode: emailLoginForm.verificationCode,
     operationType: 0,
-    phoneNumber: phoneNumberloginForm.phoneNumber
+    emailAddress: emailLoginForm.emailAddress
   }
-  console.log(sendForm);
-  var res = await sendSmsVerificationCode(sendForm);
+  var res = await sendEmailVerificationCode(sendForm);
   if (!res.hasError){
     layer.msg('发送成功')
+  }else{
+    toRefreshImg();
   }
 }
 

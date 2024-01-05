@@ -1,7 +1,10 @@
 ﻿using Energetic.NET.API.Dto;
-using Energetic.NET.Basic.Application.User.Dto;
+using Energetic.NET.Basic.Application;
+using Energetic.NET.Basic.Application.Email;
 using Energetic.NET.Common.Helpers;
+using Energetic.NET.SharedKernel.ICommonServices;
 using Lazy.Captcha.Core;
+using MailKitSimplified.Sender.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers
@@ -10,9 +13,12 @@ namespace Energetic.NET.API.Controllers
     /// 通用服务
     /// </summary>
     /// <param name="captcha"></param>
+    /// <param name="cachingProvider"></param>
+    /// <param name="emailAppService"></param>
     [AllowAnonymous]
     [Route("api/common")]
-    public class CommonController(ICaptcha captcha, IEasyCachingProvider cachingProvider) : BaseController
+    public class CommonController(ICaptcha captcha, IEasyCachingProvider cachingProvider,
+        IEmailAppService emailAppService) : BaseController
     {
         /// <summary>
         /// 图形验证码生成
@@ -38,7 +44,7 @@ namespace Energetic.NET.API.Controllers
         [HttpPost("sendSmsVerificationCode")]
         public async Task<ActionResult> SendSmsVerificationCode(SendSmsVerificationCodeRequest smsVerificationCodeRequest)
         {
-            if (!captcha.Validate(smsVerificationCodeRequest.CaptchaId, smsVerificationCodeRequest.VerificationCode, removeIfSuccess: false))
+            if (!captcha.Validate(smsVerificationCodeRequest.CaptchaId, smsVerificationCodeRequest.VerificationCode))
                 return ValidateFailed("验证码错误");
             var rndNumber = RandomHelper.GenNumberCode(4);
             await cachingProvider.SetAsync($"{smsVerificationCodeRequest.OperationType}_By_PhoneNumber_{smsVerificationCodeRequest.PhoneNumber}",
@@ -57,11 +63,8 @@ namespace Energetic.NET.API.Controllers
         {
             if (!captcha.Validate(emailVerificationCodeRequest.CaptchaId, emailVerificationCodeRequest.VerificationCode))
                 return ValidateFailed("验证码错误");
-            var rndNumber = RandomHelper.GenNumberCode(4);
-            await cachingProvider.SetAsync($"{emailVerificationCodeRequest.OperationType}_By_PhoneNumber_{emailVerificationCodeRequest.EmailAddress}",
-                rndNumber, TimeSpan.FromSeconds(120));
-            // TODO 短信发送
-            return Ok(rndNumber);
+            await emailAppService.SendEmailVerificationCodeAsync(emailVerificationCodeRequest.EmailAddress, emailVerificationCodeRequest.OperationType);
+            return Ok();
         }
     }
 }

@@ -27,10 +27,11 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public List<Role> Roles { get; } = [];
 
-        public void AddByUserName(string userName, string password, Gender gender)
+        public void AddByUserName(string userName, string? realName, string password, Gender gender)
         {
             UserName = userName;
             Gender = gender;
+            RealName = realName;
             SetPassword(password);
         }
 
@@ -57,7 +58,7 @@ namespace Energetic.NET.Basic.Domain.Models
         {
             roles.ForEach(role =>
             {
-                if(!Roles.Contains(role))
+                if (!Roles.Contains(role))
                     Roles.Add(role);
             });
         }

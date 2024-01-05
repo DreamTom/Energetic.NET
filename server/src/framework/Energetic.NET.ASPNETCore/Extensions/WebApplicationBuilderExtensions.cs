@@ -10,6 +10,7 @@ using Energetic.NET.SharedKernel;
 using EnergeticCms.WebApi.Filters;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MailKitSimplified.Sender;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -71,6 +72,11 @@ namespace Energetic.NET.ASPNETCore.Extensions
             services.AddValidatorsFromAssemblies(assemblies);
             services.AddAllDbContexts(assemblies);
             services.RunModuleInitializers(assemblies);
+            services.AddMailKitSimplifiedEmailSender(configuration);
+            services.AddMailKitSimplifiedEmailWriter(opt =>
+            {
+
+            });
         }
     }
 }

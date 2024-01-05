@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Energetic.NET.Basic.Domain\Energetic.NET.Basic.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Email\Dto\" />
+  </ItemGroup>
+
 </Project>

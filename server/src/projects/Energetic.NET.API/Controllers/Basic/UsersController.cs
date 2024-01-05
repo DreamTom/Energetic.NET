@@ -1,7 +1,6 @@
 ﻿using Energetic.NET.Basic.Application.User.Dto;
 using Energetic.NET.Basic.Domain.Enums;
 using Energetic.NET.Basic.Domain.IResponsitories;
-using Energetic.NET.Basic.Domain.Models;
 using Energetic.NET.Basic.Domain.Services;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,6 @@ namespace Energetic.NET.API.Controllers
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/users")]
     public class UsersController(IUserDomainRepository userDomainRepository,
-        IEasyCachingProvider easyCaching,
         BasicDbContext basicDbContext,
         UserDomainService userDomainService) : BaseController
     {
@@ -30,40 +28,12 @@ namespace Energetic.NET.API.Controllers
         {
             if (!captcha.Validate(regRequest.CaptchaId, regRequest.VerificationCode))
                 return ValidateFailed("验证码错误");
-            User addUser;
-            if (regRequest.RegisterWay == RegisterWay.UserName)
-            {
-                var existsUser = await userDomainRepository.FindByUserNameAsync(regRequest.UserName);
-                if (existsUser != null)
-                    return ValidateFailed("用户名已存在");
-                addUser = new User(regRequest.RegisterWay, regRequest.NickName);
-                addUser.AddByUserName(regRequest.UserName, regRequest.Password, regRequest.Gender);
-                _ = await basicDbContext.AddAsync(addUser);
-            }
-            else if (regRequest.RegisterWay == RegisterWay.PhoneNumber)
-            {
-                var code = await easyCaching.GetAsync<string>($"Register_By_PhoneNumber_{regRequest.EmailAddress}");
-                if (code.Value != regRequest.SecondCode)
-                    return ValidateFailed("手机验证码不正确");
-                var existsUser = await userDomainRepository.FindByEmailAdressAsync(regRequest.EmailAddress);
-                if (existsUser != null)
-                    return ValidateFailed("邮箱已存在");
-                addUser = await userDomainRepository.RegisterByPhoneNumberAsync(regRequest.PhoneNumber);
-            }
-            else if (regRequest.RegisterWay == RegisterWay.EmailAddress)
-            {
-                var code = await easyCaching.GetAsync<string>($"Register_By_EmailAddress_{regRequest.EmailAddress}");
-                if (code.Value != regRequest.SecondCode)
-                    return ValidateFailed("邮箱验证码不正确");
-                var existsUser = await userDomainRepository.FindByEmailAdressAsync(regRequest.EmailAddress);
-                if (existsUser != null)
-                    return ValidateFailed("邮箱已存在");
-                addUser = await userDomainRepository.RegisterByEmailAddressAsync(regRequest.EmailAddress);
-            }
-            else
-            {
-                return ValidateFailed("注册方式不支持");
-            }
+            var existsUser = await userDomainRepository.FindByUserNameAsync(regRequest.UserName);
+            if (existsUser != null)
+                return ValidateFailed("用户名已存在");
+            var addUser = new User(RegisterWay.UserName, regRequest.NickName);
+            addUser.AddByUserName(regRequest.UserName, regRequest.RealName, regRequest.Password, regRequest.Gender);
+            _ = await basicDbContext.AddAsync(addUser);
             return Ok(addUser.Id);
         }
 
@@ -77,12 +47,12 @@ namespace Energetic.NET.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login([FromServices] ICaptcha captcha, LoginRequest loginRequest)
         {
-            if (!captcha.Validate(loginRequest.CaptchaId, loginRequest.VerificationCode))
-                return ValidateFailed("验证码错误");
             User user = null;
             string token = string.Empty;
             if (loginRequest.LoginWay == RegisterWay.UserName)
             {
+                if (!captcha.Validate(loginRequest.CaptchaId, loginRequest.VerificationCode))
+                    return ValidateFailed("验证码错误");
                 var (IsSuccess, Token, User) = await userDomainService.LoginByUserNameAndPasswordAsync(loginRequest.UserName, loginRequest.Password);
                 if (!IsSuccess)
                     return ValidateFailed("用户名或密码错误");

@@ -1,4 +1,5 @@
 using Energetic.NET.ASPNETCore.Extensions;
+using Energetic.NET.Basic.Application.Email;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -10,7 +11,7 @@ try
     Log.Information("Starting web application");
     var builder = WebApplication.CreateBuilder(args);
     builder.ConfigureEnergeticNetServices();
-
+    builder.Services.AddConfigOptions<EmailNotifyConfigOptions>();
     var app = builder.Build();
 
     app.UseEnergeticNetDefault();

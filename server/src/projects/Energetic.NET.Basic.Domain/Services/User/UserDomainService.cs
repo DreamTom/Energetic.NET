@@ -1,11 +1,10 @@
 ﻿using EasyCaching.Core;
-using Energetic.NET.Basic.Domain.Enums;
+using Energetic.NET.Basic.Domain.Constants;
 using Energetic.NET.Basic.Domain.IResponsitories;
 using Energetic.NET.Basic.Domain.Models;
 using Energetic.NET.Jwt;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
 using System.Security.Claims;
 
 namespace Energetic.NET.Basic.Domain.Services
@@ -15,6 +14,12 @@ namespace Energetic.NET.Basic.Domain.Services
             IEasyCachingProvider cachingProvider,
             IOptions<JwtConfigOptions> jwtConfigOption)
     {
+        /// <summary>
+        /// 用户名密码登录
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
         public async Task<(bool IsSuccess, string? Token, User? User)> LoginByUserNameAndPasswordAsync(string userName, string password)
         {
             var user = await userDomainRepository.FindByUserNameAsync(userName);
@@ -24,9 +29,15 @@ namespace Energetic.NET.Basic.Domain.Services
             return (true, token, user);
         }
 
+        /// <summary>
+        /// 手机号和验证码登录，未注册自动注册
+        /// </summary>
+        /// <param name="phoneNumber">手机号</param>
+        /// <param name="secondCode">验证码</param>
+        /// <returns></returns>
         public async Task<(bool IsSuccess, string? Token, User? User)> LoginByPhoneNumberAsync(string phoneNumber, string secondCode)
         {
-            string key = $"Login_By_PhoneNumber_{phoneNumber}";
+            string key = CacheKey.LoginByPhoneNumberPrefix + phoneNumber;
             if (!CheckVerifyCode(key, secondCode))
                 return (false, null, null);
             var user = await userDomainRepository.FindByPhoneNumberAsync(phoneNumber);
@@ -35,9 +46,15 @@ namespace Energetic.NET.Basic.Domain.Services
             return (true, token, user);
         }
 
+        /// <summary>
+        /// 邮箱和验证码登录，未注册自动注册
+        /// </summary>
+        /// <param name="emailAddress">邮箱地址</param>
+        /// <param name="secondCode">验证码</param>
+        /// <returns></returns>
         public async Task<(bool IsSuccess, string? Token, User? User)> LoginByEmailAddressAsync(string emailAddress, string secondCode)
         {
-            string key = $"Login_By_EmailAddress_{emailAddress}";
+            string key = CacheKey.LoginByEmailAddressPrefix + emailAddress;
             if (!CheckVerifyCode(key, secondCode))
                 return (false, null, null);
             var user = await userDomainRepository.FindByEmailAdressAsync(emailAddress);
@@ -51,7 +68,6 @@ namespace Energetic.NET.Basic.Domain.Services
             var code = cachingProvider.Get<string>(key);
             return code.HasValue && code.Value.Equals(verifyCode);
         }
-
 
         private string BuildToken(User user)
         {
