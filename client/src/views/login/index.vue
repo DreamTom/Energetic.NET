@@ -22,90 +22,13 @@
             </div>
             <lay-tab type="brief" v-model="method">
               <lay-tab-item title="用户名密码" id="0">
-                <div style="height: 250px">
-                  <lay-form-item :label-width="0">
-                    <lay-input :allow-clear="true" prefix-icon="layui-icon-username" placeholder="用户名"
-                      v-model="userNameLoginForm.userName"></lay-input>
-                  </lay-form-item>
-                  <lay-form-item :label-width="0">
-                    <lay-input :allow-clear="true" prefix-icon="layui-icon-password" placeholder="密码" password
-                      type="password" v-model="userNameLoginForm.password"></lay-input>
-                  </lay-form-item>
-                  <lay-form-item :label-width="0">
-                    <div style="width: 264px; display: inline-block">
-                      <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
-                        v-model="userNameLoginForm.verificationCode"></lay-input>
-                    </div>
-
-                    <div class="login-captach" @click="toRefreshImg">
-                      <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
-                    </div>
-                  </lay-form-item>
-                  <lay-checkbox v-if="method == '0'" value="" name="like" v-model="remember" skin="primary" label="1">记住密码</lay-checkbox>
-                  <a href="javascript:void(0);" @click="openRegister" style="display: inline-block;float: right;">立即注册</a>
-                  <lay-form-item :label-width="0">
-                    <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
-                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录</lay-button>
-                  </lay-form-item>
-                </div>
-              </lay-tab-item>
-              <lay-tab-item title="手机号" id="1">
-                <div style="height: 250px;">
-                  <lay-form-item :label-width="0">
-                    <lay-input prefix-icon="layui-icon-cellphone" placeholder="手机号"
-                      v-model="phoneNumberloginForm.phoneNumber"></lay-input>
-                  </lay-form-item>
-                  <lay-form-item :label-width="0">
-                    <div style="width: 264px; display: inline-block">
-                      <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
-                        v-model="phoneNumberloginForm.verificationCode"></lay-input>
-                    </div>
-
-                    <div class="login-captach" @click="toRefreshImg">
-                      <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
-                    </div>
-                  </lay-form-item>
-                  <lay-form-item :label-width="0">
-                    <lay-input prefix-icon="layui-icon-vercode" placeholder="请输入短信验证码"
-                        v-model="phoneNumberloginForm.secondCode">
-                        <template #append><span style="cursor: pointer;color: #16baaa;" @click="sendSms">发送验证码</span></template>
-                    </lay-input>
-                  </lay-form-item>
-                  <div style="height: 19.2px;"></div>
-                  <lay-form-item :label-width="0">
-                    <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
-                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录/注册</lay-button>
-                  </lay-form-item>
-                </div>
+                <userNameLoginForm />
               </lay-tab-item>
               <lay-tab-item title="邮箱" id="2">
-                <div style="height: 250px;">
-                  <lay-form-item :label-width="0">
-                    <lay-input prefix-icon="layui-icon-email" placeholder="邮箱"
-                      v-model="emailLoginForm.emailAddress"></lay-input>
-                  </lay-form-item>
-                  <lay-form-item :label-width="0">
-                    <div style="width: 264px; display: inline-block">
-                      <lay-input :allow-clear="true" prefix-icon="layui-icon-vercode" placeholder="验证码"
-                        v-model="emailLoginForm.verificationCode"></lay-input>
-                    </div>
-
-                    <div class="login-captach" @click="toRefreshImg">
-                      <img style="width: 100%" :src="verificationImgUrl" alt="获取验证码" />
-                    </div>
-                  </lay-form-item>
-                  <lay-form-item :label-width="0">
-                    <lay-input prefix-icon="layui-icon-vercode" placeholder="请输入邮箱验证码"
-                        v-model="emailLoginForm.secondCode">
-                        <template #append><span style="cursor: pointer;color: #16baaa;" @click="sendEmail">发送验证码</span></template>
-                    </lay-input>
-                  </lay-form-item>
-                  <div style="height: 19.2px;"></div>
-                  <lay-form-item :label-width="0">
-                    <lay-button style="margin-top: 20px" type="primary" :loading="loging" :fluid="true"
-                      loadingIcon="layui-icon-loading" @click="loginSubmit">登录/注册</lay-button>
-                  </lay-form-item>
-                </div>
+                <emailLoginForm />
+              </lay-tab-item>
+              <lay-tab-item title="手机号" id="1">
+                <phoneNumberLoginForm />
               </lay-tab-item>
             </lay-tab>
             <lay-line>Other login methods</lay-line>
@@ -140,150 +63,18 @@
       </div>
     </div>
   </div>
-  <registerDialog ref="registerDialogRef"/>
 </template>
 
 <script setup lang="ts">
-import { login } from '../../api/module/user'
-import { verificationImg, loginQrcode, sendSmsVerificationCode,sendEmailVerificationCode } from '../../api/module/common'
-import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '../../store/user'
-import { layer } from '@layui/layer-vue'
-import registerDialog  from './component/registerDialog.vue';
+import { ref } from 'vue'
+import userNameLoginForm  from './component/userNameLoginForm.vue'
+import phoneNumberLoginForm  from './component/phoneNumberLoginForm.vue'
+import emailLoginForm  from './component/emailLoginForm.vue'
 
-let captchaId = ''
-const registerDialogRef = ref();
-const router = useRouter()
-const userStore = useUserStore()
 const method = ref('0')
-const verificationImgUrl = ref('')
-const loging = ref(false);
-const loginQrcodeText = ref('')
-const remember = ref(false)
-const userNameLoginForm = reactive({
-  userName: 'admin',
-  password: '123456',
-  verificationCode: '',
-  captchaId: '',
-  loginWay: 0
-})
-const phoneNumberloginForm = reactive({
-  phoneNumber: '',
-  verificationCode: '',
-  captchaId: '',
-  secondCode: '',
-  loginWay: 1
-})
-const emailLoginForm = reactive({
-  emailAddress: '',
-  verificationCode: '',
-  captchaId: '',
-  secondCode: '',
-  loginWay: 2
-})
-
-onMounted(() => {
-  toRefreshImg()
-  // toRefreshQrcode()
-})
-
-const loginSubmit = async () => {
-  const loginWay = Number(method.value);
-  if (loginWay == 0){
-    userNameLoginForm.captchaId = captchaId;
-    await loginAction(userNameLoginForm);
-  }else if (loginWay == 1){
-    phoneNumberloginForm.captchaId = captchaId;
-    await loginAction(phoneNumberloginForm);
-  }else{
-    emailLoginForm.captchaId = captchaId;
-    await loginAction(emailLoginForm);
-  }
-}
-
-const loginAction = async (loginForm:any) => {
-  loging.value = true;
-  let res = await login(loginForm);
-  if (!res.hasError)
-  {
-    setTimeout(() => {
-      loging.value = false;
-      layer.msg('登录成功', { icon: 1 }, async () => {
-          userStore.token = res.token
-          await userStore.loadMenus()
-          await userStore.loadPermissions()
-          router.push('/')
-        })
-    }, 1000);
-  }
-  else
-  {
-    loging.value = false;
-    toRefreshImg();
-  }
-}
-
-const toRefreshImg = async () => {
-  let res = await verificationImg();
-  if (!res.hasError){
-    verificationImgUrl.value = 'data:image/gif;base64,' + res.img;
-    captchaId = res.captchaId;
-  }
-}
-
-const toRefreshQrcode = async () => {
-  let { data, code, msg } = await loginQrcode()
-  if (code == 200) {
-    loginQrcodeText.value = data.data
-  } else {
-    layer.msg(msg, { icon: 2 })
-  }
-}
-
-const openRegister = () =>{
-  registerDialogRef.value.openDialog();
-}
-
-const sendSms = async () =>{
-}
-
-/**
- * 发送邮件验证码
- */
-const sendEmail = async ()=>{
-  let sendForm = { 
-    captchaId: captchaId,
-    verificationCode: emailLoginForm.verificationCode,
-    operationType: 0,
-    emailAddress: emailLoginForm.emailAddress
-  }
-  var res = await sendEmailVerificationCode(sendForm);
-  if (!res.hasError){
-    layer.msg('发送成功')
-  }else{
-    toRefreshImg();
-  }
-}
 
 </script>
-
 <style scoped>
-.login-captach {
-  display: inline-block;
-  vertical-align: bottom;
-  width: 108px;
-  height: 40px;
-  color: var(--global-primary-color);
-  margin-left: 8px;
-  border-radius: 4px;
-  border: 1px solid hsla(0, 0%, 60%, 0.46);
-  transition: border 0.2s;
-  box-sizing: border-box;
-  background: #fff;
-  overflow: hidden;
-  cursor: pointer;
-}
 
 .login-one-ball {
   opacity: 0.4;
