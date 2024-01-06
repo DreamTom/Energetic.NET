@@ -4,7 +4,6 @@ using Energetic.NET.Infrastructure.EFCore;
 using Energetic.NET.SharedKernel;
 using Energetic.NET.SharedKernel.ICommonServices;
 using IdGen.DependencyInjection;
-using MailKitSimplified.Sender;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,16 +17,11 @@ namespace Energetic.NET.Infrastructure
         {
             services.AddScoped<AuditableEntitySaveChangesInterceptor>();
             services.AddScoped<IDateTimeService, DateTimeService>();
-            services.AddIdGen(124, () => new IdGen.IdGeneratorOptions
-            {
-
-            });
+            services.AddIdGen(App.GetConfigOptions<DbConnectionConfigOptions>().GeneratorId);
             services.AddEasyCaching(option =>
             {
                 option.UseInMemory();
             });
-            services.AddSingleton(new TypeAdapterConfig());
-            services.AddScoped<IMapper, ServiceMapper>();
             services.AddCaptcha();
             services.AddSingleton<IRazorEngine, RazorEngine>();
             services.AddScoped<IRazorTemplateEngine, RazorTemplateEngine>();

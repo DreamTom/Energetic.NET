@@ -1,16 +1,26 @@
-﻿namespace Energetic.NET.Basic.Domain.Models
+﻿using Energetic.NET.Basic.Domain.Enums;
+
+namespace Energetic.NET.Basic.Domain.Models
 {
-    public class Resource : BaseAuditableEntity, IAggregateRoot
+    public class Resource(string name, string routePath, int displayOrder) : BaseAuditableEntity, IAggregateRoot
     {
-        public string Name { get; private set; }
+        public string Name { get; private set; } = name;
 
-        public string Code { get; private set; }
+        /// <summary>
+        /// 权限代码
+        /// </summary>
+        public string? Code { get; private set; }
 
-        public long? ParentId { get; private set; }
+        public long ParentId { get; private set; }
+
+        /// <summary>
+        /// 路由地址
+        /// </summary>
+        public string RoutePath { get; private set; } = routePath;
 
         public string? Icon { get; private set; }
 
-        public int DisplayOrder { get; private set; }
+        public int DisplayOrder { get; private set; } = displayOrder;
 
         public bool IsFolder { get; private set; }
 
@@ -18,33 +28,34 @@
 
         public bool IsHide { get; private set; }
 
-        public string Route { get; private set; } = string.Empty;
+        public string? ApiUrl { get; private set; }
 
-        public string? HttpMethod { get; private set; }
+        public RequestMethod? RequestMethod { get; private set; }
 
         public List<Role> Roles { get; } = [];
 
-        public Resource(string name, string code, long? parentId)
+        public void AddFolder(bool isHide, long parentId)
         {
-            Name = name;
-            Code = code;
+            IsFolder = true;
             ParentId = parentId;
+            IsHide = isHide;
         }
 
-        public void UpdateMenu(string? icon, int displayOrder, bool isFolder, bool isHide, string route)
+        public void AddMenu(bool isHide, string? icon, long parentId)
         {
+            IsMenu = true;
             Icon = icon;
-            DisplayOrder = displayOrder;
-            IsFolder = isFolder;
+            ParentId = parentId;
             IsHide = isHide;
-            Route = route;
         }
 
-        public void UpdateButton(bool isHide, string route, string httpMethod)
+        public void AddButton(bool isHide, long parentId, string code, string apiUrl, RequestMethod requestMethod)
         {
             IsHide = isHide;
-            Route = route;
-            HttpMethod = httpMethod;
+            ParentId = parentId;
+            ApiUrl = apiUrl;
+            RequestMethod = requestMethod;
+            Code = code;
         }
     }
 }

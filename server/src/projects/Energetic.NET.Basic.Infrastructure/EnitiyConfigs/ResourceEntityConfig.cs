@@ -4,7 +4,9 @@
     {
         public void Configure(EntityTypeBuilder<Resource> builder)
         {
-            builder.Property(f => f.HttpMethod).HasMaxLength(10);
+            builder.Property(f => f.RequestMethod)
+                .HasConversion<string>()
+                .HasMaxLength(10);
         }
     }
 }

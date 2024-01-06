@@ -106,7 +106,8 @@ namespace Energetic.NET.Infrastructure.EFCore
             var addEntities = ChangeTracker.Entries<IEntity>().Where(e => e.State == EntityState.Added).Select(e => e.Entity).ToList();
             addEntities.ForEach(e =>
             {
-                e.SetId(_idGenerator.CreateId());
+                if (e.Id == default)
+                    e.SetId(_idGenerator.CreateId());
             });
         }
 

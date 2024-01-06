@@ -1,4 +1,4 @@
-﻿namespace EnergeticCms.Infrastructure.EntityConfigs
+﻿namespace Energetic.NET.Basic.Infrastructure.EntityConfigs
 {
     internal class FileAttachmentEnityConfig : IEntityTypeConfiguration<FileAttachment>
     {

@@ -13,5 +13,7 @@
         public bool EnableSoftDeletionFilter { get; set; }
 
         public bool EnableUsingSnowflakeId { get; set; }
+
+        public int GeneratorId { get; set; }
     }
 }

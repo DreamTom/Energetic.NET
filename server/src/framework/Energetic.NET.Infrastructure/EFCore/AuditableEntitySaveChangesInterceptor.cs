@@ -26,7 +26,10 @@ namespace Energetic.NET.Infrastructure.EFCore
         private void UpdateEntities(DbContext? dbContext)
         {
             if (dbContext == null) return;
-            string realName = _currentUserService.CurrentUser == null ? string.Empty : _currentUserService.CurrentUser.RealName;
+            string realName = string.Empty;
+            if (_currentUserService.CurrentUser != null && !string.IsNullOrWhiteSpace(_currentUserService.CurrentUser.RealName))
+                realName = _currentUserService.CurrentUser.RealName;
+
             long userId = _currentUserService.CurrentUser == null ? 0 : _currentUserService.CurrentUser.Id;
             foreach (var entry in dbContext.ChangeTracker.Entries<ICreatedEntity>())
             {

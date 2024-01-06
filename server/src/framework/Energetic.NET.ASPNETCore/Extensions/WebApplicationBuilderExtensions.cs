@@ -1,19 +1,20 @@
 ﻿using Energetic.NET.ASPNETCore.ConfigOptions;
 using Energetic.NET.ASPNETCore.Filters;
-using Energetic.NET.ASPNETCore.Handlers;
 using Energetic.NET.ASPNETCore.Security;
 using Energetic.NET.Common.Helpers;
 using Energetic.NET.Common.JsonConverters;
 using Energetic.NET.Infrastructure;
 using Energetic.NET.Jwt;
 using Energetic.NET.SharedKernel;
-using EnergeticCms.WebApi.Filters;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MailKitSimplified.Sender;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text.Json.Serialization;
 
 namespace Energetic.NET.ASPNETCore.Extensions
 {
@@ -57,6 +58,8 @@ namespace Energetic.NET.ASPNETCore.Extensions
             {
                 // 设置时间格式。而非“2008-08-08T08:08:08”这样的格式
                 options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter(DateTimeTemplate.DateWithSeconds));
+                // 解决long类型精度丢失
+                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString;
             });
             services.Configure<MvcOptions>(options =>
             {
@@ -72,11 +75,11 @@ namespace Energetic.NET.ASPNETCore.Extensions
             services.AddValidatorsFromAssemblies(assemblies);
             services.AddAllDbContexts(assemblies);
             services.RunModuleInitializers(assemblies);
+            var config = new TypeAdapterConfig();
+            config.Scan(assemblies.ToArray());
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
             services.AddMailKitSimplifiedEmailSender(configuration);
-            services.AddMailKitSimplifiedEmailWriter(opt =>
-            {
-
-            });
         }
     }
 }

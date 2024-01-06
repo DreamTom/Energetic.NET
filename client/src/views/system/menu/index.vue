@@ -109,14 +109,17 @@
             删除
           </lay-button>
         </template>
+        <template #isHide="{ row }">
+          <lay-checkbox value="1" skin="primary"  disabled></lay-checkbox>
+        </template>
         <template #type="{ row }">
-          <div v-show="row.type == '目录'">
+          <div v-show="row.isFolder">
             <lay-tag color="#165DFF" variant="light">目录</lay-tag>
           </div>
-          <div v-show="row.type == '菜单'">
+          <div v-show="row.isMenu">
             <lay-tag color="#2dc570" variant="light">菜单</lay-tag>
           </div>
-          <div v-show="row.type == '外链'">
+          <div v-show="!row.isFolder && !row.isMenu">
             <lay-tag color="#F5319D" variant="light">外链</lay-tag>
           </div>
         </template>
@@ -173,8 +176,9 @@
   </lay-container>
 </template>
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { layer } from '@layui/layui-vue'
+import { getResourceTree } from '../../../api/module/resource'
 const searchQuery = ref({
   address: '',
   identifying: '',
@@ -188,6 +192,14 @@ function toReset() {
     name: ''
   }
 }
+
+onMounted(async ()=>{
+  let res = await getResourceTree();
+  if (!res.hasError)
+  {
+    dataSource6.value = res;
+  }
+})
 
 function toSearch() {
   page.current = 1
@@ -222,16 +234,17 @@ const columns6 = [
   },
   {
     title: '组件路径',
-    key: 'compontPath'
+    key: 'componentPath'
   },
   {
     title: '排序',
     width: '120px',
-    key: 'sort'
+    key: 'displayOrder'
   },
   {
     title: '可见',
-    key: 'isShow'
+    key: 'isHide',
+    customSlot: 'isHide'
   },
   {
     title: '类型',
@@ -245,402 +258,403 @@ const columns6 = [
   }
 ]
 
-const dataSource6 = [
-  {
-    id: '10001',
-    name: '工作空间',
-    type: '目录',
-    icon: 'layui-icon-home',
-    age: 0,
-    routePath: '/workspace',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10009',
-        name: '工作台',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-util',
-        routePath: '/workspace/workbench',
-        compontPath: '/workspace/workbench',
-        isShow: '是'
-      },
-      {
-        id: '10012',
-        name: '控制台',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-engine',
-        routePath: '/workspace/console',
-        compontPath: '/workspace/console',
-        isShow: '是'
-      },
-      {
-        id: '10012',
-        name: '分析页',
-        type: '菜单',
-        sort: 3,
-        icon: 'layui-icon-chart-screen',
-        routePath: '/workspace/analysis',
-        compontPath: '/workspace/analysis',
-        isShow: '是'
-      },
-      {
-        id: '10012',
-        name: '监控页',
-        type: '菜单',
-        sort: 4,
-        icon: 'layui-icon-find-fill',
-        routePath: '/workspace/monitor',
-        compontPath: '/workspace/monitor',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10002',
-    name: '表单页面',
-    type: '目录',
-    sort: 1,
-    icon: 'layui-icon-table',
-    routePath: '/form',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10015',
-        name: '基础表单',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-form',
-        routePath: '/form/base',
-        compontPath: '/form/base',
-        isShow: '是'
-      },
-      {
-        id: '10016',
-        name: '复杂表单',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-form',
-        routePath: '/form/intricate',
-        compontPath: '/form/intricate',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10003',
-    name: '列表页面',
-    type: '目录',
-    sort: 3,
-    icon: 'layui-icon-align-left',
-    routePath: '/table',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10017',
-        name: '查询列表',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-search',
-        routePath: '/table/base',
-        compontPath: '/table/base',
-        isShow: '是'
-      },
-      {
-        id: '10018',
-        name: '卡片列表',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-file-b',
-        routePath: '/table/card',
-        compontPath: '/table/card',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10004',
-    name: '结果页面',
-    type: '目录',
-    sort: 4,
-    icon: 'layui-icon-template',
-    routePath: '/result',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10019',
-        name: '成功页面',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-success',
-        routePath: '/result/success',
-        compontPath: '/result/success',
-        isShow: '是'
-      },
-      {
-        id: '10020',
-        name: '失败页面',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-error',
-        routePath: '/result/failure',
-        compontPath: '/result/failure',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10005',
-    icon: 'layui-icon-unlink',
-    name: '异常页面',
-    type: '目录',
-    sort: 5,
-    routePath: '/error',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10021',
-        name: '403',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-not-found',
-        routePath: '/error/403',
-        compontPath: '/error/403',
-        isShow: '是'
-      },
-      {
-        id: '10022',
-        name: '404',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-not-found',
-        routePath: '/error/404',
-        compontPath: '/error/404',
-        isShow: '是'
-      },
-      {
-        id: '10022',
-        name: '500',
-        type: '菜单',
-        sort: 3,
-        icon: 'layui-icon-not-found',
-        routePath: '/error/500',
-        compontPath: '/error/500',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10006',
-    name: '菜单嵌套',
-    type: '目录',
-    sort: 6,
-    icon: 'layui-icon-app',
-    routePath: '/menu',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10023',
-        name: '二级菜单',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-component',
-        routePath: '/menu/menu1',
-        compontPath: '/menu/menu1',
-        isShow: '是',
-        children: [
-          {
-            id: '10023',
-            name: '三级菜单1',
-            type: '菜单',
-            sort: 1,
-            icon: 'layui-icon-template-one',
-            routePath: '/menu/menu1/menu1',
-            compontPath: '/menu/menu1/menu1',
-            isShow: '是'
-          },
-          {
-            id: '10023',
-            name: '三级菜单2',
-            type: '菜单',
-            sort: 2,
-            icon: 'layui-icon-template-one',
-            routePath: '/menu/menu1/menu2',
-            compontPath: '/menu/menu1/menu2',
-            isShow: '是'
-          }
-        ]
-      },
-      {
-        id: '10024',
-        name: '二级菜单',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-component',
-        routePath: '/menu/menu2',
-        compontPath: '/menu/menu2',
-        isShow: '是',
-        children: [
-          {
-            id: '10023',
-            name: '三级菜单1',
-            type: '菜单',
-            sort: 1,
-            icon: 'layui-icon-template-one',
-            routePath: '/menu/menu2/menu1',
-            compontPath: '/menu/menu2/menu1',
-            isShow: '是'
-          },
-          {
-            id: '10023',
-            name: '三级菜单2',
-            type: '菜单',
-            sort: 2,
-            icon: 'layui-icon-template-one',
-            routePath: '/menu/menu2/menu2',
-            compontPath: '/menu/menu2/menu2',
-            isShow: '是'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: '10007',
-    name: '内置指令',
-    type: '目录',
-    sort: 7,
-    icon: 'layui-icon-test',
-    routePath: '/directive',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10025',
-        name: '权限指令',
-        type: '菜单',
-        sort: 1,
-        icon: 'layui-icon-template',
-        routePath: '/directive/permission',
-        compontPath: '/directive/permission',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10008',
-    name: '外链页面',
-    type: '外链',
-    sort: 8,
-    icon: 'layui-icon-link',
-    routePath: '/page',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10027',
-        name: '弹层外链',
-        type: '外链',
-        icon: 'layui-icon-home',
-        sort: 1,
-        routePath: 'layui-icon-layer',
-        compontPath: 'layui-icon-layer',
-        isShow: '是'
-      },
-      {
-        id: '10028',
-        name: '原生跳转',
-        type: '外链',
-        sort: 2,
-        icon: 'layui-icon-layouts',
-        routePath: 'http://www.baidu.com',
-        compontPath: 'http://www.baidu.com',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10008',
-    name: '个人中心',
-    type: '目录',
-    sort: 9,
-    icon: 'layui-icon-slider',
-    routePath: '/enrollee',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10027',
-        name: '我的资料',
-        type: '菜单',
-        icon: 'layui-icon-home',
-        sort: 1,
-        routePath: '/enrollee/profile',
-        compontPath: '/enrollee/profile',
-        isShow: '是'
-      },
-      {
-        id: '10028',
-        name: '我的消息',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-email',
-        routePath: '/enrollee/message',
-        compontPath: '/enrollee/message',
-        isShow: '是'
-      }
-    ]
-  },
-  {
-    id: '10008',
-    name: '系统管理',
-    type: '目录',
-    sort: 10,
-    icon: 'layui-icon-set',
-    routePath: '/system',
-    compontPath: '',
-    isShow: '是',
-    children: [
-      {
-        id: '10027',
-        name: '用户管理',
-        type: '菜单',
-        icon: 'layui-icon-home',
-        sort: 1,
-        routePath: '/system/user',
-        compontPath: '/system/user',
-        isShow: '是'
-      },
-      {
-        id: '10028',
-        name: '角色管理',
-        type: '菜单',
-        sort: 2,
-        icon: 'layui-icon-group',
-        routePath: '/system/role',
-        compontPath: '/system/role',
-        isShow: '是'
-      },
-      {
-        id: '10028',
-        name: '机构管理',
-        type: '菜单',
-        sort: 3,
-        icon: 'layui-icon-transfer',
-        routePath: '/system/organization',
-        compontPath: '/system/organization',
-        isShow: '是'
-      }
-    ]
-  }
-]
+// const dataSource6 = [
+//   {
+//     id: '10001',
+//     name: '工作空间',
+//     type: '目录',
+//     icon: 'layui-icon-home',
+//     age: 0,
+//     routePath: '/workspace',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10009',
+//         name: '工作台',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-util',
+//         routePath: '/workspace/workbench',
+//         compontPath: '/workspace/workbench',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10012',
+//         name: '控制台',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-engine',
+//         routePath: '/workspace/console',
+//         compontPath: '/workspace/console',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10012',
+//         name: '分析页',
+//         type: '菜单',
+//         sort: 3,
+//         icon: 'layui-icon-chart-screen',
+//         routePath: '/workspace/analysis',
+//         compontPath: '/workspace/analysis',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10012',
+//         name: '监控页',
+//         type: '菜单',
+//         sort: 4,
+//         icon: 'layui-icon-find-fill',
+//         routePath: '/workspace/monitor',
+//         compontPath: '/workspace/monitor',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10002',
+//     name: '表单页面',
+//     type: '目录',
+//     sort: 1,
+//     icon: 'layui-icon-table',
+//     routePath: '/form',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10015',
+//         name: '基础表单',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-form',
+//         routePath: '/form/base',
+//         compontPath: '/form/base',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10016',
+//         name: '复杂表单',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-form',
+//         routePath: '/form/intricate',
+//         compontPath: '/form/intricate',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10003',
+//     name: '列表页面',
+//     type: '目录',
+//     sort: 3,
+//     icon: 'layui-icon-align-left',
+//     routePath: '/table',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10017',
+//         name: '查询列表',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-search',
+//         routePath: '/table/base',
+//         compontPath: '/table/base',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10018',
+//         name: '卡片列表',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-file-b',
+//         routePath: '/table/card',
+//         compontPath: '/table/card',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10004',
+//     name: '结果页面',
+//     type: '目录',
+//     sort: 4,
+//     icon: 'layui-icon-template',
+//     routePath: '/result',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10019',
+//         name: '成功页面',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-success',
+//         routePath: '/result/success',
+//         compontPath: '/result/success',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10020',
+//         name: '失败页面',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-error',
+//         routePath: '/result/failure',
+//         compontPath: '/result/failure',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10005',
+//     icon: 'layui-icon-unlink',
+//     name: '异常页面',
+//     type: '目录',
+//     sort: 5,
+//     routePath: '/error',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10021',
+//         name: '403',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-not-found',
+//         routePath: '/error/403',
+//         compontPath: '/error/403',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10022',
+//         name: '404',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-not-found',
+//         routePath: '/error/404',
+//         compontPath: '/error/404',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10022',
+//         name: '500',
+//         type: '菜单',
+//         sort: 3,
+//         icon: 'layui-icon-not-found',
+//         routePath: '/error/500',
+//         compontPath: '/error/500',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10006',
+//     name: '菜单嵌套',
+//     type: '目录',
+//     sort: 6,
+//     icon: 'layui-icon-app',
+//     routePath: '/menu',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10023',
+//         name: '二级菜单',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-component',
+//         routePath: '/menu/menu1',
+//         compontPath: '/menu/menu1',
+//         isShow: '是',
+//         children: [
+//           {
+//             id: '10023',
+//             name: '三级菜单1',
+//             type: '菜单',
+//             sort: 1,
+//             icon: 'layui-icon-template-one',
+//             routePath: '/menu/menu1/menu1',
+//             compontPath: '/menu/menu1/menu1',
+//             isShow: '是'
+//           },
+//           {
+//             id: '10023',
+//             name: '三级菜单2',
+//             type: '菜单',
+//             sort: 2,
+//             icon: 'layui-icon-template-one',
+//             routePath: '/menu/menu1/menu2',
+//             compontPath: '/menu/menu1/menu2',
+//             isShow: '是'
+//           }
+//         ]
+//       },
+//       {
+//         id: '10024',
+//         name: '二级菜单',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-component',
+//         routePath: '/menu/menu2',
+//         compontPath: '/menu/menu2',
+//         isShow: '是',
+//         children: [
+//           {
+//             id: '10023',
+//             name: '三级菜单1',
+//             type: '菜单',
+//             sort: 1,
+//             icon: 'layui-icon-template-one',
+//             routePath: '/menu/menu2/menu1',
+//             compontPath: '/menu/menu2/menu1',
+//             isShow: '是'
+//           },
+//           {
+//             id: '10023',
+//             name: '三级菜单2',
+//             type: '菜单',
+//             sort: 2,
+//             icon: 'layui-icon-template-one',
+//             routePath: '/menu/menu2/menu2',
+//             compontPath: '/menu/menu2/menu2',
+//             isShow: '是'
+//           }
+//         ]
+//       }
+//     ]
+//   },
+//   {
+//     id: '10007',
+//     name: '内置指令',
+//     type: '目录',
+//     sort: 7,
+//     icon: 'layui-icon-test',
+//     routePath: '/directive',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10025',
+//         name: '权限指令',
+//         type: '菜单',
+//         sort: 1,
+//         icon: 'layui-icon-template',
+//         routePath: '/directive/permission',
+//         compontPath: '/directive/permission',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10008',
+//     name: '外链页面',
+//     type: '外链',
+//     sort: 8,
+//     icon: 'layui-icon-link',
+//     routePath: '/page',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10027',
+//         name: '弹层外链',
+//         type: '外链',
+//         icon: 'layui-icon-home',
+//         sort: 1,
+//         routePath: 'layui-icon-layer',
+//         compontPath: 'layui-icon-layer',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10028',
+//         name: '原生跳转',
+//         type: '外链',
+//         sort: 2,
+//         icon: 'layui-icon-layouts',
+//         routePath: 'http://www.baidu.com',
+//         compontPath: 'http://www.baidu.com',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10008',
+//     name: '个人中心',
+//     type: '目录',
+//     sort: 9,
+//     icon: 'layui-icon-slider',
+//     routePath: '/enrollee',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10027',
+//         name: '我的资料',
+//         type: '菜单',
+//         icon: 'layui-icon-home',
+//         sort: 1,
+//         routePath: '/enrollee/profile',
+//         compontPath: '/enrollee/profile',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10028',
+//         name: '我的消息',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-email',
+//         routePath: '/enrollee/message',
+//         compontPath: '/enrollee/message',
+//         isShow: '是'
+//       }
+//     ]
+//   },
+//   {
+//     id: '10008',
+//     name: '系统管理',
+//     type: '目录',
+//     sort: 10,
+//     icon: 'layui-icon-set',
+//     routePath: '/system',
+//     compontPath: '',
+//     isShow: '是',
+//     children: [
+//       {
+//         id: '10027',
+//         name: '用户管理',
+//         type: '菜单',
+//         icon: 'layui-icon-home',
+//         sort: 1,
+//         routePath: '/system/user',
+//         compontPath: '/system/user',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10028',
+//         name: '角色管理',
+//         type: '菜单',
+//         sort: 2,
+//         icon: 'layui-icon-group',
+//         routePath: '/system/role',
+//         compontPath: '/system/role',
+//         isShow: '是'
+//       },
+//       {
+//         id: '10028',
+//         name: '机构管理',
+//         type: '菜单',
+//         sort: 3,
+//         icon: 'layui-icon-transfer',
+//         routePath: '/system/organization',
+//         compontPath: '/system/organization',
+//         isShow: '是'
+//       }
+//     ]
+//   }
+// ]
+const dataSource6 = ref([]);
 
 const getCheckData6 = function () {
   layer.msg(tableRef6.value.getCheckData())

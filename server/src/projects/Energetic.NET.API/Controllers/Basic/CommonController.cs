@@ -1,10 +1,7 @@
 ﻿using Energetic.NET.API.Dto;
-using Energetic.NET.Basic.Application;
 using Energetic.NET.Basic.Application.Email;
 using Energetic.NET.Common.Helpers;
-using Energetic.NET.SharedKernel.ICommonServices;
 using Lazy.Captcha.Core;
-using MailKitSimplified.Sender.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers

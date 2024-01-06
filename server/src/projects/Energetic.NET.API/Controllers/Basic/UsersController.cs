@@ -14,7 +14,8 @@ namespace Energetic.NET.API.Controllers
     [Route("api/users")]
     public class UsersController(IUserDomainRepository userDomainRepository,
         BasicDbContext basicDbContext,
-        UserDomainService userDomainService) : BaseController
+        UserDomainService userDomainService,
+        IMapper mapper) : BaseController
     {
         /// <summary>
         /// 用户注册
@@ -77,16 +78,7 @@ namespace Energetic.NET.API.Controllers
             }
             return Ok(new LoginResponse
             {
-                UserInfo = new UserDetailResponse
-                {
-                    UserId = user.Id,
-                    UserName = user.UserName,
-                    NickName = user.NickName,
-                    RealName = user.RealName,
-                    Gender = user.Gender,
-                    EmailAddress = user.EmailAddress,
-                    PhoneNumber = user.PhoneNumber,
-                },
+                UserInfo = mapper.Map<UserDetailResponse>(user),
                 Token = token
             });
         }

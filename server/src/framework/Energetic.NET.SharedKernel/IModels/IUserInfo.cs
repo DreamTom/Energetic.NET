@@ -14,8 +14,10 @@ namespace Energetic.NET.SharedKernel.IModels
 
         int JwtVersion { get; }
 
-        string UserName { get; }
+        string? UserName { get; }
 
-        string RealName { get; }
+        string NickName { get; }
+
+        string? RealName { get; }
     }
 }

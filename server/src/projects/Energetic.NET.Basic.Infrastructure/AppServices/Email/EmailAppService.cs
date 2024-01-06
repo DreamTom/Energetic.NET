@@ -1,5 +1,4 @@
 ﻿using EasyCaching.Core;
-using Energetic.NET.Basic.Application;
 using Energetic.NET.Basic.Application.Email;
 using Energetic.NET.Basic.Domain.Constants;
 using Energetic.NET.Common.Helpers;

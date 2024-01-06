@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using EnergeticCms.WebApi.Filters;
+using Energetic.NET.ASPNETCore.Filters;
 
 namespace Energetic.NET.ASPNETCore.Handlers
 {

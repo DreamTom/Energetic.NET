@@ -2,16 +2,18 @@
 
 namespace Energetic.NET.ASPNETCore
 {
-    public sealed class WebUserInfo(long id, string userName, string realName, long tenantId, int jwtVersion) : IUserInfo
+    public sealed class WebUserInfo(long id, string nickName) : IUserInfo
     {
         public long Id { get; } = id;
 
-        public string UserName { get; } = userName;
+        public string? UserName { get; set; }
 
-        public long TenantId { get; } = tenantId;
+        public long TenantId { get; set; }
 
-        public int JwtVersion { get; } = jwtVersion;
+        public int JwtVersion { get; set; }
 
-        public string RealName { get; } = realName;
+        public string NickName { get; } = nickName;
+
+        public string? RealName { get; set; }
     }
 }

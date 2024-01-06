@@ -8,8 +8,8 @@ namespace Energetic.NET.Basic.Application.User.Dto
 {
     public class LoginResponse
     {
-        public UserDetailResponse UserInfo { get; set; }
+        public required UserDetailResponse UserInfo { get; set; }
 
-        public string Token { get; set; }
+        public required string Token { get; set; }
     }
 }

@@ -1,9 +1,8 @@
-﻿using Energetic.NET.ASPNETCore;
-using Energetic.NET.SharedKernel.BaseExceptions;
+﻿using Energetic.NET.SharedKernel.BaseExceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace EnergeticCms.WebApi.Filters
+namespace Energetic.NET.ASPNETCore.Filters
 {
     public class ApiExceptionFilter : IAsyncExceptionFilter
     {

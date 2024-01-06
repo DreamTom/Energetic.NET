@@ -58,7 +58,7 @@ namespace Energetic.NET.Basic.Domain.Services
             if (!CheckVerifyCode(key, secondCode))
                 return (false, null, null);
             var user = await userDomainRepository.FindByEmailAdressAsync(emailAddress);
-            user ??= await userDomainRepository.RegisterByEmailAddressAsync(secondCode);
+            user ??= await userDomainRepository.RegisterByEmailAddressAsync(emailAddress);
             string token = BuildToken(user);
             return (true, token, user);
         }
@@ -74,10 +74,12 @@ namespace Energetic.NET.Basic.Domain.Services
             var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Sid, user.Id.ToString(), ClaimValueTypes.Integer64),
-                new(JwtRegisteredClaimNames.Name, user.NickName),
+                new(JwtClaimNames.NickName, user.NickName),
             };
             if (!string.IsNullOrWhiteSpace(user.UserName))
-                claims.Add(new(JwtRegisteredClaimNames.UniqueName, user.UserName));
+                claims.Add(new(JwtClaimNames.UserName, user.UserName));
+            if (!string.IsNullOrWhiteSpace(user.RealName))
+                claims.Add(new(JwtRegisteredClaimNames.Name, user.RealName));
             return tokenService.BuildToken(claims, jwtConfigOption.Value);
         }
     }
