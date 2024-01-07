@@ -5,45 +5,25 @@
         <lay-row>
           <lay-col :md="5">
             <lay-form-item label="菜单名称" label-width="80">
-              <lay-input
-                v-model="searchQuery.name"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+              <lay-input v-model="searchQuery.name" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
-            <lay-form-item label="菜单地址" label-width="80">
-              <lay-input
-                v-model="searchQuery.address"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+            <lay-form-item label="路由地址" label-width="80">
+              <lay-input v-model="searchQuery.routePath" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label="权限标识" label-width="80">
-              <lay-input
-                v-model="searchQuery.identifying"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+              <lay-input v-model="searchQuery.code" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button
-                style="margin-left: 20px"
-                type="normal"
-                size="sm"
-                @click="toSearch"
-              >
+              <lay-button style="margin-left: 20px" type="normal" size="sm" @click="toSearch">
                 查询
               </lay-button>
               <lay-button size="sm" @click="toReset"> 重置 </lay-button>
@@ -54,121 +34,113 @@
     </lay-card>
     <!-- table -->
     <div class="table-box">
-      <lay-table
-        :height="`100%`"
-        ref="tableRef6"
-        :loading="loading"
-        children-column-name="children"
-        :columns="columns6"
-        :data-source="dataSource6"
-        :default-toolbar="true"
-        :default-expand-all="defaultExpandAll6"
-        :expand-index="1"
-      >
+      <lay-table :height="`100%`" :loading="loading" children-column-name="children" :columns="columns"
+        :data-source="dataSource" :default-toolbar="true" :expand-index="1">
         <template #toolbar>
-          <lay-button type="primary" size="sm" @click="getCheckData6"
-            >获取选中数据</lay-button
-          >
-          <lay-button
-            size="sm"
-            @click="changeVisible11('新建', null)"
-            type="normal"
-          >
-            新建
+          <lay-button size="sm" @click="changeVisible('新建', null)" type="primary">
+            <lay-icon class="layui-icon-addition"></lay-icon>
+            新增
           </lay-button>
-          <lay-button size="sm" @click="expandAll6(true)">展开全部</lay-button>
-          <lay-button size="sm" @click="expandAll6(false)">折叠全部</lay-button>
         </template>
         <template #name="{ row }">
           <lay-icon :class="row.icon"></lay-icon> &nbsp;&nbsp;
           {{ row.name }}
         </template>
         <template #option="{ row }">
-          <lay-button
-            @click="changeVisible11('新建', null)"
-            size="xs"
-            border="blue"
-            border-style="dashed"
-          >
+          <lay-button v-show="row.type != 3" @click="changeVisible('新建', row)" size="xs" border="blue" border-style="dashed">
             添加
           </lay-button>
-          <lay-button
-            @click="changeVisible11('修改', row)"
-            size="xs"
-            border="green"
-            border-style="dashed"
-          >
+          <lay-button @click="changeVisible('修改', row)" size="xs" border="green" border-style="dashed">
             修改
           </lay-button>
-          <lay-button
-            @click="toRemove"
-            size="xs"
-            border="red"
-            border-style="dashed"
-          >
+          <lay-button v-show="!row.children" @click="toRemove(row.id)" size="xs" border="red" border-style="dashed">
             删除
           </lay-button>
         </template>
-        <template #isHide="{ row }">
-          <lay-checkbox value="1" skin="primary"  disabled></lay-checkbox>
+        <template #isEnable="{ row }">
+          <lay-tag color="#16b777" variant="light" v-if="row.isEnable">启用</lay-tag>
+          <lay-tag color="#FF5722" variant="light" v-else>禁用</lay-tag>
         </template>
         <template #type="{ row }">
-          <div v-show="row.isFolder">
+          <div v-show="row.type == 1">
             <lay-tag color="#165DFF" variant="light">目录</lay-tag>
           </div>
-          <div v-show="row.isMenu">
+          <div v-show="row.type == 2">
             <lay-tag color="#2dc570" variant="light">菜单</lay-tag>
           </div>
-          <div v-show="!row.isFolder && !row.isMenu">
+          <div v-show="row.type == 3">
+            <lay-tag variant="light">按钮</lay-tag>
+          </div>
+          <div v-show="row.type == 4">
             <lay-tag color="#F5319D" variant="light">外链</lay-tag>
           </div>
         </template>
       </lay-table>
     </div>
 
-    <lay-layer v-model="visible11" :title="title" :area="['700px', '370px']">
+    <!-- layer -->
+    <lay-layer v-model="isVisible" :shadeClose="false" :title="title">
       <div style="padding: 20px">
-        <lay-form :model="model11" ref="layFormRef11" required>
+        <lay-form :model="resourceModel" ref="layFormRef">
+          <lay-row>
+            <lay-col>
+              <lay-form-item label="菜单类型" prop="type" required>
+                <lay-radio-group name="action" v-model="resourceModel.type">
+                  <lay-radio :value="1">目录</lay-radio>
+                  <lay-radio :value="2">菜单</lay-radio>
+                  <lay-radio :value="3">按钮</lay-radio>
+                </lay-radio-group>
+              </lay-form-item>
+            </lay-col>
+          </lay-row>
+          <lay-row>
+            <lay-col>
+              <lay-form-item label="上级菜单" prop="releationIds" :required="resourceModel.type == 3">
+                <lay-cascader :options="options" v-model="resourceModel.releationIds" :changeOnSelect="true" placeholder="请选择上级菜单"
+                  allow-clear></lay-cascader>
+              </lay-form-item>
+            </lay-col>
+          </lay-row>
           <lay-row>
             <lay-col md="12">
-              <lay-form-item label="菜单名称" prop="name">
-                <lay-input v-model="model11.name"></lay-input>
+              <lay-form-item label="菜单名称" prop="name" required>
+                <lay-input v-model="resourceModel.name"></lay-input>
               </lay-form-item>
-              <lay-form-item label="路由路径" prop="routePath">
-                <lay-input v-model="model11.routePath"></lay-input>
+              <lay-form-item v-show="resourceModel.type != 3" label="路由路径" prop="routePath" required>
+                <lay-input v-model="resourceModel.routePath"></lay-input>
               </lay-form-item>
-              <lay-form-item label="组件路径" prop="compontPath">
-                <lay-input v-model="model11.compontPath"></lay-input>
+              <lay-form-item v-show="resourceModel.type == 3" label="接口地址" prop="apiUrl" required>
+                <lay-input v-model="resourceModel.apiUrl"></lay-input>
               </lay-form-item>
-              <lay-form-item label="图标" prop="icon">
-                <lay-input v-model="model11.icon"></lay-input>
+              <lay-form-item label="是否启用" prop="isEnable" required>
+                <lay-checkbox value="1" skin="primary" v-model="resourceModel.isEnable"></lay-checkbox>
               </lay-form-item>
             </lay-col>
             <lay-col md="12">
-              <lay-form-item label="排序" prop="sort">
-                <lay-input-number
-                  style="width: 100%"
-                  v-model="model11.sort"
-                  position="right"
-                ></lay-input-number>
+              <lay-form-item label="排序" prop="displayOrder" required>
+                <lay-input-number style="width: 100%" v-model="resourceModel.displayOrder"
+                  position="right"></lay-input-number>
               </lay-form-item>
-              <lay-form-item label="是否显示" prop="isShow">
-                <lay-select v-model="model11.isShow" style="width: 100%">
-                  <lay-select-option value="是" label="是"></lay-select-option>
-                  <lay-select-option value="否" label="否"></lay-select-option>
+              <lay-form-item v-show="resourceModel.type != 3" label="图标" prop="icon">
+                <lay-icon-picker v-model="resourceModel.icon" type="layui-icon-face-smile" page
+                  showSearch></lay-icon-picker>
+              </lay-form-item>
+              <lay-form-item v-show="resourceModel.type == 3" label="请求方法" prop="requestMethod" required>
+                <lay-select v-model="resourceModel.requestMethod" placeholder="请选择">
+                  <lay-select-option :value="1" label="GET"></lay-select-option>
+                  <lay-select-option :value="2" label="POST"></lay-select-option>
+                  <lay-select-option :value="3" label="PUT"></lay-select-option>
+                  <lay-select-option :value="4" label="DELETE"></lay-select-option>
                 </lay-select>
               </lay-form-item>
-
-              <lay-form-item label="类型" prop="type">
-                <lay-input v-model="model11.type"></lay-input>
+              <lay-form-item v-show="resourceModel.type == 3" label="权限标识" prop="code" required>
+                <lay-input v-model="resourceModel.code"></lay-input>
               </lay-form-item>
             </lay-col>
           </lay-row>
         </lay-form>
         <div style="width: 97%; text-align: right">
-          <lay-button size="sm" type="primary" @click="toSubmit"
-            >保存</lay-button
-          >
+          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -176,47 +148,19 @@
   </lay-container>
 </template>
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { layer } from '@layui/layui-vue'
-import { getResourceTree } from '../../../api/module/resource'
-const searchQuery = ref({
-  address: '',
-  identifying: '',
-  name: ''
-})
+import { getResourceTree, getMenuTree, addResource, editResource, delResource } from '../../../api/module/resource'
 
-function toReset() {
-  searchQuery.value = {
-    address: '',
-    identifying: '',
-    name: ''
-  }
-}
-
-onMounted(async ()=>{
-  let res = await getResourceTree();
-  if (!res.hasError)
-  {
-    dataSource6.value = res;
-  }
-})
-
-function toSearch() {
-  page.current = 1
-  change(page)
-}
-const change = (page: any) => {
-  loading.value = true
-  setTimeout(() => {
-    //
-    loading.value = false
-  }, 1000)
-}
-const page = reactive({ current: 1, limit: 10, total: 100 })
 const loading = ref(false)
-const tableRef6 = ref()
+const dataSource = ref([]);
+const searchQuery = ref({
+  name: '',
+  code: '',
+  routePath: ''
+})
 
-const columns6 = [
+const columns = [
   {
     fixed: 'left',
     type: 'checkbox',
@@ -229,12 +173,17 @@ const columns6 = [
     customSlot: 'name'
   },
   {
+    title: '类型',
+    key: 'type',
+    customSlot: 'type'
+  },
+  {
     title: '路由地址',
     key: 'routePath'
   },
   {
-    title: '组件路径',
-    key: 'componentPath'
+    title: '权限标识',
+    key: 'code'
   },
   {
     title: '排序',
@@ -242,14 +191,9 @@ const columns6 = [
     key: 'displayOrder'
   },
   {
-    title: '可见',
-    key: 'isHide',
-    customSlot: 'isHide'
-  },
-  {
-    title: '类型',
-    key: 'type',
-    customSlot: 'type'
+    title: '状态',
+    key: 'isEnable',
+    customSlot: 'isEnable'
   },
   {
     title: '操作',
@@ -258,501 +202,128 @@ const columns6 = [
   }
 ]
 
-// const dataSource6 = [
-//   {
-//     id: '10001',
-//     name: '工作空间',
-//     type: '目录',
-//     icon: 'layui-icon-home',
-//     age: 0,
-//     routePath: '/workspace',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10009',
-//         name: '工作台',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-util',
-//         routePath: '/workspace/workbench',
-//         compontPath: '/workspace/workbench',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10012',
-//         name: '控制台',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-engine',
-//         routePath: '/workspace/console',
-//         compontPath: '/workspace/console',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10012',
-//         name: '分析页',
-//         type: '菜单',
-//         sort: 3,
-//         icon: 'layui-icon-chart-screen',
-//         routePath: '/workspace/analysis',
-//         compontPath: '/workspace/analysis',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10012',
-//         name: '监控页',
-//         type: '菜单',
-//         sort: 4,
-//         icon: 'layui-icon-find-fill',
-//         routePath: '/workspace/monitor',
-//         compontPath: '/workspace/monitor',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10002',
-//     name: '表单页面',
-//     type: '目录',
-//     sort: 1,
-//     icon: 'layui-icon-table',
-//     routePath: '/form',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10015',
-//         name: '基础表单',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-form',
-//         routePath: '/form/base',
-//         compontPath: '/form/base',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10016',
-//         name: '复杂表单',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-form',
-//         routePath: '/form/intricate',
-//         compontPath: '/form/intricate',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10003',
-//     name: '列表页面',
-//     type: '目录',
-//     sort: 3,
-//     icon: 'layui-icon-align-left',
-//     routePath: '/table',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10017',
-//         name: '查询列表',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-search',
-//         routePath: '/table/base',
-//         compontPath: '/table/base',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10018',
-//         name: '卡片列表',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-file-b',
-//         routePath: '/table/card',
-//         compontPath: '/table/card',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10004',
-//     name: '结果页面',
-//     type: '目录',
-//     sort: 4,
-//     icon: 'layui-icon-template',
-//     routePath: '/result',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10019',
-//         name: '成功页面',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-success',
-//         routePath: '/result/success',
-//         compontPath: '/result/success',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10020',
-//         name: '失败页面',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-error',
-//         routePath: '/result/failure',
-//         compontPath: '/result/failure',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10005',
-//     icon: 'layui-icon-unlink',
-//     name: '异常页面',
-//     type: '目录',
-//     sort: 5,
-//     routePath: '/error',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10021',
-//         name: '403',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-not-found',
-//         routePath: '/error/403',
-//         compontPath: '/error/403',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10022',
-//         name: '404',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-not-found',
-//         routePath: '/error/404',
-//         compontPath: '/error/404',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10022',
-//         name: '500',
-//         type: '菜单',
-//         sort: 3,
-//         icon: 'layui-icon-not-found',
-//         routePath: '/error/500',
-//         compontPath: '/error/500',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10006',
-//     name: '菜单嵌套',
-//     type: '目录',
-//     sort: 6,
-//     icon: 'layui-icon-app',
-//     routePath: '/menu',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10023',
-//         name: '二级菜单',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-component',
-//         routePath: '/menu/menu1',
-//         compontPath: '/menu/menu1',
-//         isShow: '是',
-//         children: [
-//           {
-//             id: '10023',
-//             name: '三级菜单1',
-//             type: '菜单',
-//             sort: 1,
-//             icon: 'layui-icon-template-one',
-//             routePath: '/menu/menu1/menu1',
-//             compontPath: '/menu/menu1/menu1',
-//             isShow: '是'
-//           },
-//           {
-//             id: '10023',
-//             name: '三级菜单2',
-//             type: '菜单',
-//             sort: 2,
-//             icon: 'layui-icon-template-one',
-//             routePath: '/menu/menu1/menu2',
-//             compontPath: '/menu/menu1/menu2',
-//             isShow: '是'
-//           }
-//         ]
-//       },
-//       {
-//         id: '10024',
-//         name: '二级菜单',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-component',
-//         routePath: '/menu/menu2',
-//         compontPath: '/menu/menu2',
-//         isShow: '是',
-//         children: [
-//           {
-//             id: '10023',
-//             name: '三级菜单1',
-//             type: '菜单',
-//             sort: 1,
-//             icon: 'layui-icon-template-one',
-//             routePath: '/menu/menu2/menu1',
-//             compontPath: '/menu/menu2/menu1',
-//             isShow: '是'
-//           },
-//           {
-//             id: '10023',
-//             name: '三级菜单2',
-//             type: '菜单',
-//             sort: 2,
-//             icon: 'layui-icon-template-one',
-//             routePath: '/menu/menu2/menu2',
-//             compontPath: '/menu/menu2/menu2',
-//             isShow: '是'
-//           }
-//         ]
-//       }
-//     ]
-//   },
-//   {
-//     id: '10007',
-//     name: '内置指令',
-//     type: '目录',
-//     sort: 7,
-//     icon: 'layui-icon-test',
-//     routePath: '/directive',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10025',
-//         name: '权限指令',
-//         type: '菜单',
-//         sort: 1,
-//         icon: 'layui-icon-template',
-//         routePath: '/directive/permission',
-//         compontPath: '/directive/permission',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10008',
-//     name: '外链页面',
-//     type: '外链',
-//     sort: 8,
-//     icon: 'layui-icon-link',
-//     routePath: '/page',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10027',
-//         name: '弹层外链',
-//         type: '外链',
-//         icon: 'layui-icon-home',
-//         sort: 1,
-//         routePath: 'layui-icon-layer',
-//         compontPath: 'layui-icon-layer',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10028',
-//         name: '原生跳转',
-//         type: '外链',
-//         sort: 2,
-//         icon: 'layui-icon-layouts',
-//         routePath: 'http://www.baidu.com',
-//         compontPath: 'http://www.baidu.com',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10008',
-//     name: '个人中心',
-//     type: '目录',
-//     sort: 9,
-//     icon: 'layui-icon-slider',
-//     routePath: '/enrollee',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10027',
-//         name: '我的资料',
-//         type: '菜单',
-//         icon: 'layui-icon-home',
-//         sort: 1,
-//         routePath: '/enrollee/profile',
-//         compontPath: '/enrollee/profile',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10028',
-//         name: '我的消息',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-email',
-//         routePath: '/enrollee/message',
-//         compontPath: '/enrollee/message',
-//         isShow: '是'
-//       }
-//     ]
-//   },
-//   {
-//     id: '10008',
-//     name: '系统管理',
-//     type: '目录',
-//     sort: 10,
-//     icon: 'layui-icon-set',
-//     routePath: '/system',
-//     compontPath: '',
-//     isShow: '是',
-//     children: [
-//       {
-//         id: '10027',
-//         name: '用户管理',
-//         type: '菜单',
-//         icon: 'layui-icon-home',
-//         sort: 1,
-//         routePath: '/system/user',
-//         compontPath: '/system/user',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10028',
-//         name: '角色管理',
-//         type: '菜单',
-//         sort: 2,
-//         icon: 'layui-icon-group',
-//         routePath: '/system/role',
-//         compontPath: '/system/role',
-//         isShow: '是'
-//       },
-//       {
-//         id: '10028',
-//         name: '机构管理',
-//         type: '菜单',
-//         sort: 3,
-//         icon: 'layui-icon-transfer',
-//         routePath: '/system/organization',
-//         compontPath: '/system/organization',
-//         isShow: '是'
-//       }
-//     ]
-//   }
-// ]
-const dataSource6 = ref([]);
-
-const getCheckData6 = function () {
-  layer.msg(tableRef6.value.getCheckData())
+function toReset() {
+  searchQuery.value = {
+    name: '',
+    code: '',
+    routePath: ''
+  }
 }
 
-const defaultExpandAll6 = ref(false)
+onMounted(async () => {
+  await toSearch()
+  let res = await getMenuTree();
+  if (!res.hasError) {
+    options.value = res;
+  }
+})
 
-const expandAll6 = function (flag: any) {
-  defaultExpandAll6.value = flag
+const toSearch = async () => {
+  loading.value = true;
+  let res = await getResourceTree(searchQuery.value);
+  if (!res.hasError) {
+    dataSource.value = res;
+    loading.value = false;
+  } else {
+    loading.value = false;
+  }
 }
-const model11 = ref({
+
+const resourceModel = ref({
+  id: '0',
   name: '',
-  type: '',
-  sort: 0,
+  displayOrder: 0,
   icon: '',
   routePath: '',
-  compontPath: '',
-  isShow: '是'
+  code: '',
+  isEnable: true,
+  apiUrl: '',
+  requestMethod: 1,
+  releationIds: '',
+  type: 1
 })
-const layFormRef11 = ref()
-const visible11 = ref(false)
+const layFormRef = ref()
+const isVisible = ref(false)
 
+const options = ref([]);
 const title = ref('新增')
-const changeVisible11 = (text: any, row: any) => {
+
+// 是否显示弹窗
+const changeVisible = (text: any, row: any) => {
   title.value = text
-  if (row != null) {
+  if (row != null && text != '新建') {
     let info = JSON.parse(JSON.stringify(row))
-    model11.value = info
+    resourceModel.value = info
   } else {
-    model11.value = {
+    let releationIds = ''
+    if (row){
+      releationIds = row.type == 1 ? row.id : row.releationIds + '/' + row.id
+    }
+    resourceModel.value = {
+      id: '0',
       name: '',
-      type: '',
-      sort: 0,
+      displayOrder: 1000,
       icon: '',
       routePath: '',
-      compontPath: '',
-      isShow: '是'
+      code: '',
+      isEnable: true,
+      apiUrl: '',
+      requestMethod: 1,
+      releationIds: releationIds,
+      type: row == null ? 1 : row.type + 1
     }
   }
-  visible11.value = !visible11.value
+  isVisible.value = !isVisible.value
 }
-const submit11 = function () {
-  layFormRef11.value.validate((isValidate: any, model: any, errors: any) => {
-    layer.open({
-      type: 1,
-      title: '表单提交结果',
-      content: `<div style="padding: 10px"><p>是否通过 : ${isValidate}</p> <p>表单数据 : ${JSON.stringify(
-        model
-      )} </p> <p>错误信息 : ${JSON.stringify(errors)}</p></div>`,
-      shade: false,
-      isHtmlFragment: true,
-      btn: [
-        {
-          text: '确认',
-          callback(index: number) {
-            layer.close(index)
-          }
-        }
-      ],
-      area: '500px'
-    })
-  })
-}
-// 清除校验
-const clearValidate11 = function () {
-  layFormRef11.value.clearValidate()
-}
-// 重置表单
-const reset11 = function () {
-  layFormRef11.value.reset()
-}
-function toRemove() {
-  layer.confirm('您将删除所有选中的数据？', {
+
+const toRemove = async (id: string)=> {
+  let resourceId = id;
+  layer.confirm('确认删除该条数据吗？', {
     title: '提示',
     btn: [
       {
         text: '确定',
-        callback: (id: any) => {
-          layer.msg('您已成功删除')
-          layer.close(id)
+        callback: async (id: any) => {
+          let res = await delResource(resourceId);
+          if (!res.hasError){
+            layer.close(id)
+            await toSearch()
+          }
         }
       },
       {
         text: '取消',
         callback: (id: any) => {
-          layer.msg('您已取消操作')
           layer.close(id)
         }
       }
     ]
   })
 }
-function toSubmit() {
-  layer.msg('保存成功！', { icon: 1, time: 1000 })
-  visible11.value = false
+
+const menuFields = ['name', 'type', 'displayOrder', 'routePath', 'isEnable']
+const buttonFields = ['name', 'type', 'displayOrder', 'apiUrl', 'requestMethod', 'code', 'parentId', 'isEnable']
+
+const toSubmit = () => {
+  let fields = [];
+  if (resourceModel.value.type != 3)
+    fields = menuFields;
+  else
+    fields = buttonFields;
+  layFormRef.value.validate(fields, async (isValidate: boolean) => {
+    if (!isValidate)
+      return false
+    let res = resourceModel.value.id == '0' ? await addResource(resourceModel.value) : await editResource(resourceModel.value);
+    if (!res.hasError) {
+      layer.msg('保存成功！', { icon: 1, time: 1000 })
+      isVisible.value = false
+      await toSearch()
+    }
+  })
 }
+
 function toCancel() {
-  visible11.value = false
+  isVisible.value = false
 }
 </script>
 
@@ -764,6 +335,7 @@ function toCancel() {
   box-sizing: border-box;
   overflow: hidden;
 }
+
 .top-search {
   margin-top: 10px;
   padding: 10px;
@@ -771,6 +343,7 @@ function toCancel() {
   border-radius: 4px;
   background-color: #fff;
 }
+
 .table-box {
   margin-top: 10px;
   padding: 10px;
@@ -786,9 +359,11 @@ function toCancel() {
   width: 98%;
   margin-right: 10px;
 }
+
 .table-style {
   margin-top: 10px;
 }
+
 .isChecked {
   display: inline-block;
   background-color: #e8f1ff;

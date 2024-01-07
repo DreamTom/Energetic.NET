@@ -1,4 +1,5 @@
-﻿using static System.Linq.Expressions.Expression;
+﻿using System.Linq.Expressions;
+using static System.Linq.Expressions.Expression;
 
 namespace Energetic.NET.Infrastructure.EFCore
 {

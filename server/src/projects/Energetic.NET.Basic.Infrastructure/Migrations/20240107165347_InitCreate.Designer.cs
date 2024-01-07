@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Energetic.NET.Basic.Infrastructure.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20240106194313_InitCreate")]
+    [Migration("20240107165347_InitCreate")]
     partial class InitCreate
     {
         /// <inheritdoc />
@@ -145,17 +145,9 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_deleted");
 
-                    b.Property<bool>("IsFolder")
+                    b.Property<bool>("IsEnable")
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_folder");
-
-                    b.Property<bool>("IsHide")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_hide");
-
-                    b.Property<bool>("IsMenu")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_menu");
+                        .HasColumnName("is_enable");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -168,17 +160,27 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("parent_id");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("ReleationIds")
                         .IsRequired()
-                        .HasMaxLength(32)
+                        .HasMaxLength(128)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(32)")
-                        .HasColumnName("path");
+                        .HasColumnType("varchar(128)")
+                        .HasColumnName("releation_ids");
 
                     b.Property<string>("RequestMethod")
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)")
                         .HasColumnName("request_method");
+
+                    b.Property<string>("RoutePath")
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("route_path");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnName("type");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(32)

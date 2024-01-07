@@ -16,6 +16,10 @@ namespace Energetic.NET.Basic.Domain.IResponsitories
 
         Task<bool> IsExistsApiAsync(string apiUrl, RequestMethod requestMethod);
 
-        Task<List<Resource>> GetResourcesAsync();
+        Task<List<Resource>> GetResourcesAsync(string? name, string? routePath, string? code);
+
+        Task<List<Resource>> GetResourcesIgnoreButtonsAsync();
+
+        Task<Resource?> FindByIdAsync(long id);
     }
 }

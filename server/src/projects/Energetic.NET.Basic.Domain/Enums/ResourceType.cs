@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 namespace Energetic.NET.Basic.Domain.Enums
 {
     /// <summary>
-    /// 请求方法
+    /// 资源类型
     /// </summary>
-    public enum RequestMethod
+    public enum ResourceType
     {
-        GET = 1,
-        POST,
-        PUT,
-        DELETE,
+        Folder = 1,
+        Menu,
+        Button
     }
 }

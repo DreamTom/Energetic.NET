@@ -49,14 +49,15 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                     code = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     parent_id = table.Column<long>(type: "bigint", nullable: false),
-                    path = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                    releation_ids = table.Column<string>(type: "varchar(128)", unicode: false, maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    route_path = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     icon = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     display_order = table.Column<int>(type: "int", nullable: false),
-                    is_folder = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    is_menu = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    is_hide = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false),
+                    is_enable = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     api_url = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     request_method = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)

@@ -59,7 +59,7 @@ namespace Energetic.NET.ASPNETCore.Extensions
                 // 设置时间格式。而非“2008-08-08T08:08:08”这样的格式
                 options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter(DateTimeTemplate.DateWithSeconds));
                 // 解决long类型精度丢失
-                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString;
+                options.JsonSerializerOptions.Converters.Add(new LongJsonConverter());
             });
             services.Configure<MvcOptions>(options =>
             {

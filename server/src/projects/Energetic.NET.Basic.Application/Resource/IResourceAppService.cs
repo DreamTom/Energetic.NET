@@ -1,14 +1,11 @@
 ﻿using Energetic.NET.Basic.Application.Resource.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Energetic.NET.Basic.Application.Resource
 {
     public interface IResourceAppService
     {
-        Task<List<ResourceTreeResponse>> GetResourceTreeAsync();
+        Task<List<ResourceTreeResponse>> GetResourceTreeAsync(ResourceQueryRequest resourceQuery);
+
+        Task<List<TreeResponse>> GetMenuTreeAsync();
     }
 }

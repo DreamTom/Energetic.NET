@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace Energetic.NET.Basic.Application.Resource.Dto
 {
-    public record ResourceResponse(string Name, string RoutePath, int DisplayOrder)
+    public record ResourceResponse(string Name, int DisplayOrder)
     {
         public long Id { get; set; }
+
+        public string? RoutePath { get; set; }
 
         /// <summary>
         /// 权限代码
         /// </summary>
         public string? Code { get; set; }
 
-        public long ParentId { get; set; }
+        public string ReleationIds { get; set; } = string.Empty;
 
         public string? Icon { get; set; }
 
-        public bool IsFolder { get; set; }
+        public ResourceType Type { get; set; }
 
-        public bool IsMenu { get; set; }
-
-        public bool IsHide { get; set; }
+        public bool IsEnable { get; set; }
 
         public string? ApiUrl { get; set; }
 

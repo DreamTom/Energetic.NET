@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Energetic.NET.Infrastructure
+namespace Energetic.NET.SharedKernel
 {
-    public class PaginatedQueryRequest
+    public abstract class PaginatedQueryRequest
     {
         public int PageNumber { get; set; }
 
