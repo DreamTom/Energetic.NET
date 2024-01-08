@@ -1,6 +1,6 @@
 ﻿using EasyCaching.Core;
 using Energetic.NET.Basic.Domain.Constants;
-using Energetic.NET.Basic.Domain.IResponsitories;
+using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.Basic.Domain.Models;
 using Energetic.NET.Jwt;
 using Microsoft.Extensions.Options;

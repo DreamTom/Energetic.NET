@@ -22,7 +22,7 @@ namespace Energetic.NET.SharedKernel.BaseModels
 
         public DateTime? DeletedTime { get; private set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; private set; }
 
         public void Created(long createUserId, string createdBy, DateTime createdTime)
         {
@@ -40,6 +40,7 @@ namespace Energetic.NET.SharedKernel.BaseModels
 
         public void Deleted(long deletedUserId, string deletedBy, DateTime deletedTime)
         {
+            IsDeleted = true;
             DeletedUserId = deletedUserId;
             DeletedBy = deletedBy;
             DeletedTime = deletedTime;
@@ -47,9 +48,15 @@ namespace Energetic.NET.SharedKernel.BaseModels
 
         public void Recover()
         {
+            IsDeleted = false;
             DeletedUserId = null;
             DeletedBy = null;
             DeletedTime = null;
+        }
+
+        public void LogicDelete()
+        {
+            IsDeleted = true;
         }
     }
 }

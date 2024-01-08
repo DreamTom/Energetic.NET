@@ -25,6 +25,7 @@ namespace Energetic.NET.Infrastructure
             services.AddCaptcha();
             services.AddSingleton<IRazorEngine, RazorEngine>();
             services.AddScoped<IRazorTemplateEngine, RazorTemplateEngine>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         }
     }
 }

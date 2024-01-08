@@ -206,6 +206,13 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("code");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -237,11 +244,11 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("deleted_user_id");
 
-                    b.Property<string>("Desc")
-                        .HasMaxLength(32)
+                    b.Property<string>("Description")
+                        .HasMaxLength(256)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(32)")
-                        .HasColumnName("desc");
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)")

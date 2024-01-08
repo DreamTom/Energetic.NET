@@ -4,7 +4,8 @@
     {
         public void Configure(EntityTypeBuilder<Role> builder)
         {
-            builder.HasMany(e => e.Resources).WithMany(e => e.Roles).UsingEntity<RoleResource>();
+            builder.Property(r => r.Description).HasMaxLength(256);
+            builder.HasMany(r => r.Resources).WithMany(r => r.Roles).UsingEntity<RoleResource>();
         }
     }
 }

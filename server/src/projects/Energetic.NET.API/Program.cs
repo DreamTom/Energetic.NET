@@ -1,5 +1,5 @@
 using Energetic.NET.ASPNETCore.Extensions;
-using Energetic.NET.Basic.Application.Email;
+using Energetic.NET.Basic.Application.EmailService;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

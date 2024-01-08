@@ -1,4 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using Energetic.NET.SharedKernel;
+using Mapster;
+using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using static System.Linq.Expressions.Expression;
 
 namespace Energetic.NET.Infrastructure.EFCore
@@ -14,6 +17,24 @@ namespace Energetic.NET.Infrastructure.EFCore
             var convertedResult = Convert(body, typeof(object));
             var exp = Lambda<Func<TSource, object>>(convertedResult, param);
             return isDesc ? source.OrderBy(exp) : source.OrderByDescending(exp);
+        }
+
+        public static async Task<PaginatedList<TDestination>> ToPageListAsync<TSource, TDestination>(this IQueryable<TSource> source,
+            int pageNumber = 1, int pageSize = 20)
+        {
+            var count = await source.CountAsync();
+            var pagedData = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var items = pagedData.Adapt<List<TDestination>>();
+            return new PaginatedList<TDestination>(items, count, pageNumber, pageSize);
+        }
+
+        public static async Task<PaginatedList<TDestination>> ToPageListAsync<TSource, TDestination>(this IQueryable<TSource> source,
+            IMapper mapper, int pageNumber = 1, int pageSize = 20)
+        {
+            var count = await source.CountAsync();
+            var query = source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var items = await mapper.From(query).ProjectToType<TDestination>().ToListAsync();
+            return new PaginatedList<TDestination>(items, count, pageNumber, pageSize);
         }
     }
 }

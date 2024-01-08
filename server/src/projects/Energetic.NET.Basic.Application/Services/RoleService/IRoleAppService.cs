@@ -1,0 +1,14 @@
+﻿using Energetic.NET.Basic.Application.RoleService.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Energetic.NET.Basic.Application.RoleService
+{
+    public interface IRoleAppService
+    {
+        Task<PaginatedList<RoleResponse>> GetPageListAsync(RoleQueryRequest roleQuery);
+    }
+}

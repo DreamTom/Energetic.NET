@@ -1,6 +1,6 @@
-﻿using Energetic.NET.Basic.Application.User.Dto;
+﻿using Energetic.NET.Basic.Application.UserService.Dto;
 using Energetic.NET.Basic.Domain.Enums;
-using Energetic.NET.Basic.Domain.IResponsitories;
+using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.Basic.Domain.Services;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +13,6 @@ namespace Energetic.NET.API.Controllers
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/users")]
     public class UsersController(IUserDomainRepository userDomainRepository,
-        BasicDbContext basicDbContext,
         UserDomainService userDomainService,
         IMapper mapper) : BaseController
     {
@@ -34,7 +33,7 @@ namespace Energetic.NET.API.Controllers
                 return ValidateFailed("用户名已存在");
             var addUser = new User(RegisterWay.UserName, regRequest.NickName);
             addUser.AddByUserName(regRequest.UserName, regRequest.RealName, regRequest.Password, regRequest.Gender);
-            _ = await basicDbContext.AddAsync(addUser);
+            _ = await userDomainRepository.AddAsync(addUser);
             return Ok(addUser.Id);
         }
 

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Energetic.NET.SharedKernel
 {
-    public abstract class PaginatedQueryRequest
+    public record PaginatedQueryRequest(int PageNumber, int PageSize)
     {
-        public int PageNumber { get; set; }
-
-        public int PageSize { get; set; }
+        public List<OrderByRequest> OrderBy { get; set; } = [];
     }
 }

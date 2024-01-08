@@ -1,25 +1,27 @@
 ﻿namespace Energetic.NET.Basic.Domain.Models
 {
-    public class Role : BaseAuditableEntity, IAggregateRoot
+    public class Role(string name, string code, string? description) : BaseAuditableEntity, IAggregateRoot
     {
-        public Role(string name, string? desc)
-        {
-            Name = name;
-            Desc = desc;
-        }
+        public string Name { get; private set; } = name;
 
-        public string Name { get; private set; }
+        public string Code { get; private set; } = code;
 
-        public string? Desc { get; private set; }
+        public string? Description { get; private set; } = description;
 
         public List<User> Users { get; } = [];
 
-        public List<Resource> Resources { get; } = [];
+        public List<Resource> Resources { get; private set; } = [];
 
-        public void Update(string name, string? desc)
+        public void Update(string name, string code, string? description)
         {
             Name = name;
-            Desc = desc;
+            Code = code;
+            Description = description;
+        }
+
+        public void SetResources(List<Resource> resources)
+        {
+            Resources = resources;
         }
     }
 }

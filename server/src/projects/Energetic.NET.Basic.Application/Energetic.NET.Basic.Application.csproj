@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Email\Dto\" />
+    <Folder Include="Services\EmailService\Dto\" />
   </ItemGroup>
 
 </Project>

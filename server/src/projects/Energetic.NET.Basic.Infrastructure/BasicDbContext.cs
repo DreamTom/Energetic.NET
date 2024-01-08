@@ -1,5 +1,4 @@
 ﻿using Energetic.NET.Infrastructure;
-using Energetic.NET.Infrastructure.EFCore;
 using IdGen;
 using Microsoft.Extensions.Options;
 

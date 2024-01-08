@@ -13,7 +13,7 @@ export const addResource = function(addForm:any){
 }
 
 export const editResource = function(editForm:any){
-  return Http.put('/resources', editForm)
+  return Http.put(`/resources/${editForm.id}`, editForm)
 }
 
 export const delResource = function(id: string){

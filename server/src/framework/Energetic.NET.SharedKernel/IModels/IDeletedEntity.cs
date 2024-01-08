@@ -18,6 +18,8 @@ namespace Energetic.NET.SharedKernel.IModels
 
         void Deleted(long deletedUserId, string deletedBy, DateTime deletedTime);
 
+        void LogicDelete();
+
         void Recover();
     }
 }

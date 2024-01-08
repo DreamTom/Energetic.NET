@@ -1,6 +1,4 @@
-﻿//using Microsoft.EntityFrameworkCore;
-
-namespace Energetic.NET.SharedKernel
+﻿namespace Energetic.NET.SharedKernel
 {
     public class PaginatedList<T>(IReadOnlyList<T> items, int count, int pageNumber, int pageSize)
     {
@@ -13,12 +11,5 @@ namespace Energetic.NET.SharedKernel
         public int PageNumber { get; } = pageNumber;
 
         public int PageSize { get; } = pageSize;
-
-        //public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
-        //{
-        //    var count = await source.CountAsync();
-        //    var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-        //    return new PaginatedList<T>(items, count, pageNumber, pageSize);
-        //}
     }
 }

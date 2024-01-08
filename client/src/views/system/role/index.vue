@@ -4,46 +4,20 @@
       <lay-form style="margin-top: 10px">
         <lay-row>
           <lay-col :md="5">
-            <lay-form-item label="角色名称" label-width="80">
-              <lay-input
-                v-model="searchQuery.roleName"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+            <lay-form-item label="角色名称" label-width="80" prop="name">
+              <lay-input v-model="searchQuery.name" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
-            <lay-form-item label="角色标识" label-width="80">
-              <lay-input
-                v-model="searchQuery.identifying"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
-            </lay-form-item>
-          </lay-col>
-          <lay-col :md="5">
-            <lay-form-item label="备注" label-width="80">
-              <lay-input
-                v-model="searchQuery.mark"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+            <lay-form-item label="角色标识" label-width="80" prop="code">
+              <lay-input v-model="searchQuery.code" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button
-                style="margin-left: 20px"
-                type="normal"
-                size="sm"
-                @click="toSearch"
-              >
+              <lay-button style="margin-left: 20px" type="normal" size="sm" @click="loadDataSource">
                 查询
               </lay-button>
               <lay-button size="sm" @click="toReset"> 重置 </lay-button>
@@ -54,79 +28,38 @@
     </lay-card>
     <!-- table -->
     <div class="table-box">
-      <lay-table
-        :page="page"
-        :height="'100%'"
-        :columns="columns"
-        :loading="loading"
-        :default-toolbar="true"
-        :data-source="dataSource"
-        v-model:selected-keys="selectedKeys"
-        @change="change"
-        @sortChange="sortChange"
-      >
+      <lay-table :page="page" :height="'100%'" :columns="columns" :loading="loading" :default-toolbar="true"
+        :data-source="dataSource" v-model:selected-keys="selectedKeys" @change="loadDataSource" @sortChange="sortChange">
         <template v-slot:toolbar>
-          <lay-button
-            size="sm"
-            type="primary"
-            @click="changeVisible11('新增', null)"
-          >
+          <lay-button size="sm" type="primary" @click="changeVisible('新增', null)">
             <lay-icon class="layui-icon-addition"></lay-icon>
-            新增</lay-button
-          >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
-          </lay-button>
+            新增</lay-button>
         </template>
         <template v-slot:operator="{ row }">
-          <lay-button
-            size="xs"
-            border="green"
-            border-style="dashed"
-            @click="changeVisible11('编辑', row)"
-            >编辑</lay-button
-          >
-          <lay-button
-            size="xs"
-            border="blue"
-            border-style="dashed"
-            @click="toPrivileges(row)"
-            >分配权限</lay-button
-          >
-          <lay-popconfirm
-            content="确定要删除此角色吗?"
-            @confirm="confirm"
-            @cancel="cancel"
-          >
-            <lay-button size="xs" border="red" border-style="dashed"
-              >删除</lay-button
-            >
+          <lay-button size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
+          <lay-button size="xs" border="blue" border-style="dashed" @click="toPrivileges(row)">分配权限</lay-button>
+          <lay-popconfirm content="确定要删除此角色吗?" @confirm="confirm(row.id)" @cancel="cancel">
+            <lay-button size="xs" border="red" border-style="dashed">删除</lay-button>
           </lay-popconfirm>
         </template>
       </lay-table>
     </div>
 
-    <lay-layer v-model="visible11" :title="title" :area="['500px', '370px']">
+    <lay-layer v-model="isVisible" :title="title" :shadeClose="false" :area="['500px', '370px']">
       <div style="padding: 20px">
-        <lay-form :model="model11" ref="layFormRef11" required>
-          <lay-form-item label="角色名称" prop="name">
-            <lay-input v-model="model11.name"></lay-input>
+        <lay-form :model="roleModel" ref="layFormRef">
+          <lay-form-item label="角色名称" prop="name" required>
+            <lay-input v-model="roleModel.name"></lay-input>
           </lay-form-item>
-          <lay-form-item label="角色标识" prop="flage">
-            <lay-input v-model="model11.flage"></lay-input>
+          <lay-form-item label="角色标识" prop="code" required>
+            <lay-input v-model="roleModel.code"></lay-input>
           </lay-form-item>
           <lay-form-item label="描述" prop="remark">
-            <lay-textarea
-              placeholder="请输入描述"
-              v-model="model11.remark"
-            ></lay-textarea>
+            <lay-textarea placeholder="请输入描述" v-model="roleModel.description"></lay-textarea>
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: center">
-          <lay-button size="sm" type="primary" @click="toSubmit"
-            >保存</lay-button
-          >
+          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
@@ -134,13 +67,8 @@
 
     <lay-layer v-model="visible22" title="分配权限" :area="['500px', '450px']">
       <div style="height: 320px; overflow: auto">
-        <lay-tree
-          style="margin-left: 40px"
-          :tail-node-icon="false"
-          :data="data2"
-          :showCheckbox="showCheckbox2"
-          v-model:checkedKeys="checkedKeys2"
-        >
+        <lay-tree style="margin-left: 40px" :tail-node-icon="false" :data="data2" :showCheckbox="showCheckbox2"
+          v-model:checkedKeys="checkedKeys2">
           <template #title="{ data }">
             <lay-icon :class="data.icon"></lay-icon>
             {{ data.title }}
@@ -156,37 +84,33 @@
   </lay-container>
 </template>
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { layer } from '@layui/layui-vue'
-const searchQuery = ref({
-  roleName: '',
-  identifying: '',
-  mark: ''
+import { addRole, delRole, editRole, getRoles } from '../../../api/module/role';
+
+const searchQuery = reactive({
+  name: '',
+  code: '',
+  pageNumber: 1,
+  pageSize: 10
 })
+const page = reactive({ current: 1, limit: 10, total: 4 })
 
-function toReset() {
-  searchQuery.value = {
-    roleName: '',
-    identifying: '',
-    mark: ''
-  }
-}
-
-function toSearch() {
-  page.current = 1
-  change(page)
+const toReset = async () => {
+  searchQuery.name = ''
+  searchQuery.code = ''
+  await loadDataSource()
 }
 
 const loading = ref(false)
 const selectedKeys = ref()
-const page = reactive({ current: 1, limit: 10, total: 4 })
 const columns = ref([
-  { title: '选项', width: '55px', type: 'checkbox', fixed: 'left' },
-  { title: '编号', width: '80px', key: 'id', fixed: 'left', sort: 'desc' },
-  { title: '角色名称', width: '80px', key: 'name', sort: 'desc' },
-  { title: '角色标识', width: '80px', key: 'flage', sort: 'desc' },
-  { title: '备注', width: '260px', key: 'remark', sort: 'desc' },
-  { title: '创建时间', width: '120px', key: 'joinTime', sort: 'desc' },
+  { title: '序号', width: '30px', type: 'number', fixed: 'left' },
+  { title: '角色名称', width: '80px', key: 'name' },
+  { title: '角色标识', width: '80px', key: 'code' },
+  { title: '备注', width: '260px', key: 'description' },
+  { title: '创建人', width: '120px', key: 'createdBy', sort: 'desc' },
+  { title: '创建时间', width: '120px', key: 'createdTime', sort: 'desc' },
   {
     title: '操作',
     width: '150px',
@@ -195,38 +119,30 @@ const columns = ref([
     fixed: 'right'
   }
 ])
-const change = (page: any) => {
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 1000)
+const dataSource = ref([])
+
+onMounted(async () => {
+  await loadDataSource();
+})
+
+const loadDataSource = async () => {
+  loading.value = true;
+  searchQuery.pageNumber = page.current;
+  searchQuery.pageSize = page.limit;
+  let res = await getRoles(searchQuery);
+  if (!res.hasError) {
+    dataSource.value = res.items;
+    page.total = res.totalCount;
+    loading.value = false;
+  } else {
+    loading.value = false;
+  }
 }
+
 const sortChange = (key: any, sort: number) => {
   layer.msg(`字段${key} - 排序${sort}, 你可以利用 sort-change 实现服务端排序`)
 }
-const dataSource = ref([
-  {
-    id: '1',
-    name: '管理员',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09 16:35:07',
-    flage: 'admin'
-  },
-  {
-    id: '2',
-    name: '普通用户',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09 16:35:07',
-    flage: 'user'
-  },
-  {
-    id: '3',
-    name: '游客',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09 16:35:07',
-    flage: 'guser'
-  }
-])
+
 const changeStatus = (isChecked: boolean, row: any) => {
   dataSource.value.forEach((item: any) => {
     if (item.id === row.id) {
@@ -239,46 +155,33 @@ const changeStatus = (isChecked: boolean, row: any) => {
 const remove = () => {
   layer.msg(selectedKeys.value, { area: '50%' })
 }
-const loadDataSource = (page: number, pageSize: number) => {
-  var response = []
-  var startIndex = (page - 1) * pageSize + 1
-  var endIndex = page * pageSize
-  for (var i = startIndex; i <= endIndex; i++) {
-    response.push({
-      id: `${i}`,
-      name: `用户${i}`,
-      flage: 'user',
-      remark: '花开堪折直须折,莫待无花空折枝.',
-      joinTime: '2022-02-09 16:35:07'
-    })
-  }
-  return response
-}
-const model11 = ref({
+
+const roleModel = reactive({
   name: '',
-  flage: '',
-  remark: ''
+  code: '',
+  description: '',
+  id: ''
 })
-const layFormRef11 = ref()
-const visible11 = ref(false)
+const layFormRef = ref()
+const isVisible = ref(false)
 
 const title = ref('新增')
-const changeVisible11 = (text: any, row: any) => {
+const changeVisible = (text: any, row: any) => {
   title.value = text
   if (row != null) {
     let info = JSON.parse(JSON.stringify(row))
-    model11.value = info
+    Object.assign(roleModel, info);
   } else {
-    model11.value = {
+    Object.assign(roleModel, {
       name: '',
-      flage: '',
-      remark: ''
-    }
+      code: '',
+      description: ''
+    })
   }
-  visible11.value = !visible11.value
+  isVisible.value = !isVisible.value
 }
 const submit11 = function () {
-  layFormRef11.value.validate((isValidate: any, model: any, errors: any) => {
+  layFormRef.value.validate((isValidate: any, model: any, errors: any) => {
     layer.open({
       type: 1,
       title: '表单提交结果',
@@ -301,11 +204,11 @@ const submit11 = function () {
 }
 // 清除校验
 const clearValidate11 = function () {
-  layFormRef11.value.clearValidate()
+  layFormRef.value.clearValidate()
 }
 // 重置表单
 const reset11 = function () {
-  layFormRef11.value.reset()
+  layFormRef.value.reset()
 }
 function toRemove() {
   if (selectedKeys.value.length == 0) {
@@ -332,17 +235,34 @@ function toRemove() {
     ]
   })
 }
-function toSubmit() {
-  layer.msg('保存成功！', { icon: 1, time: 1000 })
-  visible11.value = false
-  visible22.value = false
+
+const toSubmit = () => {
+  layFormRef.value.validate(async (isValidate: boolean) => {
+    if (!isValidate)
+      return false
+    let res;
+    if (roleModel.id == '') {
+      res = await addRole(roleModel);
+    } else {
+      res = await editRole(roleModel);
+    }
+    if (!res.hasError) {
+      layer.msg('保存成功！', { icon: 1, time: 1000 })
+      isVisible.value = false
+      await loadDataSource()
+      visible22.value = false
+    }
+  })
 }
 function toCancel() {
-  visible11.value = false
+  isVisible.value = false
   visible22.value = false
 }
-function confirm() {
-  layer.msg('您已成功删除')
+const confirm = async (id: string) => {
+  let res = await delRole(id)
+  if (!res.hasError){
+    loadDataSource()
+  }
 }
 function cancel() {
   layer.msg('您已取消操作')
@@ -459,6 +379,7 @@ function toPrivileges(row: any) {
   box-sizing: border-box;
   overflow: hidden;
 }
+
 .top-search {
   margin-top: 10px;
   padding: 10px;
@@ -466,6 +387,7 @@ function toPrivileges(row: any) {
   border-radius: 4px;
   background-color: #fff;
 }
+
 .table-box {
   margin-top: 10px;
   padding: 10px;
@@ -481,6 +403,7 @@ function toPrivileges(row: any) {
   width: 98%;
   margin-right: 10px;
 }
+
 .isChecked {
   display: inline-block;
   background-color: #e8f1ff;

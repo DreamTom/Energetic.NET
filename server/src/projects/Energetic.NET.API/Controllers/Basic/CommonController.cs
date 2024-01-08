@@ -1,5 +1,5 @@
 ﻿using Energetic.NET.API.Dto;
-using Energetic.NET.Basic.Application.Email;
+using Energetic.NET.Basic.Application.EmailService;
 using Energetic.NET.Common.Helpers;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;

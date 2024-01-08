@@ -1,10 +1,10 @@
 ﻿using Energetic.NET.Basic.Domain.Enums;
-using Energetic.NET.Basic.Domain.IResponsitories;
-using System.Net.Mail;
+using Energetic.NET.Basic.Domain.IRepositories;
 
 namespace Energetic.NET.Basic.Infrastructure.Responsitories
 {
-    internal class UserDomainRepository(BasicDbContext basicDbContext) : IUserDomainRepository
+    internal class UserDomainRepository(BasicDbContext basicDbContext) 
+        : BaseRepository<User>(basicDbContext), IUserDomainRepository
     {
         public Task<User?> FindByEmailAdressAsync(string emailAdress)
         {

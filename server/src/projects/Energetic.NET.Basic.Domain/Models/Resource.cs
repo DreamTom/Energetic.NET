@@ -33,48 +33,5 @@ namespace Energetic.NET.Basic.Domain.Models
         public RequestMethod? RequestMethod { get; private set; }
 
         public List<Role> Roles { get; } = [];
-
-        private static long GetParentId(string releationIds)
-        {
-            long parentId = 0;
-            if (!string.IsNullOrWhiteSpace(releationIds))
-            {
-                var lastId = releationIds.Split('/').Last();
-                if (long.TryParse(lastId, out long id))
-                    parentId = id;
-            }
-            return parentId;
-        }
-
-        public void AddFolder(string routePath, string releationIds, string? icon, bool isEnable)
-        {
-            Type = ResourceType.Folder;
-            RoutePath = routePath;
-            IsEnable = isEnable;
-            Icon = icon;
-            ParentId = GetParentId(releationIds);
-            ReleationIds = releationIds;
-        }
-
-        public void AddMenu(string routePath, string releationIds, string? icon, bool isEnable)
-        {
-            Type = ResourceType.Menu;
-            RoutePath = routePath;
-            Icon = icon;
-            ParentId = GetParentId(releationIds);
-            IsEnable = isEnable;
-            ReleationIds = releationIds;
-        }
-
-        public void AddButton(string releationIds, string code, string apiUrl, RequestMethod requestMethod, bool isEnable)
-        {
-            Type = ResourceType.Button;
-            ParentId = GetParentId(releationIds);
-            ReleationIds = releationIds;
-            ApiUrl = apiUrl;
-            RequestMethod = requestMethod;
-            Code = code;
-            IsEnable = isEnable;
-        }
     }
 }

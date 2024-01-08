@@ -1,7 +1,7 @@
-﻿using Energetic.NET.Basic.Application.Resource;
-using Energetic.NET.Basic.Application.Resource.Dto;
+﻿using Energetic.NET.Basic.Application.ResourceService;
+using Energetic.NET.Basic.Application.ResourceService.Dto;
 using Energetic.NET.Basic.Domain.Enums;
-using Energetic.NET.Basic.Domain.IResponsitories;
+using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.SharedKernel;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,7 +14,6 @@ namespace Energetic.NET.API.Controllers.Basic
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/resources")]
     public class ResourcesController(IResourceDomainRepository resourceDomainRepository,
-        BasicDbContext basicDbContext,
         IMapper mapper,
         IResourceAppService resourceAppService) : BaseController
     {
@@ -25,16 +24,12 @@ namespace Energetic.NET.API.Controllers.Basic
         /// <param name="resourceAdd"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<ResourceResponse>> Add(ResourceAddRequest resourceAdd)
+        public async Task<ActionResult<ResourceResponse>> Add(ResourceEditRequest resourceAdd)
         {
-            var resource = new Resource(resourceAdd.Name, resourceAdd.DisplayOrder);
-            if (resourceAdd.Type == ResourceType.Folder)
-                resource.AddFolder(resourceAdd.RoutePath, resourceAdd.ReleationIds, resourceAdd.Icon, resourceAdd.IsEnable);
-            else if (resourceAdd.Type == ResourceType.Menu)
+            if (resourceAdd.Type == ResourceType.Folder || resourceAdd.Type == ResourceType.Menu)
             {
                 if (await resourceDomainRepository.IsExistsPathAsync(resourceAdd.RoutePath))
                     return ValidateFailed("菜单路由已存在");
-                resource.AddMenu(resourceAdd.RoutePath, resourceAdd.ReleationIds, resourceAdd.Icon, resourceAdd.IsEnable);
             }
             else
             {
@@ -42,9 +37,9 @@ namespace Energetic.NET.API.Controllers.Basic
                     return ValidateFailed("按钮权限代码已存在");
                 if (await resourceDomainRepository.IsExistsApiAsync(resourceAdd.ApiUrl, resourceAdd.RequestMethod.Value))
                     return ValidateFailed("按钮接口地址已存在");
-                resource.AddButton(resourceAdd.ReleationIds, resourceAdd.Code, resourceAdd.ApiUrl, resourceAdd.RequestMethod.Value, resourceAdd.IsEnable);
             }
-            await basicDbContext.AddAsync(resource);
+            var resource = mapper.Map<Resource>(resourceAdd);
+            await resourceDomainRepository.AddAsync(resource);
             return Ok(mapper.Map<ResourceResponse>(resource));
         }
 
@@ -71,16 +66,29 @@ namespace Energetic.NET.API.Controllers.Basic
         /// <summary>
         /// 修改资源
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="resourceEdit"></param>
         /// <returns></returns>
-        [HttpPut]
-        public async Task<ActionResult<ResourceResponse>> Edit(ResourceEditRequest resourceEdit)
+        [HttpPut("{id:long}")]
+        public async Task<ActionResult<ResourceResponse>> Edit(long id, ResourceEditRequest resourceEdit)
         {
-            var resource = await resourceDomainRepository.FindByIdAsync(resourceEdit.Id);
+            var resource = await resourceDomainRepository.FindByIdAsync(id);
             if (resource == null)
                 return DataNotFound("资源未找到或已被删除");
+            if (resourceEdit.Type == ResourceType.Folder || resourceEdit.Type == ResourceType.Menu)
+            {
+                if (await resourceDomainRepository.IsExistsPathAsync(resourceEdit.RoutePath, id))
+                    return ValidateFailed("菜单路由已存在");
+            }
+            else
+            {
+                if (await resourceDomainRepository.IsExistsCodeAsync(resourceEdit.Code, id))
+                    return ValidateFailed("按钮权限代码已存在");
+                if (await resourceDomainRepository.IsExistsApiAsync(resourceEdit.ApiUrl, resourceEdit.RequestMethod.Value, id))
+                    return ValidateFailed("按钮接口地址已存在");
+            }
             resource = mapper.Map(resourceEdit, resource);
-            basicDbContext.Update(resource);
+            resourceDomainRepository.Update(resource);
             return Ok(resource);
         }
 
@@ -95,8 +103,7 @@ namespace Energetic.NET.API.Controllers.Basic
             var resource = await resourceDomainRepository.FindByIdAsync(id);
             if (resource == null)
                 return DataNotFound("资源未找到或已被删除");
-            resource.IsDeleted = true;
-            basicDbContext.Update(resource);
+            resourceDomainRepository.LogicDelete(resource);
             return Ok(id);
         }
     }
