@@ -1,24 +1,23 @@
 ﻿namespace Energetic.NET.Basic.Domain.Models
 {
-    public class FileAttachment : BaseCreatedEntity, IAggregateRoot
+    public class FileAttachment(string name, string hashCode, string path, string contentType, long size)
+        : BaseCreatedEntity, IEntity, IAggregateRoot
     {
-        public FileAttachment(string name, string hashCode, string path, string contentType, long size)
+        public string Name { get; init; } = name;
+
+        public string HashCode { get; init; } = hashCode;
+
+        public string Path { get; init; } = path;
+
+        public string ContentType { get; init; } = contentType;
+
+        public long Size { get; init; } = size;
+
+        public long Id { get; private set; }
+
+        public void SetId(long id)
         {
-            Name = name;
-            HashCode = hashCode;
-            Path = path;
-            ContentType = contentType;
-            Size = size;
+            Id = id;
         }
-
-        public string Name { get; init; }
-
-        public string HashCode { get; init; }
-
-        public string Path { get; init; }
-
-        public string ContentType { get; init; }
-
-        public long Size { get; init; }
     }
 }

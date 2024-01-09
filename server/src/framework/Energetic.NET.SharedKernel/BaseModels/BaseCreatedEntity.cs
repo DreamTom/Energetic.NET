@@ -2,7 +2,7 @@
 
 namespace Energetic.NET.SharedKernel.BaseModels
 {
-    public abstract class BaseCreatedEntity : BaseEntity, ICreatedEntity
+    public abstract class BaseCreatedEntity : ICreatedEntity
     {
         public long CreatedUserId { get; private set; }
 

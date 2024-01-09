@@ -435,9 +435,13 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
 
             modelBuilder.Entity("Energetic.NET.Basic.Domain.Models.UserRole", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("RoleId")
                         .HasColumnType("bigint")
-                        .HasColumnName("id");
+                        .HasColumnName("role_id");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -455,19 +459,8 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("created_user_id");
 
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("role_id");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
+                    b.HasKey("RoleId", "UserId")
                         .HasName("pk_sys_user_role");
-
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_sys_user_role_role_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_sys_user_role_user_id");

@@ -187,7 +187,6 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                 name: "sys_user_role",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
                     user_id = table.Column<long>(type: "bigint", nullable: false),
                     role_id = table.Column<long>(type: "bigint", nullable: false),
                     created_user_id = table.Column<long>(type: "bigint", nullable: false),
@@ -197,7 +196,7 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_sys_user_role", x => x.id);
+                    table.PrimaryKey("pk_sys_user_role", x => new { x.role_id, x.user_id });
                     table.ForeignKey(
                         name: "fk_sys_user_role_sys_role_role_id",
                         column: x => x.role_id,
@@ -216,11 +215,6 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_sys_role_resource_role_id",
                 table: "sys_role_resource",
-                column: "role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_sys_user_role_role_id",
-                table: "sys_user_role",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(

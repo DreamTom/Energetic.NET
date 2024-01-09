@@ -29,7 +29,7 @@
     <!-- table -->
     <div class="table-box">
       <lay-table :page="page" :height="'100%'" :columns="columns" :loading="loading" :default-toolbar="true"
-        :data-source="dataSource" v-model:selected-keys="selectedKeys" @change="loadDataSource" @sortChange="sortChange">
+        :data-source="dataSource" @change="loadDataSource" @sortChange="sortChange">
         <template v-slot:toolbar>
           <lay-button size="sm" type="primary" @click="changeVisible('新增', null)">
             <lay-icon class="layui-icon-addition"></lay-icon>
@@ -38,7 +38,7 @@
         <template v-slot:operator="{ row }">
           <lay-button size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
           <lay-button size="xs" border="blue" border-style="dashed" @click="toPrivileges(row)">分配权限</lay-button>
-          <lay-popconfirm content="确定要删除此角色吗?" @confirm="confirm(row.id)" @cancel="cancel">
+          <lay-popconfirm content="确定要删除此角色吗?" @confirm="confirm(row.id)">
             <lay-button size="xs" border="red" border-style="dashed">删除</lay-button>
           </lay-popconfirm>
         </template>
@@ -106,7 +106,6 @@ const toReset = async () => {
 }
 
 const loading = ref(false)
-const selectedKeys = ref()
 const columns = ref([
   { title: '序号', width: '30px', type: 'number', fixed: 'left' },
   { title: '角色名称', width: '80px', key: 'name' },
@@ -157,19 +156,6 @@ const sortChange = async (key: any, sort: string) => {
   await loadDataSource()
 }
 
-const changeStatus = (isChecked: boolean, row: any) => {
-  dataSource.value.forEach((item: any) => {
-    if (item.id === row.id) {
-      layer.msg('Success', { icon: 1 }, () => {
-        item.flage = isChecked
-      })
-    }
-  })
-}
-const remove = () => {
-  layer.msg(selectedKeys.value, { area: '50%' })
-}
-
 const roleModel = reactive({
   name: '',
   code: '',
@@ -203,40 +189,6 @@ const toSubmitPermission = async () =>{
   }
 }
 
-// 清除校验
-const clearValidate11 = function () {
-  layFormRef.value.clearValidate()
-}
-// 重置表单
-const reset11 = function () {
-  layFormRef.value.reset()
-}
-function toRemove() {
-  if (selectedKeys.value.length == 0) {
-    layer.msg('您未选择数据，请先选择要删除的数据', { icon: 3, time: 2000 })
-    return
-  }
-  layer.confirm('您将删除所有选中的数据？', {
-    title: '提示',
-    btn: [
-      {
-        text: '确定',
-        callback: (id: any) => {
-          layer.msg('您已成功删除')
-          layer.close(id)
-        }
-      },
-      {
-        text: '取消',
-        callback: (id: any) => {
-          layer.msg('您已取消操作')
-          layer.close(id)
-        }
-      }
-    ]
-  })
-}
-
 const toSubmit = () => {
   layFormRef.value.validate(async (isValidate: boolean) => {
     if (!isValidate)
@@ -264,9 +216,6 @@ const confirm = async (id: string) => {
   if (!res.hasError){
     loadDataSource()
   }
-}
-function cancel() {
-  layer.msg('您已取消操作')
 }
 
 const permissionVisible = ref(false)
