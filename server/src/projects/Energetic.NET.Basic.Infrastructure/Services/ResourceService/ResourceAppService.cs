@@ -12,7 +12,8 @@ namespace Energetic.NET.Basic.Infrastructure.ResourceService
         public async Task<List<ResourceTreeResponse>> GetResourceTreeAsync(ResourceQueryRequest resourceQuery)
         {
             var nodeTree = new List<ResourceTreeResponse>();
-            var resources = await resourceDomainRepository.GetResourcesAsync(resourceQuery.Name, resourceQuery.RoutePath, resourceQuery.Code);
+            var resources = await resourceDomainRepository.GetResourcesAsync(resourceQuery.Name,
+                resourceQuery.RoutePath, resourceQuery.Code, resourceQuery.IsEnable);
             var allNodes = mapper.Map<List<ResourceTreeResponse>>(resources);
             var parentNodes = allNodes.Where(r => r.ParentId == 0).ToList();
             if (parentNodes.Count == 0)

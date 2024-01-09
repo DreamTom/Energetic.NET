@@ -158,13 +158,16 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                 name: "sys_role_resource",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
                     role_id = table.Column<long>(type: "bigint", nullable: false),
-                    resource_id = table.Column<long>(type: "bigint", nullable: false)
+                    resource_id = table.Column<long>(type: "bigint", nullable: false),
+                    created_user_id = table.Column<long>(type: "bigint", nullable: false),
+                    created_by = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    created_time = table.Column<DateTime>(type: "datetime(3)", precision: 3, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_sys_role_resource", x => x.id);
+                    table.PrimaryKey("pk_sys_role_resource", x => new { x.resource_id, x.role_id });
                     table.ForeignKey(
                         name: "fk_sys_role_resource_sys_resource_resource_id",
                         column: x => x.resource_id,
@@ -209,11 +212,6 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_sys_role_resource_resource_id",
-                table: "sys_role_resource",
-                column: "resource_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_sys_role_resource_role_id",

@@ -6,7 +6,7 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
     internal class ResourceDomainRepository(BasicDbContext basicDbContext) :
         BaseRepository<Resource>(basicDbContext), IResourceDomainRepository
     {
-        public Task<List<Resource>> GetResourcesAsync(string? name, string? routePath, string? code)
+        public Task<List<Resource>> GetResourcesAsync(string? name, string? routePath, string? code, bool? isEnable)
         {
             var query = basicDbContext.Resources.AsQueryable();
             if (!string.IsNullOrWhiteSpace(name))
@@ -15,6 +15,8 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
                 query = query.Where(r => r.RoutePath != null && r.RoutePath.Contains(routePath));
             if (!string.IsNullOrWhiteSpace(code))
                 query = query.Where(r => r.Code != null && r.Code.Contains(code));
+            if (isEnable != null)
+                query = query.Where(r => r.IsEnable == isEnable);
             return query.OrderBy(r => r.DisplayOrder).ToListAsync();
         }
 

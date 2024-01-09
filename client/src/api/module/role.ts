@@ -16,3 +16,11 @@ export const getRoles = function(queryForm: any){
   return Http.get('/roles', queryForm);
 }
 
+export const getRoleResourceIds = function(id: string){
+  return Http.get(`/roles/${id}/resourceIds`);
+}
+
+export const editRoleResource = function(id: string, editForm: any){
+  return Http.put(`/roles/${id}/resources`, editForm)
+}
+

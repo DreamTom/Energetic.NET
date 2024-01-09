@@ -11,6 +11,10 @@ namespace Energetic.NET.Basic.Application.ResourceService.Dto
     {
         public long Id { get; set; }
 
+        public string Title => Name;
+
+        public bool Spread => true;
+
         public string? RoutePath { get; set; }
 
         public long ParentId { get; set; }

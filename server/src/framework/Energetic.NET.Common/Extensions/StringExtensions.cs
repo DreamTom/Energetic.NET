@@ -32,6 +32,16 @@ namespace System
             }
         }
 
+        public static string ToPascal(this string convertText)
+        {
+            if (!convertText.Any(x => x >= 'a' && x <= 'z'))
+                return convertText;
+            var firstLetter = convertText.First();
+            if (firstLetter >= 'a' && firstLetter <= 'z')
+                return string.Concat(firstLetter.ToString().ToUpper(), convertText.AsSpan(1));
+            return convertText;
+        }
+
         /// <summary>
         /// 转换为小写下划线分隔命名
         /// </summary>
@@ -68,16 +78,16 @@ namespace System
         /// <summary>
         /// 转换为小驼峰命名
         /// </summary>
-        /// <param name="converText"></param>
+        /// <param name="convertText"></param>
         /// <returns></returns>
-        public static string ToCamelCase(this string converText)
+        public static string ToCamelCase(this string convertText)
         {
-            if (!converText.Any(x => x >= 'A' && x <= 'Z'))
-                return converText;
-            var firstLetter = converText.First();
+            if (!convertText.Any(x => x >= 'A' && x <= 'Z'))
+                return convertText;
+            var firstLetter = convertText.First();
             if (firstLetter >= 'A' && firstLetter <= 'Z')
-                return string.Concat(firstLetter.ToString().ToLower(), converText.AsSpan(1));
-            return converText;
+                return string.Concat(firstLetter.ToString().ToLower(), convertText.AsSpan(1));
+            return convertText;
         }
 
         /// <summary>

@@ -47,5 +47,10 @@ namespace Energetic.NET.Infrastructure.EFCore
         {
             _dbSet.Update(entity);
         }
+
+        public Task<List<TEntity>> FindByIdsAsync(IEnumerable<long> ids)
+        {
+            return _dbSet.Where(c => ids.Contains(c.Id)).ToListAsync();
+        }
     }
 }

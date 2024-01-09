@@ -1,7 +1,7 @@
 import Http from '../http';
 
-export const getResourceTree = function(query: any){
-  return Http.get('/resources', query)
+export const getResourceTree = function(queryForm: any){
+  return Http.get('/resources', queryForm)
 }
 
 export const getMenuTree = function(){

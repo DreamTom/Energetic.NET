@@ -65,10 +65,10 @@
       </div>
     </lay-layer>
 
-    <lay-layer v-model="visible22" title="分配权限" :area="['500px', '450px']">
+    <lay-layer v-model="permissionVisible" title="分配权限" :shadeClose="false" :area="['500px', '450px']">
       <div style="height: 320px; overflow: auto">
-        <lay-tree style="margin-left: 40px" :tail-node-icon="false" :data="data2" :showCheckbox="showCheckbox2"
-          v-model:checkedKeys="checkedKeys2">
+        <lay-tree style="margin-left: 40px" :tail-node-icon="false" :data="resources" :showCheckbox="showCheckbox2"
+          v-model:checkedKeys="checkedResourceIds">
           <template #title="{ data }">
             <lay-icon :class="data.icon"></lay-icon>
             {{ data.title }}
@@ -77,7 +77,7 @@
       </div>
       <lay-line></lay-line>
       <div style="width: 90%; text-align: right">
-        <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
+        <lay-button size="sm" type="primary" @click="toSubmitPermission">保存</lay-button>
         <lay-button size="sm" @click="toCancel">取消</lay-button>
       </div>
     </lay-layer>
@@ -86,13 +86,16 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { layer } from '@layui/layui-vue'
-import { addRole, delRole, editRole, getRoles } from '../../../api/module/role';
+import { addRole, delRole, editRole, getRoles, getRoleResourceIds,editRoleResource } from '../../../api/module/role';
+import { getResourceTree } from '../../../api/module/resource';
 
 const searchQuery = reactive({
   name: '',
   code: '',
   pageNumber: 1,
-  pageSize: 10
+  pageSize: 10,
+  orderBy: '',
+  propName: ''
 })
 const page = reactive({ current: 1, limit: 10, total: 4 })
 
@@ -123,6 +126,7 @@ const dataSource = ref([])
 
 onMounted(async () => {
   await loadDataSource();
+  await loadResourceTree();
 })
 
 const loadDataSource = async () => {
@@ -139,8 +143,18 @@ const loadDataSource = async () => {
   }
 }
 
-const sortChange = (key: any, sort: number) => {
-  layer.msg(`字段${key} - 排序${sort}, 你可以利用 sort-change 实现服务端排序`)
+const loadResourceTree = async () => {
+  let queryForm = { isEnable: true };
+  let res = await getResourceTree(queryForm)
+  if (!res.hasError){
+    resources.value = res;
+  }
+}
+
+const sortChange = async (key: any, sort: string) => {
+  searchQuery.orderBy = sort
+  searchQuery.propName = key
+  await loadDataSource()
 }
 
 const changeStatus = (isChecked: boolean, row: any) => {
@@ -173,6 +187,7 @@ const changeVisible = (text: any, row: any) => {
     Object.assign(roleModel, info);
   } else {
     Object.assign(roleModel, {
+      id: '',
       name: '',
       code: '',
       description: ''
@@ -180,28 +195,14 @@ const changeVisible = (text: any, row: any) => {
   }
   isVisible.value = !isVisible.value
 }
-const submit11 = function () {
-  layFormRef.value.validate((isValidate: any, model: any, errors: any) => {
-    layer.open({
-      type: 1,
-      title: '表单提交结果',
-      content: `<div style="padding: 10px"><p>是否通过 : ${isValidate}</p> <p>表单数据 : ${JSON.stringify(
-        model
-      )} </p> <p>错误信息 : ${JSON.stringify(errors)}</p></div>`,
-      shade: false,
-      isHtmlFragment: true,
-      btn: [
-        {
-          text: '确认',
-          callback(index: number) {
-            layer.close(index)
-          }
-        }
-      ],
-      area: '500px'
-    })
-  })
+const toSubmitPermission = async () =>{
+  let res = await editRoleResource(roleId.value, checkedResourceIds.value);
+  if (!res.hasError){
+    layer.msg('保存成功！', { icon: 1, time: 1000 })
+    permissionVisible.value = false
+  }
 }
+
 // 清除校验
 const clearValidate11 = function () {
   layFormRef.value.clearValidate()
@@ -250,13 +251,13 @@ const toSubmit = () => {
       layer.msg('保存成功！', { icon: 1, time: 1000 })
       isVisible.value = false
       await loadDataSource()
-      visible22.value = false
+      isVisible.value = false
     }
   })
 }
 function toCancel() {
   isVisible.value = false
-  visible22.value = false
+  permissionVisible.value = false
 }
 const confirm = async (id: string) => {
   let res = await delRole(id)
@@ -268,107 +269,22 @@ function cancel() {
   layer.msg('您已取消操作')
 }
 
-const visible22 = ref(false)
-const checkedKeys2 = ref([])
+const permissionVisible = ref(false)
+const checkedResourceIds = ref([])
 const showCheckbox2 = ref(true)
 
-const data2 = ref([
-  {
-    icon: 'layui-icon-home',
+const resources = ref([])
 
-    title: '工作空间',
-    id: 1,
-    checked: true,
-    spread: true,
-    children: [
-      {
-        title: '工作台',
-        icon: 'layui-icon-util',
-        id: 3
-      },
-      {
-        title: '控制台',
-        icon: 'layui-icon-engine',
-        id: 4,
-        spread: true
-      },
-      {
-        title: '分析页',
-        id: 20,
-        icon: 'layui-icon-chart-screen'
-      },
-      {
-        title: '监控页',
-        id: 21,
-        icon: 'layui-icon-find-fill'
-      }
-    ]
-  },
-  {
-    title: '表单页面',
-    icon: 'layui-icon-table',
-    id: 2,
-    spread: true,
-    children: [
-      {
-        title: '基础表单',
-        icon: 'layui-icon-form',
-        id: 5,
-        spread: true
-      },
-      {
-        title: '复杂表单',
-        icon: 'layui-icon-form',
-        id: 6
-      }
-    ]
-  },
-  {
-    title: '个人中心',
-    icon: 'layui-icon-slider',
-    id: 16,
-    children: [
-      {
-        icon: 'layui-icon-username',
-        title: '我的资料',
-        id: 17,
-        fixed: true
-      },
-      {
-        title: '我的消息',
-        icon: 'layui-icon-email',
-        id: 27
-      }
-    ]
-  },
-  {
-    title: '系统管理',
-    icon: 'layui-icon-set',
-    id: 19,
-    children: [
-      {
-        icon: 'layui-icon-user',
-        title: '用户管理',
-        id: 25,
-        fixed: true
-      },
-      {
-        title: '角色管理',
-        icon: 'layui-icon-group',
-        id: 29
-      },
-      {
-        title: '机构管理',
-        icon: 'layui-icon-transfer',
-        id: 29
-      }
-    ]
+const roleId = ref('');
+const toPrivileges = async (row: any) => {
+  roleId.value = row.id;
+  let res = await getRoleResourceIds(row.id);
+  if (!res.hasError){
+    checkedResourceIds.value = res;
   }
-])
-
-function toPrivileges(row: any) {
-  visible22.value = true
+  permissionVisible.value = true
 }
+
 </script>
 
 <style scoped>

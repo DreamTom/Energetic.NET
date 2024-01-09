@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Energetic.NET.Basic.Infrastructure.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20240108203607_InitCreate")]
+    [Migration("20240109174750_InitCreate")]
     partial class InitCreate
     {
         /// <inheritdoc />
@@ -287,10 +287,6 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
 
             modelBuilder.Entity("Energetic.NET.Basic.Domain.Models.RoleResource", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
                     b.Property<long>("ResourceId")
                         .HasColumnType("bigint")
                         .HasColumnName("resource_id");
@@ -299,11 +295,24 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_sys_role_resource");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("created_by");
 
-                    b.HasIndex("ResourceId")
-                        .HasDatabaseName("ix_sys_role_resource_resource_id");
+                    b.Property<DateTime>("CreatedTime")
+                        .HasPrecision(3)
+                        .HasColumnType("datetime(3)")
+                        .HasColumnName("created_time");
+
+                    b.Property<long>("CreatedUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("created_user_id");
+
+                    b.HasKey("ResourceId", "RoleId")
+                        .HasName("pk_sys_role_resource");
 
                     b.HasIndex("RoleId")
                         .HasDatabaseName("ix_sys_role_resource_role_id");

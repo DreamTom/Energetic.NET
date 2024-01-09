@@ -212,11 +212,15 @@ function toReset() {
 
 onMounted(async () => {
   await toSearch()
+  await loadMenuTree()
+})
+
+const loadMenuTree = async () => {
   let res = await getMenuTree();
   if (!res.hasError) {
     options.value = res;
   }
-})
+}
 
 const toSearch = async () => {
   loading.value = true;
@@ -318,6 +322,10 @@ const toSubmit = () => {
       layer.msg('保存成功！', { icon: 1, time: 1000 })
       isVisible.value = false
       await toSearch()
+      // 刷新菜单树
+      if (resourceModel.value.type != 3){
+        await loadMenuTree()
+      }
     }
   })
 }

@@ -8,6 +8,8 @@ namespace Energetic.NET.SharedKernel
 {
     public record PaginatedQueryRequest(int PageNumber, int PageSize)
     {
-        public List<OrderByRequest> OrderBy { get; set; } = [];
+        public string? PropName { get; set; }
+
+        public string? OrderBy { get; set; }
     }
 }

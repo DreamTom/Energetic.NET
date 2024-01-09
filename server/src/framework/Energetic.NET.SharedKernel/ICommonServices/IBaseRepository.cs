@@ -6,6 +6,8 @@ namespace Energetic.NET.SharedKernel.ICommonServices
     {
         ValueTask<TEntity?> FindByIdAsync(long id);
 
+        Task<List<TEntity>> FindByIdsAsync(IEnumerable<long> ids);
+
         Task<bool> IsExistsIdAsync(long id);
 
         IQueryable<TEntity> GetQueryableSet();

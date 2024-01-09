@@ -9,6 +9,7 @@ namespace Energetic.NET.Basic.Domain
         public void Initialize(IServiceCollection services)
         {
             services.AddScoped<UserDomainService>();
+            services.AddScoped<RoleDomainService>();
         }
     }
 }

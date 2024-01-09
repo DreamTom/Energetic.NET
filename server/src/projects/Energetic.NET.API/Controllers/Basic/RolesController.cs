@@ -1,6 +1,9 @@
-﻿using Energetic.NET.Basic.Application.RoleService;
+﻿using Energetic.NET.Basic.Application.ResourceService.Dto;
+using Energetic.NET.Basic.Application.RoleService;
 using Energetic.NET.Basic.Application.RoleService.Dto;
+using Energetic.NET.Basic.Application.Services.RoleService.Dto;
 using Energetic.NET.Basic.Domain.IRepositories;
+using Energetic.NET.Basic.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers.Basic
@@ -13,7 +16,8 @@ namespace Energetic.NET.API.Controllers.Basic
     [Route("api/roles")]
     public class RolesController(IRoleAppService roleAppService,
         IMapper mapper,
-        IRoleDomainRepository roleDomainRepository) : BaseController
+        IRoleDomainRepository roleDomainRepository,
+        RoleDomainService roleDomainService) : BaseController
     {
         /// <summary>
         /// 角色列表
@@ -73,6 +77,36 @@ namespace Energetic.NET.API.Controllers.Basic
                 return ValidateFailed("角色不存在或已被删除");
             roleDomainRepository.LogicDelete(role);
             return Ok(id);
+        }
+
+        /// <summary>
+        /// 获取角色资源权限ID集合
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id:long}/resourceIds")]
+        public async Task<ActionResult<long[]>> GetRoleResourceIds(long id)
+        {
+            if (!await roleDomainRepository.IsExistsIdAsync(id))
+                return DataNotFound("角色不存在或已被删除");
+            var role = await roleDomainRepository.GetRoleIncludeResourcesAsync(id);
+            return Ok(role.Resources.Select(r => r.Id).ToArray());
+        }
+
+        /// <summary>
+        /// 更新角色资源权限
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="resourceIds"></param>
+        /// <returns></returns>
+        [HttpPut("{id:long}/resources")]
+        public async Task<ActionResult<List<ResourceResponse>>> EditRoleResources(long id, long[] resourceIds)
+        {
+            if (!await roleDomainRepository.IsExistsIdAsync(id))
+                return DataNotFound("角色不存在或已被删除");
+            var role = await roleDomainService.UpdateRoleResourcesAsync(id, resourceIds);
+            roleDomainRepository.Update(role);
+            return Ok(mapper.Map<List<ResourceResponse>>(role.Resources));
         }
     }
 }
