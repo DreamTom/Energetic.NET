@@ -1,7 +1,6 @@
 ﻿using Energetic.NET.Basic.Application.ResourceService.Dto;
 using Energetic.NET.Basic.Application.RoleService;
 using Energetic.NET.Basic.Application.RoleService.Dto;
-using Energetic.NET.Basic.Application.Services.RoleService.Dto;
 using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.Basic.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -72,10 +71,11 @@ namespace Energetic.NET.API.Controllers.Basic
         [HttpDelete("{id:long}")]
         public async Task<ActionResult<long>> Delete(long id)
         {
-            var role = await roleDomainRepository.FindByIdAsync(id);
+            var role = await roleDomainRepository.GetRoleIncludeResourcesAsync(id);
             if (role == null)
                 return ValidateFailed("角色不存在或已被删除");
-            roleDomainRepository.LogicDelete(role);
+            role.SetResources(null);
+            role.LogicDelete();
             return Ok(id);
         }
 
@@ -107,6 +107,17 @@ namespace Energetic.NET.API.Controllers.Basic
             var role = await roleDomainService.UpdateRoleResourcesAsync(id, resourceIds);
             roleDomainRepository.Update(role);
             return Ok(mapper.Map<List<ResourceResponse>>(role.Resources));
+        }
+
+        /// <summary>
+        /// 角色下拉列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("dpList")]
+        public async Task<ActionResult<List<DropdownItemResponse>>> GetDropdownList()
+        {
+            var roles = await roleDomainRepository.GetAllAsync();
+            return Ok(mapper.Map<List<DropdownItemResponse>>(roles));
         }
     }
 }

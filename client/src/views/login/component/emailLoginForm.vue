@@ -92,8 +92,10 @@ const loginSubmit = () => {
         loging.value = false;
         layer.msg("登录成功", { icon: 1 }, async () => {
           userStore.token = res.token;
-          await userStore.loadMenus();
-          await userStore.loadPermissions();
+          userStore.userInfo = res.userInfo
+          await userStore.loadResources()
+          //await userStore.loadMenus();
+          //await userStore.loadPermissions();
           router.push("/");
         });
       }, 1000);

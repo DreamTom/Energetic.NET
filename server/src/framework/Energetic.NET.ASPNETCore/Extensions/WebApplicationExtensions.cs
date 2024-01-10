@@ -30,6 +30,7 @@ namespace Energetic.NET.ASPNETCore
             app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseCors();//启用Cors
+            app.UseRateLimiter();
             app.UseForwardedHeaders();
             app.UseAuthentication();
             app.UseAuthorization();

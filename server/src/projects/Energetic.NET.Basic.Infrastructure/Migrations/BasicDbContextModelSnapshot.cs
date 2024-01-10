@@ -376,6 +376,10 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsEnable")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_enable");
+
                     b.Property<string>("NickName")
                         .IsRequired()
                         .HasMaxLength(32)

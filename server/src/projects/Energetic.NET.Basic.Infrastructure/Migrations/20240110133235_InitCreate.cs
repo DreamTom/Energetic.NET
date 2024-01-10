@@ -132,6 +132,7 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                     avatar_id = table.Column<long>(type: "bigint", nullable: true),
                     is_admin = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     register_way = table.Column<int>(type: "int", nullable: false),
+                    is_enable = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     password_hash = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     created_user_id = table.Column<long>(type: "bigint", nullable: false),

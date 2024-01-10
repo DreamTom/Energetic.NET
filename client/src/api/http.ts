@@ -16,9 +16,10 @@ const config: TAxiosOption = {
  
 class Http {
     service;
+    config;
     constructor(config: TAxiosOption) {
         this.service = axios.create(config)
-
+        this.config = config
         /* 请求拦截 */
         this.service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const userInfoStore = useUserStore();
@@ -52,6 +53,10 @@ class Http {
                                 layer.closeAll()
                             });
                         return;
+                    case 503:
+                    case 429:
+                        message = "服务暂时不可用，请稍后再试"
+                        break;        
                     default:
                         break;
                 }

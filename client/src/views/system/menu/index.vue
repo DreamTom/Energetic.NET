@@ -36,6 +36,15 @@
     <div class="table-box">
       <lay-table :height="`100%`" :loading="loading" children-column-name="children" :columns="columns"
         :data-source="dataSource" :default-toolbar="true" :expand-index="1">
+        <template #path="{ row }">
+          {{ row.routePath ? row.routePath : row.apiUrl }} &nbsp;&nbsp;
+          <div v-show="row.apiUrl">
+            <lay-tag v-if="row.requestMethod == 1" color="#31BDEC" variant="light">GET</lay-tag>
+            <lay-tag v-if="row.requestMethod == 2" color="#16b777" variant="light">POST</lay-tag>
+            <lay-tag v-if="row.requestMethod == 3" color="#FFB800" variant="light">PUT</lay-tag>
+            <lay-tag v-if="row.requestMethod == 4" color="#FF5722" variant="light">DELETE</lay-tag>
+          </div>
+        </template>
         <template #toolbar>
           <lay-button size="sm" @click="changeVisible('新建', null)" type="primary">
             <lay-icon class="layui-icon-addition"></lay-icon>
@@ -148,9 +157,10 @@
   </lay-container>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { layer } from '@layui/layui-vue'
 import { getResourceTree, getMenuTree, addResource, editResource, delResource } from '../../../api/module/resource'
+import { number } from 'echarts';
 
 const loading = ref(false)
 const dataSource = ref([]);
@@ -179,7 +189,8 @@ const columns = [
   },
   {
     title: '路由地址',
-    key: 'routePath'
+    key: 'routePath',
+    customSlot: 'path'
   },
   {
     title: '权限标识',
@@ -202,12 +213,13 @@ const columns = [
   }
 ]
 
-function toReset() {
+const toReset = async () => {
   searchQuery.value = {
     name: '',
     code: '',
     routePath: ''
   }
+  await loadMenuTree()
 }
 
 onMounted(async () => {

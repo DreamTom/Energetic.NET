@@ -36,13 +36,6 @@ namespace Energetic.NET.Infrastructure.EFCore
             return _dbSet;
         }
 
-        public void LogicDelete(TEntity enity)
-        {
-            if (enity is IDeletedEntity deletedEntity)
-                deletedEntity.LogicDelete();
-            _dbSet.Update(enity);
-        }
-
         public void Update(TEntity entity)
         {
             _dbSet.Update(entity);
@@ -51,6 +44,11 @@ namespace Energetic.NET.Infrastructure.EFCore
         public Task<List<TEntity>> FindByIdsAsync(IEnumerable<long> ids)
         {
             return _dbSet.Where(c => ids.Contains(c.Id)).ToListAsync();
+        }
+
+        public Task<List<TEntity>> GetAllAsync()
+        {
+            return _dbSet.ToListAsync();
         }
     }
 }

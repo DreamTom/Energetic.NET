@@ -5,6 +5,6 @@ namespace Energetic.NET.Basic.Domain.IRepositories
     {
         Task<bool> IsExistsCodeAsync(string code, long id = 0);
 
-        Task<Role> GetRoleIncludeResourcesAsync(long roleId); 
+        Task<Role> GetRoleIncludeResourcesAsync(long roleId);
     }
 }

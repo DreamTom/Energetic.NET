@@ -1,7 +1,6 @@
 ﻿using EasyCaching.Core;
 using Energetic.NET.Basic.Domain.Constants;
 using Energetic.NET.Basic.Domain.IRepositories;
-using Energetic.NET.Basic.Domain.Models;
 using Energetic.NET.Jwt;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +9,7 @@ using System.Security.Claims;
 namespace Energetic.NET.Basic.Domain.Services
 {
     public class UserDomainService(IUserDomainRepository userDomainRepository,
+            IRoleDomainRepository roleDomainRepository,
             ITokenService tokenService,
             IEasyCachingProvider cachingProvider,
             IOptions<JwtConfigOptions> jwtConfigOption)
@@ -61,6 +61,19 @@ namespace Energetic.NET.Basic.Domain.Services
             user ??= await userDomainRepository.RegisterByEmailAddressAsync(emailAddress);
             string token = BuildToken(user);
             return (true, token, user);
+        }
+
+        public async Task<User> UpdateUserRolesAsync(long userId, long[] roleIds)
+        {
+            var user = await userDomainRepository.GetUserIncludeRolesAsync(userId);
+            if (roleIds.Length == 0)
+            {
+                user.SetRoles([]);
+                return user;
+            }
+            var roles = await roleDomainRepository.FindByIdsAsync(roleIds);
+            user.SetRoles(roles);
+            return user;
         }
 
         private bool CheckVerifyCode(string key, string verifyCode)

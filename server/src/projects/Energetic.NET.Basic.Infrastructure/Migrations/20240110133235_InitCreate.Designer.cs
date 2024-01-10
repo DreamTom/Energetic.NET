@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Energetic.NET.Basic.Infrastructure.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20240109191637_InitCreate")]
+    [Migration("20240110133235_InitCreate")]
     partial class InitCreate
     {
         /// <inheritdoc />
@@ -378,6 +378,10 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsEnable")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_enable");
 
                     b.Property<string>("NickName")
                         .IsRequired()

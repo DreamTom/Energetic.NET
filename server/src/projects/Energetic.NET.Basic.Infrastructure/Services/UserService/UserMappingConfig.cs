@@ -7,8 +7,9 @@ namespace Energetic.NET.Basic.Infrastructure.UserService
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<User, UserDetailResponse>()
-                  .Map(dest => dest.UserId, src => src.Id);
+            config.NewConfig<User, UserResponse>();
+            config.NewConfig<Resource, UserResourceTreeResponse>().MapToConstructor(true)
+                .Map(dest => dest.TempId , src=> src.Id);
         }
     }
 }

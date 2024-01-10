@@ -8,17 +8,37 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
     {
         public Task<User?> FindByEmailAdressAsync(string emailAdress)
         {
-            return basicDbContext.Users.FirstOrDefaultAsync(u => u.EmailAddress == emailAdress);
+            return GetQueryableSet().SingleOrDefaultAsync(u => u.EmailAddress == emailAdress);
         }
 
         public Task<User?> FindByPhoneNumberAsync(string phoneNumber)
         {
-            return basicDbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            return GetQueryableSet().SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
         }
 
         public Task<User?> FindByUserNameAsync(string userName)
         {
-            return basicDbContext.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+            return GetQueryableSet().SingleOrDefaultAsync(u => u.UserName == userName);
+        }
+
+        public Task<User> GetUserIncludeRolesAndResourcesAsync(long userId)
+        {
+            return GetQueryableSet().Include(u => u.Roles)
+                .ThenInclude(r => r.Resources.Where(a => a.IsEnable))
+                .SingleAsync(u => u.Id == userId);
+        }
+
+        public Task<User> GetUserIncludeRolesAsync(long userId)
+        {
+            return GetQueryableSet().Include(u => u.Roles)
+                .SingleAsync(u => u.Id == userId);
+        }
+
+        public Task<bool> IsExistsUserNameAsync(string userName, long id = 0)
+        {
+            if (id > 0)
+                return GetQueryableSet().AnyAsync(u => u.UserName == userName && u.Id != id);
+            return GetQueryableSet().AnyAsync(u => u.UserName == userName);
         }
 
         public async Task<User> RegisterByEmailAddressAsync(string emailAddress)
@@ -35,6 +55,11 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
             user.SetPhoneNumber(phoneNumber);
             _ = await basicDbContext.AddAsync(user);
             return user;
+        }
+
+        public Task<bool> IsEnableAsync(long userId)
+        {
+            return GetQueryableSet().AnyAsync(u => u.Id == userId && u.IsEnable);
         }
     }
 }

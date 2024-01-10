@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Energetic.NET.Basic.Application.UserService.Dto;
 
 namespace Energetic.NET.Basic.Application.UserService
 {
     public interface IUserAppService
     {
+        Task<PaginatedList<UserResponse>> GetPageListAsync(UserQueryRequest userQuery);
+
+        Task<UserResourceResponse> GetUserResourcesAsync(long userId);
     }
 }

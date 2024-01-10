@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Energetic.NET.Basic.Application.ResourceService.Dto;
 
 namespace Energetic.NET.Basic.Application.UserService.Dto
 {
     public class LoginResponse
     {
-        public required UserDetailResponse UserInfo { get; set; }
-
         public required string Token { get; set; }
+
+        public required UserResponse UserInfo { get; set; }
     }
 }

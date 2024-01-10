@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Mvc
     {
         public static IActionResult Formatter(this ModelStateDictionary modelState)
         {
-            var error = modelState.Values.First().Errors.First().ErrorMessage;
+            var error = modelState.Values.First(v => v.ValidationState == ModelValidationState.Invalid).Errors.First().ErrorMessage;
             return new BadRequestObjectResult(new ErrorResponseResult(error));
         }
     }

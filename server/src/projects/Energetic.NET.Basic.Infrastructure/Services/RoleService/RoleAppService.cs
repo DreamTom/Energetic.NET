@@ -1,7 +1,5 @@
-﻿using Energetic.NET.Basic.Application.ResourceService.Dto;
-using Energetic.NET.Basic.Application.RoleService;
+﻿using Energetic.NET.Basic.Application.RoleService;
 using Energetic.NET.Basic.Application.RoleService.Dto;
-using Energetic.NET.Basic.Application.Services.RoleService.Dto;
 using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.SharedKernel;
 using MapsterMapper;

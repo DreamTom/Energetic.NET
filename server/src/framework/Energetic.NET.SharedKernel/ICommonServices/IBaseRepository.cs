@@ -8,6 +8,8 @@ namespace Energetic.NET.SharedKernel.ICommonServices
 
         Task<List<TEntity>> FindByIdsAsync(IEnumerable<long> ids);
 
+        Task<List<TEntity>> GetAllAsync();
+
         Task<bool> IsExistsIdAsync(long id);
 
         IQueryable<TEntity> GetQueryableSet();
@@ -15,8 +17,6 @@ namespace Energetic.NET.SharedKernel.ICommonServices
         Task<TEntity> AddAsync(TEntity entity);
 
         void Update(TEntity entity);
-
-        void LogicDelete(TEntity enity);
 
         void Delete(TEntity entity);
     }

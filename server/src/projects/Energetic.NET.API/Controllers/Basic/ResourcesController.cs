@@ -103,7 +103,7 @@ namespace Energetic.NET.API.Controllers.Basic
             var resource = await resourceDomainRepository.FindByIdAsync(id);
             if (resource == null)
                 return DataNotFound("资源未找到或已被删除");
-            resourceDomainRepository.LogicDelete(resource);
+            resource.LogicDelete();
             return Ok(id);
         }
     }

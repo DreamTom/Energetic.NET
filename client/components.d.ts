@@ -25,6 +25,7 @@ declare module '@vue/runtime-core' {
     LayDropdown: typeof import('@layui/layui-vue')['LayDropdown']
     LayDropdownMenu: typeof import('@layui/layui-vue')['LayDropdownMenu']
     LayDropdownMenuItem: typeof import('@layui/layui-vue')['LayDropdownMenuItem']
+    LayException: typeof import('@layui/layui-vue')['LayException']
     LayFooter: typeof import('@layui/layui-vue')['LayFooter']
     LayForm: typeof import('@layui/layui-vue')['LayForm']
     LayFormItem: typeof import('@layui/layui-vue')['LayFormItem']
@@ -62,6 +63,7 @@ declare module '@vue/runtime-core' {
     LayTooltip: typeof import('@layui/layui-vue')['LayTooltip']
     LayTree: typeof import('@layui/layui-vue')['LayTree']
     LayUpload: typeof import('@layui/layui-vue')['LayUpload']
+    LayWatermark: typeof import('@layui/layui-vue')['LayWatermark']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

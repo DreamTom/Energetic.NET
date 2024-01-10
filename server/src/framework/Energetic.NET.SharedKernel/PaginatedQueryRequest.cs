@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Energetic.NET.SharedKernel
 {
-    public record PaginatedQueryRequest(int PageNumber, int PageSize)
+    public record PaginatedQueryRequest(int PageNumber = 1, int PageSize = 20)
     {
         public string? PropName { get; set; }
 

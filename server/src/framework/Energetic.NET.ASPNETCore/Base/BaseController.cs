@@ -95,6 +95,6 @@ namespace Energetic.NET.ASPNETCore
         /// <param name="message">错误消息</param>
         /// <returns></returns>
         [NonAction]
-        public UnauthorizedObjectResult DataNotFound(string message) => new(new ErrorResponseResult(message));
+        public NotFoundObjectResult DataNotFound(string message) => new(new ErrorResponseResult(message));
     }
 }

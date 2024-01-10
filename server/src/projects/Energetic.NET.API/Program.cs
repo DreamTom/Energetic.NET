@@ -1,5 +1,8 @@
 using Energetic.NET.ASPNETCore.Extensions;
 using Energetic.NET.Basic.Application.EmailService;
+using Energetic.NET.Infrastructure.CommonServices;
+using Energetic.NET.Infrastructure.ConfigOptions;
+using Energetic.NET.SharedKernel.ICommonServices;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -12,6 +15,8 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.ConfigureEnergeticNetServices();
     builder.Services.AddConfigOptions<EmailNotifyConfigOptions>();
+    builder.Services.AddConfigOptions<LocalStorageConfigOptions>();
+    builder.Services.AddScoped<IStorageService, LocalStorageService>();
     var app = builder.Build();
 
     app.UseEnergeticNetDefault();

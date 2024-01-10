@@ -14,7 +14,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Text.Json.Serialization;
 
 namespace Energetic.NET.ASPNETCore.Extensions
 {
@@ -37,6 +36,8 @@ namespace Energetic.NET.ASPNETCore.Extensions
 
             App.InitConfiguration(configuration);
             services.AddControllers();
+            services.AddRateLimiterConfig();
+            services.AddConfigOptions<RateLimiterConfigOptions>();
             services.AddConfigOptions<DbConnectionConfigOptions>();
             services.AddConfigOptions<SwaggerConfigOptions>();
             services.AddConfigOptions<JwtConfigOptions>();

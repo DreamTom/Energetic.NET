@@ -67,7 +67,7 @@
 
     <lay-layer v-model="permissionVisible" title="分配权限" :shadeClose="false" :area="['500px', '450px']">
       <div style="height: 320px; overflow: auto">
-        <lay-tree style="margin-left: 40px" :tail-node-icon="false" :data="resources" :showCheckbox="showCheckbox2"
+        <lay-tree style="margin-left: 40px" :tail-node-icon="false" :data="resources" :showCheckbox="true"
           v-model:checkedKeys="checkedResourceIds">
           <template #title="{ data }">
             <lay-icon :class="data.icon"></lay-icon>
@@ -142,6 +142,7 @@ const loadDataSource = async () => {
   }
 }
 
+const resources = ref([])
 const loadResourceTree = async () => {
   let queryForm = { isEnable: true };
   let res = await getResourceTree(queryForm)
@@ -181,6 +182,8 @@ const changeVisible = (text: any, row: any) => {
   }
   isVisible.value = !isVisible.value
 }
+
+//修改角色权限
 const toSubmitPermission = async () =>{
   let res = await editRoleResource(roleId.value, checkedResourceIds.value);
   if (!res.hasError){
@@ -189,6 +192,7 @@ const toSubmitPermission = async () =>{
   }
 }
 
+//修改角色信息
 const toSubmit = () => {
   layFormRef.value.validate(async (isValidate: boolean) => {
     if (!isValidate)
@@ -207,24 +211,28 @@ const toSubmit = () => {
     }
   })
 }
+
+// 关闭角色权限弹窗
 function toCancel() {
   isVisible.value = false
   permissionVisible.value = false
 }
+
+
 const confirm = async (id: string) => {
   let res = await delRole(id)
   if (!res.hasError){
+    layer.msg('删除成功！', { icon: 1, time: 1000 })
     loadDataSource()
   }
 }
 
 const permissionVisible = ref(false)
 const checkedResourceIds = ref([])
-const showCheckbox2 = ref(true)
-
-const resources = ref([])
 
 const roleId = ref('');
+
+// 打开角色授权页面
 const toPrivileges = async (row: any) => {
   roleId.value = row.id;
   let res = await getRoleResourceIds(row.id);

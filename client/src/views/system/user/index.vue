@@ -4,49 +4,29 @@
       <lay-form style="margin-top: 10px">
         <lay-row>
           <lay-col :md="5">
-            <lay-form-item label="用户账号" label-width="80">
-              <lay-input
-                v-model="searchQuery.userAccount"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+            <lay-form-item label="昵称" label-width="80">
+              <lay-input v-model="searchQuery.nickName" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label="用户名" label-width="80">
-              <lay-input
-                v-model="searchQuery.userName"
-                placeholder="请输入"
-                size="sm"
-                :allow-clear="true"
-                style="width: 98%"
-              ></lay-input>
+              <lay-input v-model="searchQuery.userName" placeholder="请输入" size="sm" :allow-clear="true"
+                style="width: 98%"></lay-input>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label="性别" label-width="80">
-              <lay-select
-                class="search-input"
-                size="sm"
-                v-model="searchQuery.sex"
-                :allow-clear="true"
-                placeholder="请选择"
-              >
-                <lay-select-option value="man" label="男"></lay-select-option>
-                <lay-select-option value="woman" label="女"></lay-select-option>
+              <lay-select class="search-input" size="sm" v-model="searchQuery.gender" :allow-clear="true"
+                placeholder="请选择">
+                <lay-select-option :value="0" label="男"></lay-select-option>
+                <lay-select-option :value="1" label="女"></lay-select-option>
               </lay-select>
             </lay-form-item>
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button
-                style="margin-left: 20px"
-                type="primary"
-                size="sm"
-                @click="toSearch"
-              >
+              <lay-button style="margin-left: 20px" type="normal" size="sm" @click="loadDataSource">
                 查询
               </lay-button>
               <lay-button size="sm" @click="toReset"> 重置 </lay-button>
@@ -57,34 +37,25 @@
     </lay-card>
     <!-- table -->
     <div class="table-box">
-      <lay-table
-        :page="page"
-        :height="'100%'"
-        :columns="columns"
-        :loading="loading"
-        :default-toolbar="true"
-        :data-source="dataSource"
-        v-model:selected-keys="selectedKeys"
-        @change="change"
-        @sortChange="sortChange"
-      >
-        <template #status="{ row }">
-          <lay-switch
-            :model-value="row.status"
-            @change="changeStatus($event, row)"
-          ></lay-switch>
+      <lay-table :page="page" :height="'100%'" :columns="columns" :loading="loading" :default-toolbar="true"
+        :data-source="dataSource" @change="loadDataSource" @sortChange="sortChange">
+        <template #isEnable="{ row }">
+          <lay-switch :model-value="row.isEnable"></lay-switch>
+        </template>
+        <template #role="{ row }">
+          <lay-tag style="margin-left: 5px;" v-for="role in row.roles" color="#F5319D" variant="light">{{ role.name }}</lay-tag>
+        </template>
+        <template #gender="{ row }">
+          {{ row.gender == 0 ? '男' : '女' }}
         </template>
         <template #avatar="{ row }">
-          <lay-avatar :src="row.avatar"></lay-avatar>
+          <lay-avatar v-if="row.avatarId" :src="getFileUrl(row.avatarId)"></lay-avatar>
+          <lay-avatar v-else> {{ row.firstLetterName }}</lay-avatar>
         </template>
         <template v-slot:toolbar>
-          <lay-button size="sm" type="primary" @click="changeVisible11('新增')">
+          <lay-button size="sm" type="primary" @click="changeVisible('新增')">
             <lay-icon class="layui-icon-addition"></lay-icon>
-            新增</lay-button
-          >
-          <lay-button size="sm" @click="toRemove">
-            <lay-icon class="layui-icon-delete"></lay-icon>
-            删除
+            新增
           </lay-button>
           <lay-button size="sm" @click="toImport">
             <lay-icon class="layui-icon-upload-drag"></lay-icon>
@@ -92,75 +63,58 @@
           </lay-button>
         </template>
         <template v-slot:operator="{ row }">
-          <lay-button
-            size="xs"
-            type="primary"
-            @click="changeVisible11('编辑', row)"
-            >编辑</lay-button
-          >
-          <lay-popconfirm
-            content="确定要删除此用户吗?"
-            @confirm="confirm"
-            @cancel="cancel"
-          >
-            <lay-button size="xs" border="red" border-style="dashed"
-              >删除</lay-button
-            >
+          <lay-button size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
+          <lay-popconfirm content="确定要删除此用户吗?" @confirm="confirm(row.id)" @cancel="cancel">
+            <lay-button size="xs" border="red" border-style="dashed">删除</lay-button>
           </lay-popconfirm>
         </template>
       </lay-table>
     </div>
 
-    <lay-layer v-model="visible11" :title="title" :area="['500px', '550px']">
+    <lay-layer v-model="isVisible" :title="title" :area="['500px', '560px']">
       <div style="padding: 20px">
-        <lay-form :model="model11" ref="layFormRef11" required>
-          <lay-form-item label="姓名" prop="name">
-            <lay-input v-model="model11.name"></lay-input>
+        <lay-form :model="userModel" ref="layFormRef">
+          <lay-form-item label="昵称" prop="nickName" required>
+            <lay-input v-model="userModel.nickName"></lay-input>
           </lay-form-item>
-          <lay-form-item label="年龄" prop="age">
-            <lay-input v-model="model11.age"></lay-input>
+          <lay-form-item label="姓名" prop="realName">
+            <lay-input v-model="userModel.realName"></lay-input>
           </lay-form-item>
-          <lay-form-item label="性别" prop="sex">
-            <lay-select v-model="model11.sex" style="width: 100%">
-              <lay-select-option value="男" label="男"></lay-select-option>
-              <lay-select-option value="女" label="女"></lay-select-option>
+          <lay-form-item label="用户名" prop="userName" required>
+            <lay-input v-model="userModel.userName"></lay-input>
+          </lay-form-item>
+          <lay-form-item label="角色" prop="roleIds">
+            <lay-select v-model="userModel.roleIds" style="width: 100%" multiple allow-clear placeholder="请选择">
+              <lay-select-option v-for="role in roles" :value="role.value" :label="role.label"></lay-select-option>
             </lay-select>
           </lay-form-item>
-          <lay-form-item label="城市" prop="city">
-            <lay-input v-model="model11.city"></lay-input>
+          <lay-form-item label="性别" prop="gender" required>
+            <lay-select v-model="userModel.gender" style="width: 100%">
+              <lay-select-option :value="0" label="男"></lay-select-option>
+              <lay-select-option :value="1" label="女"></lay-select-option>
+            </lay-select>
           </lay-form-item>
-          <lay-form-item label="email" prop="email">
-            <lay-input v-model="model11.email"></lay-input>
+          <lay-form-item label="头像" prop="avatarId">
+            <div v-show="userModel.avatarId" style="display: inline-block;padding-right: 10px;">
+              <img :src="getFileUrl(userModel.avatarId)" style="width: 64px;height: 64px;cursor: pointer;" />
+              <lay-icon @click="removeFile(userModel.avatarId)" style="font-size: 20px;position:absolute;left:54px;top:-10px;" color="#ff0000" type="layui-icon-close"></lay-icon>
+            </div>
+            <lay-upload text="选择图片" @done="uploadFile" :url="uploadImageUrl" field="image">
+            </lay-upload>
           </lay-form-item>
-          <lay-form-item label="描述" prop="remark">
-            <lay-textarea
-              placeholder="请输入描述"
-              v-model="model11.remark"
-            ></lay-textarea>
+          <lay-form-item label="启用" prop="isEnable" required>
+            <lay-switch :model-value="userModel.isEnable"></lay-switch>
           </lay-form-item>
         </lay-form>
         <div style="width: 100%; text-align: center">
-          <lay-button size="sm" type="primary" @click="toSubmit"
-            >保存</lay-button
-          >
+          <lay-button size="sm" type="primary" @click="toSubmit">保存</lay-button>
           <lay-button size="sm" @click="toCancel">取消</lay-button>
         </div>
       </div>
     </lay-layer>
-    <lay-layer
-      v-model="visibleImport"
-      title="导入用户"
-      :area="['380px', '380px']"
-    >
-      <lay-upload
-        :beforeUpload="beforeUpload10"
-        style="margin: 60px"
-        url="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        v-model="file1"
-        field="file"
-        :auto="false"
-        :drag="true"
-      >
+    <lay-layer v-model="visibleImport" title="导入用户" :area="['380px', '380px']">
+      <lay-upload :beforeUpload="beforeUpload10" style="margin: 60px"
+        url="https://www.mocky.io/v2/5cc8019d300000980a055e76" v-model="file1" field="file" :auto="false" :drag="true">
         <template #preview>
           {{ file1[0]?.name }}
         </template>
@@ -172,47 +126,61 @@
   </lay-container>
 </template>
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { layer } from '@layui/layui-vue'
-const searchQuery = ref({
-  userAccount: '',
+import { getUsers, addUser, editUser, delUser } from '../../../api/module/user';
+import { getRoleDpList } from '../../../api/module/role';
+import { uploadImageUrl, getFileUrl, delFile  } from '../../../api/module/file';
+
+const searchQuery = reactive({
   userName: '',
-  sex: ''
+  gender: null,
+  nickName: '',
+  pageNumber: 1,
+  pageSize: 20,
+  orderBy: '',
+  propName: ''
 })
+
+const roles = ref<any>([])
 
 const visibleImport = ref(false)
 const file1 = ref<any>([])
 function toImport() {
   visibleImport.value = true
 }
-function toReset() {
-  searchQuery.value = {
-    userAccount: '',
-    userName: '',
-    sex: ''
+const toReset = async () => {
+  searchQuery.userName = ''
+  searchQuery.gender = null
+  searchQuery.nickName = ''
+  await loadDataSource()
+}
+
+onMounted(async () => {
+  await loadDataSource()
+  await loadRoles()
+})
+
+const loadRoles = async () => {
+  let res = await getRoleDpList()
+  if (!res.hasError) {
+    roles.value = res;
   }
 }
 
-function toSearch() {
-  page.current = 1
-  change(page)
-}
-
 const loading = ref(false)
-const selectedKeys = ref<string[]>([])
 const page = reactive({ current: 1, limit: 10, total: 100 })
 const columns = ref([
-  { title: '选项', width: '60px', type: 'checkbox', fixed: 'left' },
-  { title: '编号', width: '80px', key: 'id', fixed: 'left', sort: 'desc' },
+  { title: '序号', width: '30px', type: 'number', fixed: 'left' },
+  { title: '用户名', width: '120px', key: 'userName', sort: 'desc' },
+  { title: '昵称', width: '120px', key: 'nickName', sort: 'desc' },
   { title: '头像', width: '50px', key: 'avatar', customSlot: 'avatar' },
-  { title: '姓名', width: '80px', key: 'name', sort: 'desc' },
-  { title: '状态', width: '80px', key: 'status', customSlot: 'status' },
-  { title: '邮箱', width: '120px', key: 'email' },
-  { title: '性别', width: '80px', key: 'sex' },
-  { title: '年龄', width: '80px', key: 'age' },
-  { title: '城市', width: '120px', key: 'city' },
-  { title: '签名', width: '260px', key: 'remark' },
-  { title: '时间', width: '120px', key: 'joinTime' },
+  { title: '姓名', width: '80px', key: 'realName', sort: 'desc' },
+  { title: '性别', width: '80px', key: 'gender', customSlot: 'gender' },
+  { title: '角色', width: '200px', key: 'roles', customSlot: 'role' },
+  { title: '状态', width: '80px', key: 'isEnable', customSlot: 'isEnable' },
+  { title: '创建时间', width: '120px', key: 'createdTime', sort: 'desc' },
+  { title: '修改时间', width: '120px', key: 'updatedTime', sort: 'desc' },
   {
     title: '操作',
     width: '120px',
@@ -221,266 +189,103 @@ const columns = ref([
     fixed: 'right'
   }
 ])
-const change = (page: any) => {
-  loading.value = true
-  setTimeout(() => {
-    dataSource.value = loadDataSource(page.current, page.limit)
-    loading.value = false
-  }, 1000)
-}
-const sortChange = (key: any, sort: number) => {
-  layer.msg(`字段${key} - 排序${sort}, 你可以利用 sort-change 实现服务端排序`)
-}
-const dataSource = ref([
-  {
-    id: '1',
-    name: '张三1',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '18',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '2',
-    name: '张三2',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '3',
-    name: '张三3',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '4',
-    name: '张三4',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '5',
-    name: '张三5',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '6',
-    name: '张三6',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '7',
-    name: '张三7',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '18',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '8',
-    name: '张三8',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '9',
-    name: '张三9',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  },
-  {
-    id: '10',
-    name: '张三10',
-    avatar:
-      'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    email: 'test@qq.com',
-    sex: '男',
-    city: '浙江杭州',
-    age: '20',
-    remark: '花开堪折直须折,莫待无花空折枝.',
-    joinTime: '2022-02-09',
-    status: true
-  }
-])
 
-const changeStatus = (isChecked: boolean, row: any) => {
-  dataSource.value.forEach((item) => {
-    if (item.id === row.id) {
-      layer.msg('Success', { icon: 1 }, () => {
-        item.status = isChecked
-      })
+const sortChange = async (key: any, sort: string) => {
+  searchQuery.orderBy = sort
+  searchQuery.propName = key
+  await loadDataSource()
+}
+
+const dataSource = ref([])
+
+const loadDataSource = async () => {
+  loading.value = true;
+  searchQuery.pageNumber = page.current;
+  searchQuery.pageSize = page.limit;
+  let res = await getUsers(searchQuery);
+  if (!res.hasError) {
+    dataSource.value = res.items;
+    page.total = res.totalCount;
+    loading.value = false;
+  } else {
+    loading.value = false;
+  }
+}
+
+const userModel = reactive({
+  userName: '',
+  gender: 0,
+  nickName: '',
+  realName: '',
+  isEnable: true,
+  avatarId: <any>null,
+  roleIds: [],
+  id: ''
+})
+const layFormRef = ref()
+const isVisible = ref(false)
+const title = ref('新增')
+const changeVisible = (text: any, row?: any) => {
+  title.value = text
+  if (row) {
+    let info = JSON.parse(JSON.stringify(row))
+    Object.assign(userModel, info);
+  } else {
+    Object.assign(userModel, {
+      userName: '',
+      gender: 0,
+      nickName: '',
+      realName: '',
+      isEnable: true,
+      avatarId: null,
+      roleIds: [],
+      id: ''
+    })
+  }
+  isVisible.value = !isVisible.value
+}
+
+function toSubmit() {
+  layFormRef.value.validate(async (isValidate: boolean) => {
+    if (!isValidate)
+      return false
+    let res = userModel.id == '' ? await addUser(userModel) : await editUser(userModel)
+    if (!res.hasError) {
+      layer.msg('保存成功！', { icon: 1, time: 1000 })
+      isVisible.value = false
+      await loadDataSource()
     }
   })
 }
 
-const remove = () => {
-  layer.msg(JSON.stringify(selectedKeys.value), { area: '50%' })
+function toCancel() {
+  isVisible.value = false
 }
 
-const loadDataSource = (page: number, pageSize: number) => {
-  var response = []
-  var startIndex = (page - 1) * pageSize + 1
-  var endIndex = page * pageSize
-  for (var i = startIndex; i <= endIndex; i++) {
-    response.push({
-      id: `${i}`,
-      age: '18',
-      sex: '男',
-      avatar:
-        'https://tse1-mm.cn.bing.net/th/id/OIP-C.0fLeVmNXnV-6Eom3FEUNjgAAAA?w=196&h=196&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-      name: `张三${i}`,
-      email: 'test@qq.com',
-      remark: '花开堪折直须折,莫待无花空折枝.',
-      joinTime: '2022-02-09',
-      city: '浙江杭州',
-      status: true
-    })
+const confirm = async (id: string) => {
+  let res = await delUser(id);
+  if (res){
+    layer.msg('删除成功！', { icon: 1, time: 1000 })
+    await loadDataSource()
   }
-  return response
 }
-const model11 = ref<any>({})
-const layFormRef11 = ref()
-const visible11 = ref(false)
-const title = ref('新增')
-const changeVisible11 = (text: any, row?: any) => {
-  title.value = text
-  if (row) {
-    let info = JSON.parse(JSON.stringify(row))
-    model11.value = info
-  } else {
-    model11.value = {}
-  }
-  visible11.value = !visible11.value
-}
-const submit11 = function () {
-  layFormRef11.value.validate((isValidate: any, model: any, errors: any) => {
-    layer.open({
-      type: 1,
-      title: '表单提交结果',
-      content: `<div style="padding: 10px"><p>是否通过 : ${isValidate}</p> <p>表单数据 : ${JSON.stringify(
-        model
-      )} </p> <p>错误信息 : ${JSON.stringify(errors)}</p></div>`,
-      shade: false,
-      isHtmlFragment: true,
-      btn: [
-        {
-          text: '确认',
-          callback(index: number) {
-            layer.close(index)
-          }
-        }
-      ],
-      area: '500px'
-    })
-  })
-}
-// 清除校验
-const clearValidate11 = function () {
-  layFormRef11.value.clearValidate()
-}
-// 重置表单
-const reset11 = function () {
-  layFormRef11.value.reset()
-}
-function toRemove() {
-  if (selectedKeys.value.length == 0) {
-    layer.msg('您未选择数据，请先选择要删除的数据', { icon: 3, time: 2000 })
-    return
-  }
-  layer.confirm('您将删除所有选中的数据？', {
-    title: '提示',
-    btn: [
-      {
-        text: '确定',
-        callback: (id: any) => {
-          layer.msg('您已成功删除')
-          layer.close(id)
-        }
-      },
-      {
-        text: '取消',
-        callback: (id: any) => {
-          layer.msg('您已取消操作')
-          layer.close(id)
-        }
-      }
-    ]
-  })
-}
-function toSubmit() {
-  layer.msg('保存成功！', { icon: 1, time: 1000 })
-  visible11.value = false
-}
-function toCancel() {
-  visible11.value = false
-}
-function confirm() {
-  layer.msg('您已成功删除')
-}
+
 function cancel() {
   layer.msg('您已取消操作')
 }
+
+const uploadFile = (file: any) =>{
+  let res = JSON.parse(file.data);
+  userModel.avatarId = res.id
+}
+
+const removeFile = async (id: string) => {
+  let res = await delFile(id)
+  if (!res.hasError){
+    userModel.avatarId = null
+  }
+}
+
 const beforeUpload10 = (file: File) => {
   var isOver = false
   if (file.size > 1000) {

@@ -10,6 +10,7 @@ namespace Energetic.NET.Basic.Domain
         {
             services.AddScoped<UserDomainService>();
             services.AddScoped<RoleDomainService>();
+            services.AddScoped<FileAttachmentDomainService>();
         }
     }
 }

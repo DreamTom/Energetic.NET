@@ -1,8 +1,10 @@
 ﻿using Energetic.NET.API.Dto;
+using Energetic.NET.ASPNETCore.Security;
 using Energetic.NET.Basic.Application.EmailService;
 using Energetic.NET.Common.Helpers;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Energetic.NET.API.Controllers
 {
@@ -55,6 +57,7 @@ namespace Energetic.NET.API.Controllers
         /// </summary>
         /// <param name="emailVerificationCodeRequest"></param>
         /// <returns></returns>
+        [EnableRateLimiting(RateLimiterPolicy.Fixed)]
         [HttpPost("sendEmailVerificationCode")]
         public async Task<ActionResult> SendEmailVerificationCode(SendEmailVerificationCodeRequest emailVerificationCodeRequest)
         {

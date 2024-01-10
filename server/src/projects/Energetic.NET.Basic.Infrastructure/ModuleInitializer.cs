@@ -8,6 +8,8 @@ using Energetic.NET.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Energetic.NET.Basic.Application.RoleService;
 using Energetic.NET.Basic.Infrastructure.RoleService;
+using Energetic.NET.Basic.Application.UserService;
+using Energetic.NET.Basic.Infrastructure.UserService;
 
 namespace Energetic.NET.Basic.Infrastructure
 {
@@ -18,9 +20,11 @@ namespace Energetic.NET.Basic.Infrastructure
             services.AddScoped<IUserDomainRepository, UserDomainRepository>();
             services.AddScoped<IResourceDomainRepository, ResourceDomainRepository>();
             services.AddScoped<IRoleDomainRepository, RoleDomainRepository>();
+            services.AddScoped<IFileAttachmentDomainRepository, FileAttachmentRepository>();
             services.AddScoped<IEmailAppService, EmailAppService>();
             services.AddScoped<IResourceAppService, ResourceAppService>();
             services.AddScoped<IRoleAppService, RoleAppService>();
+            services.AddScoped<IUserAppService, UserAppService>();
         }
     }
 }

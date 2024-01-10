@@ -5,6 +5,8 @@
         public void Configure(EntityTypeBuilder<FileAttachment> builder)
         {
             builder.Property(f => f.Path).HasMaxLength(512);
+            builder.Property(f => f.HashCode).HasMaxLength(256);
+            builder.Property(f => f.Name).HasMaxLength(128);
         }
     }
 }

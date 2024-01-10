@@ -32,9 +32,9 @@ namespace Energetic.NET.Infrastructure.EFCore
             IMapper mapper, int pageNumber = 1, int pageSize = 20, string? propName = default, string? orderBy = default) where TSource : class
         {
             var count = await source.CountAsync();
-            if (!string.IsNullOrWhiteSpace(propName) && !string.IsNullOrWhiteSpace(orderBy))
-                source = source.OrderByPropName(propName, orderBy);
             var query = source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            if (!string.IsNullOrWhiteSpace(propName) && !string.IsNullOrWhiteSpace(orderBy))
+                query = query.OrderByPropName(propName, orderBy);
             var items = await mapper.From(query).ProjectToType<TDestination>().ToListAsync();
             return new PaginatedList<TDestination>(items, count, pageNumber, pageSize);
         }

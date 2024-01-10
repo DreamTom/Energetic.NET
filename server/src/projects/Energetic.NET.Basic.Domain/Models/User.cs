@@ -7,7 +7,7 @@ namespace Energetic.NET.Basic.Domain.Models
     {
         public string? UserName { get; private set; }
 
-        public string NickName { get; init; } = nickName;
+        public string NickName { get; set; } = nickName;
 
         public string? RealName { get; private set; }
 
@@ -25,42 +25,48 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public RegisterWay RegisterWay { get; private set; } = registerWay;
 
-        public List<Role> Roles { get; } = [];
+        public List<Role> Roles { get; private set; } = [];
+
+        public bool IsEnable { get; private set; }
 
         public void AddByUserName(string userName, string? realName, string password, Gender gender)
         {
             UserName = userName;
             Gender = gender;
             RealName = realName;
+            IsEnable = true;
             SetPassword(password);
         }
 
         public void SetEmailAddress(string emailAddress)
         {
             EmailAddress = emailAddress;
+            IsEnable = true;
         }
 
         public void SetPhoneNumber(string phoneNumber)
         {
             PhoneNumber = phoneNumber;
+            IsEnable = true;
         }
 
-        public void AddOrUpdate(string? realName, string? phoneNumber, string? emailAddress, Gender gender, long? avatarId)
+        public void AddOrUpdate(string userName, string? realName, Gender gender, long? avatarId, bool isEnable)
         {
+            UserName = userName;
             RealName = realName;
-            PhoneNumber = phoneNumber;
-            EmailAddress = emailAddress;
             Gender = gender;
             AvatarId = avatarId;
+            IsEnable = isEnable;
         }
 
-        public void AddOrUpdateRoles(List<Role> roles)
+        public void ChangeNickName(string nickName)
         {
-            roles.ForEach(role =>
-            {
-                if (!Roles.Contains(role))
-                    Roles.Add(role);
-            });
+            NickName = nickName;
+        }
+
+        public void SetRoles(List<Role> roles)
+        {
+            Roles = roles;
         }
 
         public void SetPassword(string password)
