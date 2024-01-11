@@ -23,7 +23,7 @@
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button style="margin-left: 20px" type="normal" size="sm" @click="toSearch">
+              <lay-button v-permission="['sys:resources:query']" style="margin-left: 20px" type="normal" size="sm" @click="toSearch">
                 查询
               </lay-button>
               <lay-button size="sm" @click="toReset"> 重置 </lay-button>
@@ -46,7 +46,7 @@
           </div>
         </template>
         <template #toolbar>
-          <lay-button size="sm" @click="changeVisible('新建', null)" type="primary">
+          <lay-button v-permission="['sys:resources:add']" size="sm" @click="changeVisible('新建', null)" type="primary">
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增
           </lay-button>
@@ -56,13 +56,13 @@
           {{ row.name }}
         </template>
         <template #option="{ row }">
-          <lay-button v-show="row.type != 3" @click="changeVisible('新建', row)" size="xs" border="blue" border-style="dashed">
+          <lay-button v-permission="['sys:resources:add']" v-show="row.type != 3" @click="changeVisible('新建', row)" size="xs" border="blue" border-style="dashed">
             添加
           </lay-button>
-          <lay-button @click="changeVisible('修改', row)" size="xs" border="green" border-style="dashed">
+          <lay-button v-permission="['sys:resources:edit']" @click="changeVisible('修改', row)" size="xs" border="green" border-style="dashed">
             修改
           </lay-button>
-          <lay-button v-show="!row.children" @click="toRemove(row.id)" size="xs" border="red" border-style="dashed">
+          <lay-button v-permission="['sys:resources:delete']" v-show="!row.children" @click="toRemove(row.id)" size="xs" border="red" border-style="dashed">
             删除
           </lay-button>
         </template>
@@ -160,7 +160,6 @@
 import { ref, onMounted, reactive } from 'vue'
 import { layer } from '@layui/layui-vue'
 import { getResourceTree, getMenuTree, addResource, editResource, delResource } from '../../../api/module/resource'
-import { number } from 'echarts';
 
 const loading = ref(false)
 const dataSource = ref([]);
@@ -228,7 +227,7 @@ onMounted(async () => {
 })
 
 const loadMenuTree = async () => {
-  let res = await getMenuTree();
+  let res = await getMenuTree(true);
   if (!res.hasError) {
     options.value = res;
   }

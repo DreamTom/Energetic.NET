@@ -10,8 +10,10 @@ namespace Energetic.NET.Basic.Domain.IRepositories
 
         Task<bool> IsExistsApiAsync(string apiUrl, RequestMethod requestMethod, long id = 0);
 
-        Task<List<Resource>> GetResourcesAsync(string? name, string? routePath, string? code, bool? isEnable);
+        Task<List<Resource>> GetResourcesAsync(string? name, string? routePath, string? code);
 
-        Task<List<Resource>> GetResourcesIgnoreButtonsAsync();
+        Task<Resource?> FindByApiUrlAndRequestMethodAsync(string apiUrl, RequestMethod requestMethod);
+
+        Task<List<Resource>> GetAllEnableResourcesAsync(bool ingoreButton = false);
     }
 }

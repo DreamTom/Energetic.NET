@@ -157,6 +157,7 @@ namespace Energetic.NET.API.Controllers
         /// 当前已登录用户权限
         /// </summary>
         /// <returns></returns>
+        [NoPermissionCheck]
         [HttpGet("loginUserResources")]
         public async Task<ActionResult<UserResourceResponse>> GetLoginUserResources()
         {

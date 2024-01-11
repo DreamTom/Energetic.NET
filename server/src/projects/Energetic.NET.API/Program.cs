@@ -2,6 +2,7 @@ using Energetic.NET.ASPNETCore.Extensions;
 using Energetic.NET.Basic.Application.EmailService;
 using Energetic.NET.Infrastructure.CommonServices;
 using Energetic.NET.Infrastructure.ConfigOptions;
+using Energetic.NET.Middleware.Auth;
 using Energetic.NET.SharedKernel.ICommonServices;
 using Serilog;
 
@@ -16,7 +17,12 @@ try
     builder.ConfigureEnergeticNetServices();
     builder.Services.AddConfigOptions<EmailNotifyConfigOptions>();
     builder.Services.AddConfigOptions<LocalStorageConfigOptions>();
+    builder.Services.AddConfigOptions<AppConfigOptions>();
     builder.Services.AddScoped<IStorageService, LocalStorageService>();
+    builder.Services.Configure<MvcOptions>(option =>
+    {
+        option.Filters.Add<UserPermissionFilter>();
+    });
     var app = builder.Build();
 
     app.UseEnergeticNetDefault();

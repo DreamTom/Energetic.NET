@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Auth\" />
     <Folder Include="Logger\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\framework\Energetic.NET.ASPNETCore\Energetic.NET.ASPNETCore.csproj" />
+    <ProjectReference Include="..\Energetic.NET.Basic.Domain\Energetic.NET.Basic.Domain.csproj" />
   </ItemGroup>
 
 </Project>

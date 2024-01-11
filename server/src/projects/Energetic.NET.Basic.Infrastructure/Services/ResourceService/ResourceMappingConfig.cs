@@ -1,5 +1,4 @@
 ﻿using Energetic.NET.Basic.Application.ResourceService.Dto;
-using Energetic.NET.SharedKernel;
 using Mapster;
 
 namespace Energetic.NET.Basic.Infrastructure.ResourceService
@@ -12,7 +11,7 @@ namespace Energetic.NET.Basic.Infrastructure.ResourceService
             config.NewConfig<Resource, ResourceTreeResponse>().MapToConstructor(true);
             config.NewConfig<ResourceEditRequest, Resource>().MapToConstructor(true)
                 .Map(dest => dest.ParentId, src => GetParentId(src.ReleationIds));
-            config.NewConfig<Resource, TreeResponse>().Map(dest => dest.Label, src => src.Name);
+            config.NewConfig<Resource, SimpleResourceTreeResponse>().MapToConstructor(true);
         }
 
         private static long GetParentId(string releationIds)

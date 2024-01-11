@@ -27,10 +27,15 @@ router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, n
   const userStore = useUserStore();
 
   if(to.meta.requireAuth) {
-    next();
+    const res = userStore.menuList.some((m: { id: string; }) => m.id == to.path)
+    if (res){
+      next();
+    } else{
+      next({path: '/error/403'});
+    }
   } else if(to.matched.length == 0) {
     next({path: '/error/404'})
-  }  else {
+  } else {
     next();
   }
 })

@@ -244,8 +244,7 @@ export default {
       if (document.body.clientWidth < 768) {
         appStore.collapse = true
       }
-      //userInfoStore.loadMenus()
-      //userInfoStore.loadPermissions()
+      //userInfoStore.loadResources()
     })
 
     const changeVisible = () => {

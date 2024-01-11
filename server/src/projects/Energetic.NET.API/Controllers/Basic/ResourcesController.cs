@@ -10,7 +10,6 @@ namespace Energetic.NET.API.Controllers.Basic
     /// <summary>
     /// 资源管理
     /// </summary>
-    [AllowAnonymous]
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/resources")]
     public class ResourcesController(IResourceDomainRepository resourceDomainRepository,
@@ -54,13 +53,15 @@ namespace Energetic.NET.API.Controllers.Basic
         }
 
         /// <summary>
-        /// 获取菜单树，不包括按钮
+        /// 获取菜单树下拉列表
         /// </summary>
+        /// <param name="ingoreButton">是否忽略按钮</param>
         /// <returns></returns>
+        [NoPermissionCheck]
         [HttpGet("menuTree")]
-        public async Task<ActionResult<TreeResponse>> GetMenuTree()
+        public async Task<ActionResult<SimpleResourceTreeResponse>> GetMenuTree(bool ingoreButton = false)
         {
-            return Ok(await resourceAppService.GetMenuTreeAsync());
+            return Ok(await resourceAppService.GetMenuTreeAsync(ingoreButton));
         }
 
         /// <summary>

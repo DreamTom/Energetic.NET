@@ -4,8 +4,8 @@ export const getResourceTree = function(queryForm: any){
   return Http.get('/resources', queryForm)
 }
 
-export const getMenuTree = function(){
-  return Http.get('/resources/menuTree')
+export const getMenuTree = function(ingoreButton: boolean){
+  return Http.get('/resources/menuTree?ingoreButton='+ingoreButton)
 }
 
 export const addResource = function(addForm:any){

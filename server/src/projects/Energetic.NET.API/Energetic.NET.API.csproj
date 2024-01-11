@@ -36,6 +36,7 @@
     <ProjectReference Include="..\Energetic.NET.Basic.Application\Energetic.NET.Basic.Application.csproj" />
     <ProjectReference Include="..\Energetic.NET.Basic.Domain\Energetic.NET.Basic.Domain.csproj" />
     <ProjectReference Include="..\Energetic.NET.Basic.Infrastructure\Energetic.NET.Basic.Infrastructure.csproj" />
+    <ProjectReference Include="..\Energetic.NET.Middleware\Energetic.NET.Middleware.csproj" />
   </ItemGroup>
 
   <ItemGroup>

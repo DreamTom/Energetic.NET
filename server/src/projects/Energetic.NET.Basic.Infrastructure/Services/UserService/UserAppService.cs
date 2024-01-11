@@ -4,15 +4,16 @@ using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.SharedKernel;
 using MapsterMapper;
 using Energetic.NET.Basic.Domain.Enums;
-using Energetic.NET.Basic.Application.RoleService.Dto;
+using Energetic.NET.Basic.Domain.Services;
 
 namespace Energetic.NET.Basic.Infrastructure.UserService
 {
-    internal class UserAppService(IUserDomainRepository userDomainRepository, IMapper mapper) : IUserAppService
+    internal class UserAppService(IUserDomainRepository userDomainRepository,
+        UserDomainService userDomainService, IMapper mapper) : IUserAppService
     {
         public async Task<PaginatedList<UserResponse>> GetPageListAsync(UserQueryRequest userQuery)
         {
-            var query = userDomainRepository.GetQueryableSet();
+            var query = userDomainRepository.GetQueryableSet().Where(u => !u.IsAdmin);
             if (!string.IsNullOrWhiteSpace(userQuery.UserName))
                 query = query.Where(u => !string.IsNullOrWhiteSpace(u.UserName) && u.UserName.Contains(userQuery.UserName));
             if (!string.IsNullOrWhiteSpace(userQuery.NickName))
@@ -27,8 +28,7 @@ namespace Energetic.NET.Basic.Infrastructure.UserService
         public async Task<UserResourceResponse> GetUserResourcesAsync(long userId)
         {
             var nodeTree = new List<UserResourceTreeResponse>();
-            var user = await userDomainRepository.GetUserIncludeRolesAndResourcesAsync(userId);
-            var allResources = user.Roles.SelectMany(u => u.Resources);
+            var allResources = await userDomainService.GetUserResourcesAsync(userId);
             var menus = allResources.Where(u => u.Type != ResourceType.Button);
             var allNodes = mapper.Map<List<UserResourceTreeResponse>>(menus);
             var parentNodes = allNodes.Where(a => a.ParentId == 0);

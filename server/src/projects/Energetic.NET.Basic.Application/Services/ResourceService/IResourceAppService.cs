@@ -6,6 +6,6 @@ namespace Energetic.NET.Basic.Application.ResourceService
     {
         Task<List<ResourceTreeResponse>> GetResourceTreeAsync(ResourceQueryRequest resourceQuery);
 
-        Task<List<TreeResponse>> GetMenuTreeAsync();
+        Task<List<SimpleResourceTreeResponse>> GetMenuTreeAsync(bool ignoreButton = false);
     }
 }

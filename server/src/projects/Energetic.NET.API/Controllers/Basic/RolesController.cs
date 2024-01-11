@@ -3,14 +3,12 @@ using Energetic.NET.Basic.Application.RoleService;
 using Energetic.NET.Basic.Application.RoleService.Dto;
 using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.Basic.Domain.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers.Basic
 {
     /// <summary>
     /// 角色管理
     /// </summary>
-    [AllowAnonymous]
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/roles")]
     public class RolesController(IRoleAppService roleAppService,
@@ -113,6 +111,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// 角色下拉列表
         /// </summary>
         /// <returns></returns>
+        [NoPermissionCheck]
         [HttpGet("dpList")]
         public async Task<ActionResult<List<DropdownItemResponse>>> GetDropdownList()
         {

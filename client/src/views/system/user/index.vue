@@ -26,7 +26,7 @@
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button style="margin-left: 20px" type="normal" size="sm" @click="loadDataSource">
+              <lay-button v-permission="['sys:users:query']" style="margin-left: 20px" type="normal" size="sm" @click="loadDataSource">
                 查询
               </lay-button>
               <lay-button size="sm" @click="toReset"> 重置 </lay-button>
@@ -53,7 +53,7 @@
           <lay-avatar v-else> {{ row.firstLetterName }}</lay-avatar>
         </template>
         <template v-slot:toolbar>
-          <lay-button size="sm" type="primary" @click="changeVisible('新增')">
+          <lay-button v-permission="['sys:users:add']" size="sm" type="primary" @click="changeVisible('新增')">
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增
           </lay-button>
@@ -63,9 +63,9 @@
           </lay-button>
         </template>
         <template v-slot:operator="{ row }">
-          <lay-button size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
+          <lay-button v-permission="['sys:users:edit']" size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
           <lay-popconfirm content="确定要删除此用户吗?" @confirm="confirm(row.id)" @cancel="cancel">
-            <lay-button size="xs" border="red" border-style="dashed">删除</lay-button>
+            <lay-button v-permission="['sys:users:delete']" size="xs" border="red" border-style="dashed">删除</lay-button>
           </lay-popconfirm>
         </template>
       </lay-table>

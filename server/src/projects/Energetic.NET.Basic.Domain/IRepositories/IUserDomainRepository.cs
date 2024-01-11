@@ -17,8 +17,12 @@ namespace Energetic.NET.Basic.Domain.IRepositories
 
         Task<User> GetUserIncludeRolesAsync(long userId);
 
-        Task<User> GetUserIncludeRolesAndResourcesAsync(long userId);
+        Task<List<Resource>> GetUserResourcesAsync(long userId);
 
         Task<bool> IsEnableAsync(long userId);
+
+        Task<bool> IsAdminAsync(long userId);
+
+        Task<bool> IsHasResourceAsync(long userId, long resourceId);
     }
 }

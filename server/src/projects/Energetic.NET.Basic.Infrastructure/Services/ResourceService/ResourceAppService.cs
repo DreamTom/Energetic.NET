@@ -13,7 +13,7 @@ namespace Energetic.NET.Basic.Infrastructure.ResourceService
         {
             var nodeTree = new List<ResourceTreeResponse>();
             var resources = await resourceDomainRepository.GetResourcesAsync(resourceQuery.Name,
-                resourceQuery.RoutePath, resourceQuery.Code, resourceQuery.IsEnable);
+                resourceQuery.RoutePath, resourceQuery.Code);
             var allNodes = mapper.Map<List<ResourceTreeResponse>>(resources);
             var parentNodes = allNodes.Where(r => r.ParentId == 0).ToList();
             if (parentNodes.Count == 0)
@@ -38,11 +38,11 @@ namespace Energetic.NET.Basic.Infrastructure.ResourceService
             }
         }
 
-        public async Task<List<TreeResponse>> GetMenuTreeAsync()
+        public async Task<List<SimpleResourceTreeResponse>> GetMenuTreeAsync(bool ignoreButton = false)
         {
-            var nodeTree = new List<TreeResponse>();
-            var resources = await resourceDomainRepository.GetResourcesIgnoreButtonsAsync();
-            var allNodes = mapper.Map<List<TreeResponse>>(resources);
+            var nodeTree = new List<SimpleResourceTreeResponse>();
+            var resources = await resourceDomainRepository.GetAllEnableResourcesAsync(ignoreButton);
+            var allNodes = mapper.Map<List<SimpleResourceTreeResponse>>(resources);
             var parentNodes = allNodes.Where(r => r.ParentId == 0).ToList();
             foreach (var parentNode in parentNodes)
             {
@@ -52,7 +52,7 @@ namespace Energetic.NET.Basic.Infrastructure.ResourceService
             return nodeTree;
         }
 
-        private static void SetChildNodes(List<TreeResponse> allNodes, TreeResponse parentNode)
+        private static void SetChildNodes(List<SimpleResourceTreeResponse> allNodes, SimpleResourceTreeResponse parentNode)
         {
             var childNodes = allNodes.Where(x => x.ParentId == parentNode.Id).ToList();
             parentNode.Children.AddRange(childNodes);

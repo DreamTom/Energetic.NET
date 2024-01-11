@@ -3,7 +3,7 @@ using Energetic.NET.Basic.Domain.IRepositories;
 
 namespace Energetic.NET.Basic.Infrastructure.Responsitories
 {
-    internal class UserDomainRepository(BasicDbContext basicDbContext) 
+    internal class UserDomainRepository(BasicDbContext basicDbContext)
         : BaseRepository<User>(basicDbContext), IUserDomainRepository
     {
         public Task<User?> FindByEmailAdressAsync(string emailAdress)
@@ -21,11 +21,12 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
             return GetQueryableSet().SingleOrDefaultAsync(u => u.UserName == userName);
         }
 
-        public Task<User> GetUserIncludeRolesAndResourcesAsync(long userId)
+        public async Task<List<Resource>> GetUserResourcesAsync(long userId)
         {
-            return GetQueryableSet().Include(u => u.Roles)
+            var user = await GetQueryableSet().Include(u => u.Roles)
                 .ThenInclude(r => r.Resources.Where(a => a.IsEnable))
                 .SingleAsync(u => u.Id == userId);
+            return user.Roles.SelectMany(r => r.Resources).ToList();
         }
 
         public Task<User> GetUserIncludeRolesAsync(long userId)
@@ -60,6 +61,19 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
         public Task<bool> IsEnableAsync(long userId)
         {
             return GetQueryableSet().AnyAsync(u => u.Id == userId && u.IsEnable);
+        }
+
+        public Task<bool> IsAdminAsync(long userId)
+        {
+            return GetQueryableSet().AnyAsync(u => u.Id == userId && u.IsAdmin);
+        }
+
+        public async Task<bool> IsHasResourceAsync(long userId, long resourceId)
+        {
+            var user = await GetQueryableSet().Include(u => u.Roles)
+                .ThenInclude(r => r.Resources.Where(r => r.Id == resourceId))
+                .SingleAsync(u => u.Id == userId);
+            return user.Roles.SelectMany(r => r.Resources).Any();
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Energetic.NET.Basic.Domain.Services
 {
     public class UserDomainService(IUserDomainRepository userDomainRepository,
             IRoleDomainRepository roleDomainRepository,
+            IResourceDomainRepository resourceDomainRepository,
             ITokenService tokenService,
             IEasyCachingProvider cachingProvider,
             IOptions<JwtConfigOptions> jwtConfigOption)
@@ -74,6 +75,14 @@ namespace Energetic.NET.Basic.Domain.Services
             var roles = await roleDomainRepository.FindByIdsAsync(roleIds);
             user.SetRoles(roles);
             return user;
+        }
+
+        public async Task<List<Resource>> GetUserResourcesAsync(long userId)
+        {
+            if (await userDomainRepository.IsAdminAsync(userId))
+                return await resourceDomainRepository.GetAllEnableResourcesAsync();
+            else
+                return await userDomainRepository.GetUserResourcesAsync(userId);
         }
 
         private bool CheckVerifyCode(string key, string verifyCode)

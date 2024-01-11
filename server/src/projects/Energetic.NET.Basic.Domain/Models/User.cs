@@ -78,5 +78,10 @@ namespace Energetic.NET.Basic.Domain.Models
         {
             return passwordHash == password.ComputeMd5Hash();
         }
+
+        public void SetAdmin()
+        {
+            IsAdmin = true;
+        }
     }
 }

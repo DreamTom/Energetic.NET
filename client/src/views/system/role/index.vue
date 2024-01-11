@@ -17,7 +17,7 @@
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button style="margin-left: 20px" type="normal" size="sm" @click="loadDataSource">
+              <lay-button v-permission="['sys:roles:query']" style="margin-left: 20px" type="normal" size="sm" @click="loadDataSource">
                 查询
               </lay-button>
               <lay-button size="sm" @click="toReset"> 重置 </lay-button>
@@ -36,10 +36,10 @@
             新增</lay-button>
         </template>
         <template v-slot:operator="{ row }">
-          <lay-button size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
-          <lay-button size="xs" border="blue" border-style="dashed" @click="toPrivileges(row)">分配权限</lay-button>
+          <lay-button v-permission="['sys:roles:edit']" size="xs" border="green" border-style="dashed" @click="changeVisible('编辑', row)">编辑</lay-button>
+          <lay-button v-permission="['sys:roles:auth','sys:roles:queryAuth']" size="xs" border="blue" border-style="dashed" @click="toPrivileges(row)">分配权限</lay-button>
           <lay-popconfirm content="确定要删除此角色吗?" @confirm="confirm(row.id)">
-            <lay-button size="xs" border="red" border-style="dashed">删除</lay-button>
+            <lay-button v-permission="['sys:roles:delete']" size="xs" border="red" border-style="dashed">删除</lay-button>
           </lay-popconfirm>
         </template>
       </lay-table>
@@ -87,7 +87,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { layer } from '@layui/layui-vue'
 import { addRole, delRole, editRole, getRoles, getRoleResourceIds,editRoleResource } from '../../../api/module/role';
-import { getResourceTree } from '../../../api/module/resource';
+import { getMenuTree } from '../../../api/module/resource';
 
 const searchQuery = reactive({
   name: '',
@@ -125,7 +125,7 @@ const dataSource = ref([])
 
 onMounted(async () => {
   await loadDataSource();
-  await loadResourceTree();
+  await loadMenuTree();
 })
 
 const loadDataSource = async () => {
@@ -143,9 +143,8 @@ const loadDataSource = async () => {
 }
 
 const resources = ref([])
-const loadResourceTree = async () => {
-  let queryForm = { isEnable: true };
-  let res = await getResourceTree(queryForm)
+const loadMenuTree = async () => {
+  let res = await getMenuTree(false)
   if (!res.hasError){
     resources.value = res;
   }
