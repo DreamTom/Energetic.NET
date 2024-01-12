@@ -52,13 +52,6 @@ const loginForm = reactive({
   loginWay: 2
 });
 const rules = ref({
-  emailAddress:[{
-    required: true,
-    message: '邮箱不能为空'
-  },{
-    type: 'email',
-    message: '邮箱不合法'
-  }],
   verificationCode:{
     required: true,
     message: '验证码不能为空'

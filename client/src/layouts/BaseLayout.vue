@@ -245,6 +245,7 @@ export default {
         appStore.collapse = true
       }
       //userInfoStore.loadResources()
+      userInfoStore.loadMenus()
     })
 
     const changeVisible = () => {

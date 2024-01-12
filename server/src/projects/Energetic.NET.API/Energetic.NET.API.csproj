@@ -13,15 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="notify-template.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Templates\email-notify-template.html" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Templates\email-notify-template.html" />
+    <Content Include="Templates\email-notify-template.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -41,12 +35,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Templates\email-notify-template.html">
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿global using Energetic.NET.ASPNETCore;
+global using Energetic.NET.ASPNETCore.Attributes;
 global using Microsoft.AspNetCore.Mvc;
 global using Energetic.NET.Infrastructure;
 global using Energetic.NET.SharedKernel;

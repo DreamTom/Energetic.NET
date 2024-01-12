@@ -1,0 +1,12 @@
+version: '1.0'
+services:
+  tom-api:
+    build: .
+    ports:
+      - 5004:8080
+    restart: always
+    container_name: energetic-net
+    image: energetic
+    volumes:
+      - /home/new/Uploads:/app/Uploads
+      

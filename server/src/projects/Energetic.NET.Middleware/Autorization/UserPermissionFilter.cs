@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 
-namespace Energetic.NET.Middleware.Auth
+namespace Energetic.NET.Middleware.Authorization
 {
     public class UserPermissionFilter(ICurrentUserService currentUserService,
         IUserDomainRepository userDomainRepository,

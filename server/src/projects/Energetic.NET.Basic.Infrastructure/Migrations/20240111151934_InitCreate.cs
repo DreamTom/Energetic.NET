@@ -19,9 +19,9 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false),
-                    name = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                    name = table.Column<string>(type: "varchar(128)", unicode: false, maxLength: 128, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    hash_code = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                    hash_code = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 256, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     path = table.Column<string>(type: "varchar(512)", unicode: false, maxLength: 512, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),

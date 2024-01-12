@@ -2,7 +2,8 @@ using Energetic.NET.ASPNETCore.Extensions;
 using Energetic.NET.Basic.Application.EmailService;
 using Energetic.NET.Infrastructure.CommonServices;
 using Energetic.NET.Infrastructure.ConfigOptions;
-using Energetic.NET.Middleware.Auth;
+using Energetic.NET.Middleware.Authorization;
+using Energetic.NET.Middleware.Logger;
 using Energetic.NET.SharedKernel.ICommonServices;
 using Serilog;
 
@@ -26,6 +27,8 @@ try
     var app = builder.Build();
 
     app.UseEnergeticNetDefault();
+    app.UseMiddleware<DbLoggingMiddleware>();
+    app.MapControllers();
 
     app.Run();
 }

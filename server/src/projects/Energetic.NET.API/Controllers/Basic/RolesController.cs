@@ -9,6 +9,7 @@ namespace Energetic.NET.API.Controllers.Basic
     /// <summary>
     /// 角色管理
     /// </summary>
+    [Module("角色管理")]
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/roles")]
     public class RolesController(IRoleAppService roleAppService,
@@ -21,6 +22,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// </summary>
         /// <param name="roleQuery"></param>
         /// <returns></returns>
+        [Function("角色列表")]
         [HttpGet]
         public async Task<ActionResult<PaginatedList<RoleResponse>>> GetPageList([FromQuery] RoleQueryRequest roleQuery)
         {
@@ -32,6 +34,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// </summary>
         /// <param name="roleAdd"></param>
         /// <returns></returns>
+        [Function("新增角色")]
         [HttpPost]
         public async Task<ActionResult<RoleResponse>> Add(RoleEditRequest roleAdd)
         {
@@ -48,6 +51,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// <param name="id"></param>
         /// <param name="roleEdit"></param>
         /// <returns></returns>
+        [Function("修改角色")]
         [HttpPut("{id:long}")]
         public async Task<ActionResult<RoleResponse>> Edit(long id, RoleEditRequest roleEdit)
         {
@@ -66,6 +70,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Function("删除角色")]
         [HttpDelete("{id:long}")]
         public async Task<ActionResult<long>> Delete(long id)
         {
@@ -82,6 +87,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Function("获取角色权限id集合")]
         [HttpGet("{id:long}/resourceIds")]
         public async Task<ActionResult<long[]>> GetRoleResourceIds(long id)
         {
@@ -97,6 +103,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// <param name="id"></param>
         /// <param name="resourceIds"></param>
         /// <returns></returns>
+        [Function("更新角色权限")]
         [HttpPut("{id:long}/resources")]
         public async Task<ActionResult<List<ResourceResponse>>> EditRoleResources(long id, long[] resourceIds)
         {
@@ -111,6 +118,7 @@ namespace Energetic.NET.API.Controllers.Basic
         /// 角色下拉列表
         /// </summary>
         /// <returns></returns>
+        [Function("获取角色下拉列表")]
         [NoPermissionCheck]
         [HttpGet("dpList")]
         public async Task<ActionResult<List<DropdownItemResponse>>> GetDropdownList()

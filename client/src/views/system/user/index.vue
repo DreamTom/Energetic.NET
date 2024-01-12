@@ -264,7 +264,7 @@ function toCancel() {
 
 const confirm = async (id: string) => {
   let res = await delUser(id);
-  if (res){
+  if (!res.hasError){
     layer.msg('删除成功！', { icon: 1, time: 1000 })
     await loadDataSource()
   }

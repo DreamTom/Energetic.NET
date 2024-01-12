@@ -35,7 +35,7 @@
     <!-- table -->
     <div class="table-box">
       <lay-table :height="`100%`" :loading="loading" children-column-name="children" :columns="columns"
-        :data-source="dataSource" :default-toolbar="true" :expand-index="1">
+        :data-source="dataSource" :default-toolbar="true" :expand-index="0">
         <template #path="{ row }">
           {{ row.routePath ? row.routePath : row.apiUrl }} &nbsp;&nbsp;
           <div v-show="row.apiUrl">
@@ -171,12 +171,6 @@ const searchQuery = ref({
 
 const columns = [
   {
-    fixed: 'left',
-    type: 'checkbox',
-    title: '复选'
-  },
-
-  {
     title: '菜单名称',
     key: 'name',
     customSlot: 'name'
@@ -189,6 +183,7 @@ const columns = [
   {
     title: '路由地址',
     key: 'routePath',
+    width: '360px',
     customSlot: 'path'
   },
   {

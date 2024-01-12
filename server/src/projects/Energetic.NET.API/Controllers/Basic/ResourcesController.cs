@@ -2,8 +2,6 @@
 using Energetic.NET.Basic.Application.ResourceService.Dto;
 using Energetic.NET.Basic.Domain.Enums;
 using Energetic.NET.Basic.Domain.IRepositories;
-using Energetic.NET.SharedKernel;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Energetic.NET.API.Controllers.Basic
 {

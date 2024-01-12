@@ -14,7 +14,7 @@ namespace Energetic.NET.Basic.Application.UserService.Dto
 
         public string? SecondCode { get; set; }
 
-        public RegisterWay LoginWay { get; set; }
+        public LoginWay LoginWay { get; set; }
 
         public string? VerificationCode { get; set; }
         

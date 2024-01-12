@@ -4,19 +4,20 @@ using Serilog;
 
 namespace Energetic.NET.ASPNETCore
 {
-    public static class WebApplicationExtensions
+    public static class ApplicationBuliderExtensions
     {
         /// <summary>
         /// 框架内置中间件启用
         /// </summary>
         /// <param name="app"></param>
         /// <returns></returns>
-        public static WebApplication UseEnergeticNetDefault(this WebApplication app)
+        public static IApplicationBuilder UseEnergeticNetDefault(this IApplicationBuilder app)
         {
-            App.InitServiceProvider(app.Services);
+            App.InitServiceProvider(app.ApplicationServices);
             //app.UseExceptionHandler();
+            var envirment = App.GetRequiredService<IWebHostEnvironment>();
             var config = App.GetConfigOptions<SwaggerConfigOptions>();
-            if (app.Environment.IsDevelopment() || (!app.Environment.IsDevelopment() && config.EnableInProduction))
+            if (envirment.IsDevelopment() || (!envirment.IsDevelopment() && config.EnableInProduction))
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -27,14 +28,13 @@ namespace Energetic.NET.ASPNETCore
                 });
             }
             app.UseStaticFiles();
-            app.UseSerilogRequestLogging();
+            //app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseCors();//启用Cors
             app.UseRateLimiter();
             app.UseForwardedHeaders();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapControllers();
             return app;
         }
     }

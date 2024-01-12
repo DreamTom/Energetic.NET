@@ -50,16 +50,16 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
 
                     b.Property<string>("HashCode")
                         .IsRequired()
-                        .HasMaxLength(32)
+                        .HasMaxLength(256)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("varchar(256)")
                         .HasColumnName("hash_code");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(32)
+                        .HasMaxLength(128)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(32)")
+                        .HasColumnType("varchar(128)")
                         .HasColumnName("name");
 
                     b.Property<string>("Path")

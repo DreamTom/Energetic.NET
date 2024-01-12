@@ -21,6 +21,18 @@ export const useUserStore = defineStore({
         this.permissions = res.permissions;
         this.menuList = treeToList(res.menus)
       }
+    },
+    async loadMenus(){
+      const { data, code } = await menu();
+      if(code == 200) {
+        this.menus = data;
+      }
+    },
+    async loadPermissions(){
+      const { data, code } = await permission();
+      if(code == 200) {
+        this.permissions = data;
+      }
     }
   },
   persist: {

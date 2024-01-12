@@ -12,6 +12,7 @@ namespace Energetic.NET.API.Controllers
     /// <summary>
     /// 用户管理
     /// </summary>
+    [Module("用户管理")]
     [UnitOfWork(typeof(BasicDbContext))]
     [Route("api/users")]
     public class UsersController(IUserDomainRepository userDomainRepository,
@@ -26,6 +27,7 @@ namespace Energetic.NET.API.Controllers
         /// <param name="captcha"></param>
         /// <param name="regRequest"></param>
         /// <returns></returns>
+        [Function("用户注册")]
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromServices] ICaptcha captcha, RegRequest regRequest)
@@ -46,13 +48,14 @@ namespace Energetic.NET.API.Controllers
         /// <param name="captcha"></param>
         /// <param name="loginRequest"></param>
         /// <returns></returns>
+        [Function("用户登录")]
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login([FromServices] ICaptcha captcha, LoginRequest loginRequest)
         {
             User user = null;
             string token = string.Empty;
-            if (loginRequest.LoginWay == RegisterWay.UserName)
+            if (loginRequest.LoginWay == LoginWay.UserName)
             {
                 if (!captcha.Validate(loginRequest.CaptchaId, loginRequest.VerificationCode))
                     return ValidateFailed("验证码错误");
@@ -62,7 +65,7 @@ namespace Energetic.NET.API.Controllers
                 user = User;
                 token = Token;
             }
-            else if (loginRequest.LoginWay == RegisterWay.PhoneNumber)
+            else if (loginRequest.LoginWay == LoginWay.PhoneNumber)
             {
                 var (IsSuccess, Token, User) = await userDomainService.LoginByPhoneNumberAsync(loginRequest.PhoneNumber, loginRequest.SecondCode);
                 if (!IsSuccess)
@@ -72,7 +75,7 @@ namespace Energetic.NET.API.Controllers
                 user = User;
                 token = Token;
             }
-            else if (loginRequest.LoginWay == RegisterWay.EmailAddress)
+            else if (loginRequest.LoginWay == LoginWay.EmailAddress)
             {
                 var (IsSuccess, Token, User) = await userDomainService.LoginByEmailAddressAsync(loginRequest.EmailAddress, loginRequest.SecondCode);
                 if (!IsSuccess)
@@ -95,6 +98,7 @@ namespace Energetic.NET.API.Controllers
         /// <param name="configuration"></param>
         /// <param name="userAdd"></param>
         /// <returns></returns>
+        [Function("新增用户")]
         [HttpPost]
         public async Task<ActionResult<UserResponse>> Add([FromServices] IConfiguration configuration, UserEditRequest userAdd)
         {
@@ -119,6 +123,7 @@ namespace Energetic.NET.API.Controllers
         /// <param name="id"></param>
         /// <param name="userAdd"></param>
         /// <returns></returns>
+        [Function("修改用户")]
         [HttpPut("{id:long}")]
         public async Task<ActionResult<UserResponse>> Edit([FromServices] IConfiguration configuration, long id, UserEditRequest userAdd)
         {
@@ -142,6 +147,7 @@ namespace Energetic.NET.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Function("删除用户")]
         [HttpDelete("{id:long}")]
         public async Task<ActionResult<long>> Delete(long id)
         {
@@ -157,6 +163,7 @@ namespace Energetic.NET.API.Controllers
         /// 当前已登录用户权限
         /// </summary>
         /// <returns></returns>
+        [Function("获取已登录用户权限")]
         [NoPermissionCheck]
         [HttpGet("loginUserResources")]
         public async Task<ActionResult<UserResourceResponse>> GetLoginUserResources()
@@ -169,6 +176,7 @@ namespace Energetic.NET.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Function("查看用户")]
         [HttpGet("{id:long}")]
         public async Task<ActionResult<UserResponse>> Detail(long id)
         {
@@ -183,6 +191,7 @@ namespace Energetic.NET.API.Controllers
         /// </summary>
         /// <param name="userQuery"></param>
         /// <returns></returns>
+        [Function("用户列表")]
         [HttpGet]
         public async Task<ActionResult<PaginatedList<UserResponse>>> GetPageList([FromQuery] UserQueryRequest userQuery)
         {

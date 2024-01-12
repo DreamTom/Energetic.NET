@@ -54,7 +54,6 @@ namespace Energetic.NET.ASPNETCore.Extensions
                     policy.WithOrigins(corsConfig.AllowOrigins).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                 });
             });
-            services.AddFluentValidationAutoValidation();
             services.Configure<JsonOptions>(options =>
             {
                 // 设置时间格式。而非“2008-08-08T08:08:08”这样的格式
@@ -73,6 +72,7 @@ namespace Energetic.NET.ASPNETCore.Extensions
             });
             //services.AddExceptionHandler<ApiExceptionHandler>();
             var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
+            services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblies(assemblies);
             services.AddAllDbContexts(assemblies);
             services.RunModuleInitializers(assemblies);
