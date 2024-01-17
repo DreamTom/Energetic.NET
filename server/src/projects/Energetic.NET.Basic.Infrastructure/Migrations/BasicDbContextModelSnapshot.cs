@@ -437,6 +437,129 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                     b.ToTable("sys_user");
                 });
 
+            modelBuilder.Entity("Energetic.NET.Basic.Domain.Models.UserLoginHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasPrecision(3)
+                        .HasColumnType("datetime(3)")
+                        .HasColumnName("created_time");
+
+                    b.Property<string>("LoginAccount")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("login_account");
+
+                    b.Property<string>("LoginIp")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("login_ip");
+
+                    b.Property<int>("LoginResult")
+                        .HasColumnType("int")
+                        .HasColumnName("login_result");
+
+                    b.Property<int>("LoginWay")
+                        .HasColumnType("int")
+                        .HasColumnName("login_way");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("message");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sys_user_login_history");
+
+                    b.ToTable("sys_user_login_history");
+                });
+
+            modelBuilder.Entity("Energetic.NET.Basic.Domain.Models.UserOperationHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasPrecision(3)
+                        .HasColumnType("datetime(3)")
+                        .HasColumnName("created_time");
+
+                    b.Property<string>("FunctionName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("function_name");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("message");
+
+                    b.Property<string>("ModuleName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("module_name");
+
+                    b.Property<string>("NickName")
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("nick_name");
+
+                    b.Property<string>("OperatorAccount")
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("operator_account");
+
+                    b.Property<string>("RequestAddress")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("request_address");
+
+                    b.Property<string>("RequestMethod")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("request_method");
+
+                    b.Property<int>("RequestResult")
+                        .HasColumnType("int")
+                        .HasColumnName("request_result");
+
+                    b.Property<int>("TakingTime")
+                        .HasColumnType("int")
+                        .HasColumnName("taking_time");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sys_user_operation_history");
+
+                    b.ToTable("sys_user_operation_history");
+                });
+
             modelBuilder.Entity("Energetic.NET.Basic.Domain.Models.UserRole", b =>
                 {
                     b.Property<long>("RoleId")

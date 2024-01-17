@@ -24,5 +24,9 @@ namespace Energetic.NET.Basic.Domain.IRepositories
         Task<bool> IsAdminAsync(long userId);
 
         Task<bool> IsHasResourceAsync(long userId, long resourceId);
+
+        Task PublishLoginEventAsync(UserLoginHistory userLoginHistory);
+
+        Task AddUserLoginHistoryAsync(UserLoginHistory userLoginHistory);
     }
 }

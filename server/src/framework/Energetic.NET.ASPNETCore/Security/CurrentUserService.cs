@@ -7,13 +7,12 @@ namespace Energetic.NET.ASPNETCore.Security
 {
     internal class CurrentUserService(IHttpContextAccessor contextAccessor) : ICurrentUserService
     {
-        private readonly IHttpContextAccessor _contextAccessor = contextAccessor;
 
         public IUserInfo? CurrentUser => GetCurrentUserInfo();
 
         public IUserInfo? GetCurrentUserInfo()
         {
-            var httpContext = _contextAccessor?.HttpContext;
+            var httpContext = contextAccessor?.HttpContext;
             if (httpContext  == null) 
                 return null;
 
@@ -38,6 +37,14 @@ namespace Energetic.NET.ASPNETCore.Security
                 TenantId = 0,
                 RealName = realName,
             };
+        }
+
+        public string GetClientIpAddress()
+        {
+            var ip = contextAccessor.HttpContext?.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(ip))
+                ip = contextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+            return string.IsNullOrWhiteSpace(ip) ? "unknown" : ip;
         }
     }
 }

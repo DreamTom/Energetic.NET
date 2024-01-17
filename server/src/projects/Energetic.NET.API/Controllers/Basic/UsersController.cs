@@ -59,29 +59,25 @@ namespace Energetic.NET.API.Controllers
             {
                 if (!captcha.Validate(loginRequest.CaptchaId, loginRequest.VerificationCode))
                     return ValidateFailed("验证码错误");
-                var (IsSuccess, Token, User) = await userDomainService.LoginByUserNameAndPasswordAsync(loginRequest.UserName, loginRequest.Password);
-                if (!IsSuccess)
-                    return ValidateFailed("用户名或密码错误");
+                var (LoginFailedResult, Token, User) = await userDomainService.LoginByUserNameAndPasswordAsync(loginRequest.UserName, loginRequest.Password);
+                if (LoginFailedResult != null)
+                    return ValidateFailed(LoginFailedResult);
                 user = User;
                 token = Token;
             }
             else if (loginRequest.LoginWay == LoginWay.PhoneNumber)
             {
-                var (IsSuccess, Token, User) = await userDomainService.LoginByPhoneNumberAsync(loginRequest.PhoneNumber, loginRequest.SecondCode);
-                if (!IsSuccess)
-                    return ValidateFailed("短信验证码错误");
-                if (!user.IsEnable)
-                    return ValidateFailed("用户已被禁用");
+                var (LoginFailedResult, Token, User) = await userDomainService.LoginByPhoneNumberAsync(loginRequest.PhoneNumber, loginRequest.SecondCode);
+                if (LoginFailedResult != null)
+                    return ValidateFailed(LoginFailedResult);
                 user = User;
                 token = Token;
             }
             else if (loginRequest.LoginWay == LoginWay.EmailAddress)
             {
-                var (IsSuccess, Token, User) = await userDomainService.LoginByEmailAddressAsync(loginRequest.EmailAddress, loginRequest.SecondCode);
-                if (!IsSuccess)
-                    return ValidateFailed("邮箱验证码错误");
-                if (!user.IsEnable)
-                    return ValidateFailed("用户已被禁用");
+                var (LoginFailedResult, Token, User) = await userDomainService.LoginByEmailAddressAsync(loginRequest.EmailAddress, loginRequest.SecondCode);
+                if (LoginFailedResult != null)
+                    return ValidateFailed(LoginFailedResult);
                 user = User;
                 token = Token;
             }
@@ -131,13 +127,10 @@ namespace Energetic.NET.API.Controllers
                 return DataNotFound("用户不存在或已被删除");
             if (await userDomainRepository.IsExistsUserNameAsync(userAdd.UserName, id))
                 return ValidateFailed("用户名已存在");
-            var defaultPassword = configuration[ConfigKey.DefaultPassword];
-            if (string.IsNullOrWhiteSpace(defaultPassword))
-                defaultPassword = "123456";
+
             var user = await userDomainService.UpdateUserRolesAsync(id, userAdd.RoleIds);
             user.AddOrUpdate(userAdd.UserName, userAdd.RealName, userAdd.Gender, userAdd.AvatarId, userAdd.IsEnable);
             user.ChangeNickName(userAdd.NickName);
-            user.SetPassword(defaultPassword);
             userDomainRepository.Update(user);
             return Ok(mapper.Map<UserResponse>(user));
         }

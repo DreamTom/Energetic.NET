@@ -1,9 +1,11 @@
 ﻿using Energetic.NET.Basic.Domain.Enums;
+using Energetic.NET.Basic.Domain.Events;
 using Energetic.NET.Basic.Domain.IRepositories;
+using MediatR;
 
 namespace Energetic.NET.Basic.Infrastructure.Responsitories
 {
-    internal class UserDomainRepository(BasicDbContext basicDbContext)
+    internal class UserDomainRepository(BasicDbContext basicDbContext, IMediator? mediator)
         : BaseRepository<User>(basicDbContext), IUserDomainRepository
     {
         public Task<User?> FindByEmailAdressAsync(string emailAdress)
@@ -74,6 +76,17 @@ namespace Energetic.NET.Basic.Infrastructure.Responsitories
                 .ThenInclude(r => r.Resources.Where(r => r.Id == resourceId))
                 .SingleAsync(u => u.Id == userId);
             return user.Roles.SelectMany(r => r.Resources).Any();
+        }
+
+        public async Task PublishLoginEventAsync(UserLoginHistory userLoginHistory)
+        {
+            ArgumentNullException.ThrowIfNull(mediator);
+            await mediator.Publish(new UserLoginEvent(userLoginHistory));
+        }
+
+        public async Task AddUserLoginHistoryAsync(UserLoginHistory userLoginHistory)
+        {
+            await basicDbContext.AddAsync(userLoginHistory);
         }
     }
 }

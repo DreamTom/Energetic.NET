@@ -76,6 +76,7 @@ namespace Energetic.NET.ASPNETCore.Extensions
             services.AddValidatorsFromAssemblies(assemblies);
             services.AddAllDbContexts(assemblies);
             services.RunModuleInitializers(assemblies);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assemblies.ToArray()));
             var config = new TypeAdapterConfig();
             config.Scan(assemblies.ToArray());
             services.AddSingleton(config);

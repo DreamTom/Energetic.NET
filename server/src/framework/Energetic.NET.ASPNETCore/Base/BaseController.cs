@@ -22,6 +22,15 @@ namespace Energetic.NET.ASPNETCore
             }
         }
 
+        [NonAction]
+        public virtual string GetClientIpAddress()
+        {
+            var ip = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(ip))
+                ip = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+            return string.IsNullOrWhiteSpace(ip) ? "unknown" : ip;
+        }
+
         /// <summary>
         /// 验证失败响应
         /// </summary>

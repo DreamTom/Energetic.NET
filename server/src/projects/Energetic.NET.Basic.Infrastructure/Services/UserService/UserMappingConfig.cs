@@ -10,6 +10,7 @@ namespace Energetic.NET.Basic.Infrastructure.UserService
             config.NewConfig<User, UserResponse>();
             config.NewConfig<Resource, UserResourceTreeResponse>().MapToConstructor(true)
                 .Map(dest => dest.TempId , src=> src.Id);
+            config.NewConfig<UserEditRequest, User>().MapToConstructor(true);
         }
     }
 }

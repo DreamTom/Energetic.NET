@@ -1,13 +1,15 @@
 ﻿using Energetic.NET.Infrastructure;
 using IdGen;
+using MediatR;
 using Microsoft.Extensions.Options;
 
 namespace Energetic.NET.Basic.Infrastructure
 {
     public class BasicDbContext(DbContextOptions<BasicDbContext> dbContextOptions,
         AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor,
-        IIdGenerator<long> idGenerator, IOptions<DbConnectionConfigOptions> dbConnectionConfig)
-        : BaseDbContext(dbContextOptions, auditableEntitySaveChangesInterceptor, idGenerator, dbConnectionConfig)
+        IIdGenerator<long> idGenerator, IOptions<DbConnectionConfigOptions> dbConnectionConfig, IMediator? mediator)
+        : BaseDbContext(dbContextOptions, auditableEntitySaveChangesInterceptor,
+            idGenerator, dbConnectionConfig, mediator)
     {
         protected override string TablePrefix => "sys_";
 
@@ -24,5 +26,7 @@ namespace Energetic.NET.Basic.Infrastructure
         public DbSet<Resource> Resources { get; set; }
 
         public DbSet<FileAttachment> FileAttachments { get; set; }
+
+        public DbSet<UserLoginHistory> UserLoginHistories { get; set; }
     }
 }

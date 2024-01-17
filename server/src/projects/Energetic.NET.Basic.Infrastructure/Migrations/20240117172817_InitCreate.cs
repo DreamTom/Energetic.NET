@@ -156,6 +156,58 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "sys_user_login_history",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: true),
+                    login_account = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    login_ip = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    login_way = table.Column<int>(type: "int", nullable: false),
+                    login_result = table.Column<int>(type: "int", nullable: false),
+                    message = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    created_time = table.Column<DateTime>(type: "datetime(3)", precision: 3, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_sys_user_login_history", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "sys_user_operation_history",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: true),
+                    operator_account = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    nick_name = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    module_name = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    function_name = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    request_address = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    request_method = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    request_result = table.Column<int>(type: "int", nullable: false),
+                    taking_time = table.Column<int>(type: "int", nullable: false),
+                    created_time = table.Column<DateTime>(type: "datetime(3)", precision: 3, nullable: false),
+                    message = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_sys_user_operation_history", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "sys_role_resource",
                 columns: table => new
                 {
@@ -232,6 +284,12 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "sys_role_resource");
+
+            migrationBuilder.DropTable(
+                name: "sys_user_login_history");
+
+            migrationBuilder.DropTable(
+                name: "sys_user_operation_history");
 
             migrationBuilder.DropTable(
                 name: "sys_user_role");

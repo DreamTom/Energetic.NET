@@ -1,5 +1,6 @@
 ﻿using EasyCaching.Core;
 using Energetic.NET.Basic.Domain.Constants;
+using Energetic.NET.Basic.Domain.Enums;
 using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.Jwt;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,8 @@ namespace Energetic.NET.Basic.Domain.Services
             IResourceDomainRepository resourceDomainRepository,
             ITokenService tokenService,
             IEasyCachingProvider cachingProvider,
-            IOptions<JwtConfigOptions> jwtConfigOption)
+            IOptions<JwtConfigOptions> jwtConfigOption,
+            ICurrentUserService currentUserService)
     {
         /// <summary>
         /// 用户名密码登录
@@ -21,13 +23,22 @@ namespace Energetic.NET.Basic.Domain.Services
         /// <param name="userName">用户名</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public async Task<(bool IsSuccess, string? Token, User? User)> LoginByUserNameAndPasswordAsync(string userName, string password)
+        public async Task<(LoginFailedResult? LoginFailedResult, string? Token, User? User)> LoginByUserNameAndPasswordAsync(string userName, string password)
         {
             var user = await userDomainRepository.FindByUserNameAsync(userName);
             if (user == null || !user.CheckPassword(password))
-                return (false, null, null);
+            {
+                await PublishLoginEventAsync(null, userName, LoginWay.UserName, ResultType.Fail, LoginFailedResult.UserNameOrPasswordIsWrong);
+                return (LoginFailedResult.UserNameOrPasswordIsWrong, null, null);
+            }
+            if (!user.IsEnable)
+            {
+                await PublishLoginEventAsync(user.Id, userName, LoginWay.UserName, ResultType.Fail, LoginFailedResult.UserIsForbidden);
+                return (LoginFailedResult.UserIsForbidden, null, null);
+            }
+            await PublishLoginEventAsync(user.Id, userName, LoginWay.UserName, ResultType.Success, null);
             string token = BuildToken(user);
-            return (true, token, user);
+            return (null, token, user);
         }
 
         /// <summary>
@@ -36,15 +47,24 @@ namespace Energetic.NET.Basic.Domain.Services
         /// <param name="phoneNumber">手机号</param>
         /// <param name="secondCode">验证码</param>
         /// <returns></returns>
-        public async Task<(bool IsSuccess, string? Token, User? User)> LoginByPhoneNumberAsync(string phoneNumber, string secondCode)
+        public async Task<(LoginFailedResult? LoginFailedResult, string? Token, User? User)> LoginByPhoneNumberAsync(string phoneNumber, string secondCode)
         {
             string key = CacheKey.LoginByPhoneNumberPrefix + phoneNumber;
             if (!CheckVerifyCode(key, secondCode))
-                return (false, null, null);
+            {
+                await PublishLoginEventAsync(null, phoneNumber, LoginWay.PhoneNumber, ResultType.Fail, LoginFailedResult.SmsVerificationCodeIsWrong);
+                return (LoginFailedResult.SmsVerificationCodeIsWrong, null, null);
+            }
             var user = await userDomainRepository.FindByPhoneNumberAsync(phoneNumber);
+            if (user != null && !user.IsEnable)
+            {
+                await PublishLoginEventAsync(user.Id, phoneNumber, LoginWay.PhoneNumber, ResultType.Fail, LoginFailedResult.UserIsForbidden);
+                return (LoginFailedResult.UserIsForbidden, null, null);
+            }
             user ??= await userDomainRepository.RegisterByPhoneNumberAsync(phoneNumber);
+            await PublishLoginEventAsync(user.Id, phoneNumber, LoginWay.PhoneNumber, ResultType.Success, null);
             string token = BuildToken(user);
-            return (true, token, user);
+            return (null, token, user);
         }
 
         /// <summary>
@@ -53,15 +73,25 @@ namespace Energetic.NET.Basic.Domain.Services
         /// <param name="emailAddress">邮箱地址</param>
         /// <param name="secondCode">验证码</param>
         /// <returns></returns>
-        public async Task<(bool IsSuccess, string? Token, User? User)> LoginByEmailAddressAsync(string emailAddress, string secondCode)
+        public async Task<(LoginFailedResult? LoginFailedResult, string? Token, User? User)>
+            LoginByEmailAddressAsync(string emailAddress, string secondCode)
         {
             string key = CacheKey.LoginByEmailAddressPrefix + emailAddress;
             if (!CheckVerifyCode(key, secondCode))
-                return (false, null, null);
+            {
+                await PublishLoginEventAsync(null, emailAddress, LoginWay.EmailAddress, ResultType.Fail, LoginFailedResult.EmailVerifcationCodeIsWrong);
+                return (LoginFailedResult.EmailVerifcationCodeIsWrong, null, null);
+            }
             var user = await userDomainRepository.FindByEmailAdressAsync(emailAddress);
+            if (user != null && !user.IsEnable)
+            {
+                await PublishLoginEventAsync(user.Id, emailAddress, LoginWay.EmailAddress, ResultType.Fail, LoginFailedResult.UserIsForbidden);
+                return (LoginFailedResult.UserIsForbidden, null, null);
+            }
             user ??= await userDomainRepository.RegisterByEmailAddressAsync(emailAddress);
+            await PublishLoginEventAsync(user.Id, emailAddress, LoginWay.EmailAddress, ResultType.Success, null);
             string token = BuildToken(user);
-            return (true, token, user);
+            return (null, token, user);
         }
 
         public async Task<User> UpdateUserRolesAsync(long userId, long[] roleIds)
@@ -103,6 +133,15 @@ namespace Energetic.NET.Basic.Domain.Services
             if (!string.IsNullOrWhiteSpace(user.RealName))
                 claims.Add(new(JwtRegisteredClaimNames.Name, user.RealName));
             return tokenService.BuildToken(claims, jwtConfigOption.Value);
+        }
+
+        private async Task PublishLoginEventAsync(long? userId, string loginAccount, LoginWay loginWay, ResultType loginResult, LoginFailedResult? loginFailedResult)
+        {
+            var msg = "登录成功";
+            if (loginFailedResult != null)
+                msg = loginFailedResult.GetDescription();
+            var ip = currentUserService.GetClientIpAddress();
+            await userDomainRepository.PublishLoginEventAsync(new UserLoginHistory(userId, loginAccount, loginWay, loginResult, ip, msg));
         }
     }
 }
