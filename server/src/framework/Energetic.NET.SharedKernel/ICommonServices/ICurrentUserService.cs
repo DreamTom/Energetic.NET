@@ -12,7 +12,5 @@ namespace Energetic.NET.SharedKernel
         IUserInfo? CurrentUser { get; }
 
         IUserInfo? GetCurrentUserInfo();
-
-        string GetClientIpAddress();
     }
 }

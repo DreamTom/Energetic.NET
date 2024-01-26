@@ -6,6 +6,7 @@ using Energetic.NET.Common.JsonConverters;
 using Energetic.NET.Infrastructure;
 using Energetic.NET.Jwt;
 using Energetic.NET.SharedKernel;
+using Energetic.NET.SharedKernel.ICommonServices;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MailKitSimplified.Sender;
@@ -42,6 +43,7 @@ namespace Energetic.NET.ASPNETCore.Extensions
             services.AddConfigOptions<SwaggerConfigOptions>();
             services.AddConfigOptions<JwtConfigOptions>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IClientService, ClientService>();
             services.AddHttpContextAccessor();
             services.AddJwtAuthentication(App.GetConfigOptions<JwtConfigOptions>());
             services.AddSwaggerConfig();

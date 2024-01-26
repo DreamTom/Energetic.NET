@@ -15,7 +15,8 @@ namespace Energetic.NET.Basic.Domain.Services
             ITokenService tokenService,
             IEasyCachingProvider cachingProvider,
             IOptions<JwtConfigOptions> jwtConfigOption,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IClientService clientService)
     {
         /// <summary>
         /// 用户名密码登录
@@ -140,7 +141,7 @@ namespace Energetic.NET.Basic.Domain.Services
             var msg = "登录成功";
             if (loginFailedResult != null)
                 msg = loginFailedResult.GetDescription();
-            var ip = currentUserService.GetClientIpAddress();
+            var ip = clientService.GetClientIpAddress();
             await userDomainRepository.PublishLoginEventAsync(new UserLoginHistory(userId, loginAccount, loginWay, loginResult, ip, msg));
         }
     }

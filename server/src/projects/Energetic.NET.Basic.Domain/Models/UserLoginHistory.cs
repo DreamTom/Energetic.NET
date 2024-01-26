@@ -12,6 +12,12 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public string LoginIp { get; init; } = loginIp;
 
+        public string LoginLocation { get; init; }
+
+        public string Browser { get; init; }
+
+        public string OperatingSystem { get; init; } 
+
         public LoginWay LoginWay { get; init; } = loginWay;
 
         public ResultType LoginResult { get; init; } = loginResult;

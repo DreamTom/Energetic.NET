@@ -38,13 +38,5 @@ namespace Energetic.NET.ASPNETCore.Security
                 RealName = realName,
             };
         }
-
-        public string GetClientIpAddress()
-        {
-            var ip = contextAccessor.HttpContext?.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            if (string.IsNullOrWhiteSpace(ip))
-                ip = contextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString();
-            return string.IsNullOrWhiteSpace(ip) ? "unknown" : ip;
-        }
     }
 }

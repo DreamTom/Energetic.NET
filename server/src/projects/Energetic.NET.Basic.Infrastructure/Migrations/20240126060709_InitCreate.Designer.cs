@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Energetic.NET.Basic.Infrastructure.Migrations
 {
     [DbContext(typeof(BasicDbContext))]
-    [Migration("20240117172817_InitCreate")]
+    [Migration("20240126060709_InitCreate")]
     partial class InitCreate
     {
         /// <inheritdoc />
