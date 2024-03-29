@@ -1,4 +1,4 @@
-import BaseLayout from '../../layouts/BaseLayout.vue';
+import BasicLayout from '../../layouts/BasicLayout.vue';
 import Login from '../../views/login/index.vue';
 
 
@@ -15,14 +15,14 @@ export default [
   {
     path: '/workspace',
     redirect: '/workspace/workbench',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '工作空间' },
     children: [
       {
         path: '/workspace/workbench',
         name: 'Workbench',
         component: () => import('../../views/workSpace/workbench/index.vue'),
-        meta: { title: '工作台', requireAuth: false, affix: true, closable: false },
+        meta: { title: '工作台', requireAuth: true, affix: true, closable: false },
       },
       {
         path: '/workspace/console',
@@ -42,7 +42,7 @@ export default [
     ]
   }, {
     path: '/error',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '错误页面' },
     children: [
       {
@@ -68,7 +68,7 @@ export default [
     ]
   }, {
     path: '/system',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '系统管理' },
     children: [
       {
@@ -114,7 +114,7 @@ export default [
     ]
   }, {
     path: '/result',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '错误页面' },
     children: [
       {
@@ -130,7 +130,7 @@ export default [
     ]
   }, {
     path: '/list',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '列表页面' },
     children: [
       {
@@ -156,7 +156,7 @@ export default [
     ]
   }, {
     path: '/form',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '表单页面' },
     children: [
       {
@@ -184,7 +184,7 @@ export default [
     ]
   }, {
     path: '/directive',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '内置指令' },
     children: [
       {
@@ -195,7 +195,7 @@ export default [
     ]
   }, {
     path: '/component',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '常用组件' },
     children: [
       {
@@ -216,7 +216,7 @@ export default [
     ]
   }, {
     path: '/enrollee',
-    component: BaseLayout,
+    component: BasicLayout,
     meta: { title: '个人中心' },
     children: [
       {

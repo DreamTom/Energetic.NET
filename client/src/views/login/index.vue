@@ -31,7 +31,7 @@
                 <phoneNumberLoginForm />
               </lay-tab-item>
             </lay-tab>
-            <lay-line>Other login methods</lay-line>
+            <lay-line style="margin: 34px 0px;">Other login methods</lay-line>
             <ul class="other-ways">
               <li>
                 <div class="line-container">
@@ -150,7 +150,7 @@ const method = ref('0')
   position: relative;
   overflow: hidden;
   width: 940px;
-  height: 520px;
+  height: 540px;
   max-width: calc(100vw - 28px);
   border-radius: 4px;
   background: hsla(0, 0%, 100%, 0.5);
@@ -180,7 +180,7 @@ const method = ref('0')
 }
 
 .login-ID {
-  padding: 20px;
+  padding: 20px 30px;
   width: 380px;
   min-width: 380px;
 }
