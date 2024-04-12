@@ -15,7 +15,6 @@ namespace Energetic.NET.Basic.Domain.Services
             ITokenService tokenService,
             IEasyCachingProvider cachingProvider,
             IOptions<JwtConfigOptions> jwtConfigOption,
-            ICurrentUserService currentUserService,
             IClientService clientService)
     {
         /// <summary>
@@ -142,7 +141,12 @@ namespace Energetic.NET.Basic.Domain.Services
             if (loginFailedResult != null)
                 msg = loginFailedResult.GetDescription();
             var ip = clientService.GetClientIpAddress();
-            await userDomainRepository.PublishLoginEventAsync(new UserLoginHistory(userId, loginAccount, loginWay, loginResult, ip, msg));
+            var ipLocation = clientService.GetIpLocation();
+            var browser = clientService.GetBrowserInfo();
+            var operatingSystem = clientService.GetOperatingSystemInfo();
+            var userLoginHistory = new UserLoginHistory(userId, loginAccount, loginWay, loginResult, ip, msg);
+            userLoginHistory.SetClientInfo(ipLocation, browser, operatingSystem);
+            await userDomainRepository.PublishLoginEventAsync(userLoginHistory);
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Energetic.NET.Basic.Infrastructure
             services.AddScoped<IResourceDomainRepository, ResourceDomainRepository>();
             services.AddScoped<IRoleDomainRepository, RoleDomainRepository>();
             services.AddScoped<IFileAttachmentDomainRepository, FileAttachmentRepository>();
+            services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
             services.AddScoped<IEmailAppService, EmailAppService>();
             services.AddScoped<IResourceAppService, ResourceAppService>();
             services.AddScoped<IRoleAppService, RoleAppService>();

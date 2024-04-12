@@ -15,8 +15,7 @@ namespace Energetic.NET.Basic.Infrastructure.RoleService
                 query = query.Where(r => r.Name.Contains(roleQuery.Name));
             if (!string.IsNullOrWhiteSpace(roleQuery.Code))
                 query = query.Where(r => r.Code.Contains(roleQuery.Code));
-            return await query.ToPageListAsync<Role, RoleResponse>(mapper, roleQuery.PageNumber, roleQuery.PageSize,
-                roleQuery.PropName, roleQuery.OrderBy);
+            return await query.ToPageListAsync<Role, RoleResponse>(mapper, roleQuery.GetPaginatedQuery());
         }
 
         public async Task<List<RoleResourceTreeResponse>> GetRoleResourcesTreeAsync(long roleId)

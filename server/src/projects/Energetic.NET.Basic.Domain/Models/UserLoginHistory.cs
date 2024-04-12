@@ -12,11 +12,11 @@ namespace Energetic.NET.Basic.Domain.Models
 
         public string LoginIp { get; init; } = loginIp;
 
-        public string LoginLocation { get; init; }
+        public string LoginLocation { get; private set; } = string.Empty;
 
-        public string Browser { get; init; }
+        public string Browser { get; private set; } = string.Empty;
 
-        public string OperatingSystem { get; init; } 
+        public string OperatingSystem { get; private set; } = string.Empty;
 
         public LoginWay LoginWay { get; init; } = loginWay;
 
@@ -25,5 +25,12 @@ namespace Energetic.NET.Basic.Domain.Models
         public string? Message { get; init; } = message;
 
         public DateTime CreatedTime { get; init; } = DateTime.Now;
+
+        public void SetClientInfo(string loginLocation, string browser, string operatingSystem)
+        {
+            LoginLocation = loginLocation;
+            Browser = browser;
+            OperatingSystem = operatingSystem;
+        }
     }
 }

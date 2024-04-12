@@ -10,9 +10,11 @@ namespace Energetic.NET.SharedKernel.ICommonServices
     {
         string GetClientIpAddress();
 
-        string GetOperationSystemInfo();
+        string GetOperatingSystemInfo();
 
         string GetBrowserInfo();
+
+        string GetIpLocation();
 
         string GetUserAgent();
     }

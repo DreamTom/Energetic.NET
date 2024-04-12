@@ -16,27 +16,27 @@ namespace Energetic.NET.Infrastructure.EFCore
             var body = Property(param, propInfo);
             var convertedResult = Convert(body, typeof(object));
             var exp = Lambda<Func<TSource, object>>(convertedResult, param);
-            return orderBy.ToLower() == "asc" ? source.OrderBy(exp) : source.OrderByDescending(exp);
+            return orderBy.Equals("asc", StringComparison.CurrentCultureIgnoreCase) ? source.OrderBy(exp) : source.OrderByDescending(exp);
         }
 
         public static async Task<PaginatedList<TDestination>> ToPageListAsync<TSource, TDestination>(this IQueryable<TSource> source,
-            int pageNumber = 1, int pageSize = 20)
+            PaginatedQueryRequest paginatedQuery)
         {
             var count = await source.CountAsync();
-            var pagedData = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var pagedData = await source.Skip((paginatedQuery.PageNumber - 1) * paginatedQuery.PageSize).Take(paginatedQuery.PageSize).ToListAsync();
             var items = pagedData.Adapt<List<TDestination>>();
-            return new PaginatedList<TDestination>(items, count, pageNumber, pageSize);
+            return new PaginatedList<TDestination>(items, count, paginatedQuery.PageNumber, paginatedQuery.PageSize);
         }
 
         public static async Task<PaginatedList<TDestination>> ToPageListAsync<TSource, TDestination>(this IQueryable<TSource> source,
-            IMapper mapper, int pageNumber = 1, int pageSize = 20, string? propName = default, string? orderBy = default) where TSource : class
+            IMapper mapper, PaginatedQueryRequest paginatedQuery) where TSource : class
         {
             var count = await source.CountAsync();
-            var query = source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-            if (!string.IsNullOrWhiteSpace(propName) && !string.IsNullOrWhiteSpace(orderBy))
-                query = query.OrderByPropName(propName, orderBy);
-            var items = await mapper.From(query).ProjectToType<TDestination>().ToListAsync();
-            return new PaginatedList<TDestination>(items, count, pageNumber, pageSize);
+            if (!string.IsNullOrWhiteSpace(paginatedQuery.PropName) && !string.IsNullOrWhiteSpace(paginatedQuery.OrderBy))
+                source = source.OrderByPropName(paginatedQuery.PropName, paginatedQuery.OrderBy);
+            source = source.Skip((paginatedQuery.PageNumber - 1) * paginatedQuery.PageSize).Take(paginatedQuery.PageSize);
+            var items = await mapper.From(source).ProjectToType<TDestination>().ToListAsync();
+            return new PaginatedList<TDestination>(items, count, paginatedQuery.PageNumber, paginatedQuery.PageSize);
         }
     }
 }

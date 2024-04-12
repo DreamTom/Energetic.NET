@@ -6,6 +6,7 @@ using Energetic.NET.Basic.Domain.IRepositories;
 using Energetic.NET.Basic.Domain.Services;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
+using Energetic.NET.Basic.Application.Services.UserService.Dto;
 
 namespace Energetic.NET.API.Controllers
 {
@@ -189,6 +190,19 @@ namespace Energetic.NET.API.Controllers
         public async Task<ActionResult<PaginatedList<UserResponse>>> GetPageList([FromQuery] UserQueryRequest userQuery)
         {
             return Ok(await userAppService.GetPageListAsync(userQuery));
+        }
+
+        /// <summary>
+        /// 用户登日志录列表
+        /// </summary>
+        /// <param name="userLoginHistoryQueryRequest"></param>
+        /// <returns></returns>
+        [Function("用户登录日志列表")]
+        [HttpGet("loginHistories")]
+        public async Task<ActionResult<PaginatedList<UserLoginHistoryResponse>>> GetPageUserLoginHistories
+            ([FromQuery] UserLoginHistoryQueryRequest userLoginHistoryQueryRequest)
+        {
+            return Ok(await userAppService.GetUserLoginHistoriesAsync(userLoginHistoryQueryRequest));
         }
     }
 }

@@ -443,6 +443,13 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
+                    b.Property<string>("Browser")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("browser");
+
                     b.Property<DateTime>("CreatedTime")
                         .HasPrecision(3)
                         .HasColumnType("datetime(3)")
@@ -462,6 +469,13 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .HasColumnType("varchar(32)")
                         .HasColumnName("login_ip");
 
+                    b.Property<string>("LoginLocation")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("login_location");
+
                     b.Property<int>("LoginResult")
                         .HasColumnType("int")
                         .HasColumnName("login_result");
@@ -475,6 +489,13 @@ namespace Energetic.NET.Basic.Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(32)")
                         .HasColumnName("message");
+
+                    b.Property<string>("OperatingSystem")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("operating_system");
 
                     b.Property<long?>("UserId")
                         .HasColumnType("bigint")

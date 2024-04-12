@@ -11,5 +11,14 @@ namespace Energetic.NET.SharedKernel
         public string? PropName { get; set; }
 
         public string? OrderBy { get; set; }
+
+        public PaginatedQueryRequest GetPaginatedQuery()
+        {
+            return new PaginatedQueryRequest(PageNumber, PageSize)
+            {
+                PropName = PropName,
+                OrderBy = OrderBy
+            };
+        }
     }
 }

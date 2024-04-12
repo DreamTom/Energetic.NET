@@ -5,10 +5,12 @@ using Energetic.NET.SharedKernel;
 using MapsterMapper;
 using Energetic.NET.Basic.Domain.Enums;
 using Energetic.NET.Basic.Domain.Services;
+using Energetic.NET.Basic.Application.Services.UserService.Dto;
 
 namespace Energetic.NET.Basic.Infrastructure.UserService
 {
     internal class UserAppService(IUserDomainRepository userDomainRepository,
+        IUserLoginHistoryRepository userLoginHistoryRepository,
         UserDomainService userDomainService, IMapper mapper) : IUserAppService
     {
         public async Task<PaginatedList<UserResponse>> GetPageListAsync(UserQueryRequest userQuery)
@@ -21,8 +23,7 @@ namespace Energetic.NET.Basic.Infrastructure.UserService
             if (userQuery.Gender != null)
                 query = query.Where(u => u.Gender == userQuery.Gender);
 
-            return await query.Include(u => u.Roles).ToPageListAsync<User, UserResponse>(mapper, userQuery.PageNumber,
-                userQuery.PageSize, userQuery.PropName, userQuery.OrderBy);
+            return await query.Include(u => u.Roles).ToPageListAsync<User, UserResponse>(mapper, userQuery.GetPaginatedQuery());
         }
 
         public async Task<UserResourceResponse> GetUserResourcesAsync(long userId)
@@ -56,6 +57,16 @@ namespace Energetic.NET.Basic.Infrastructure.UserService
             {
                 SetChildNodes(allNodes, childNode);
             }
+        }
+
+        public async Task<PaginatedList<UserLoginHistoryResponse>> GetUserLoginHistoriesAsync(UserLoginHistoryQueryRequest userLoginHistoryQuery)
+        {
+            var query = userLoginHistoryRepository.GetQueryableSet();
+            if (!string.IsNullOrWhiteSpace(userLoginHistoryQuery.LoginAccount))
+                query = query.Where(q => q.LoginAccount == userLoginHistoryQuery.LoginAccount);
+            if (userLoginHistoryQuery.RangeTime.Length != 0)
+                query = query.Where(q => q.CreatedTime >= userLoginHistoryQuery.RangeTime[0] && q.CreatedTime <= userLoginHistoryQuery.RangeTime[1]);
+            return await query.ToPageListAsync<UserLoginHistory, UserLoginHistoryResponse>(mapper, userLoginHistoryQuery.GetPaginatedQuery());
         }
     }
 }
