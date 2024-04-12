@@ -1,4 +1,3 @@
-import http from '../http';
 import Http from '../http';
 
 export const login = function(loginForm: any) {
@@ -35,4 +34,8 @@ export const delUser = function(id: string){
 
 export const getLoginUserResources = function(){
     return Http.get('users/loginUserResources')
+}
+
+export const getUserLoginHistories = function(userLoginHistoryQuery: any){
+    return Http.get('users/loginHistories', userLoginHistoryQuery)
 }

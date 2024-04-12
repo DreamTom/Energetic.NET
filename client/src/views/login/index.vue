@@ -62,6 +62,22 @@
         </div>
       </div>
     </div>
+    <div class="login-footer">
+      <p>
+        <span>Released under the </span>
+        <a href="/index.html">MIT License</a>.
+      </p>
+      <p>
+        <span>Copyright © 2023-2024 Energetic.NET All Rights Reserved  </span>
+        <span><a href="https://beian.miit.gov.cn" target="_blank">鄂ICP备19006397号-1</a></span>
+      </p>
+      <p>
+        鸣谢： 
+        <a href="https://gitee.com" style="color:#c71d23;font-weight:800;margin:0px 5px;">Gitee</a>
+        <a href="http://www.layui-vue.com/zh-CN/index" style="color:#16baaa;font-weight:800;margin:0px 5px;">layui-vue</a>
+        <a href="https://github.com" style="color:#9b16ff;font-weight:800;margin:0px 5px;">Github</a>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -258,5 +274,19 @@ const method = ref('0')
 
 :deep(.layui-tab-title .layui-this) {
   background-color: transparent;
+}
+
+.login-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 30px 0;
+    line-height: 30px;
+    text-align: center;
+    /* border-top: 1px solid #eee; */
+    color: #3c3c3cb3;
+    font-weight: 300;
+    font-size: 13.6px;
+    /* background: #f9f9f9 */
 }
 </style>

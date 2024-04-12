@@ -1,4 +1,5 @@
 import axios, { AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import qs from 'qs';
 import { useUserStore } from "../store/user";
 import { layer } from '@layui/layui-vue';
 import router from '../router';
@@ -68,7 +69,7 @@ class Http {
 
     /* GET 方法 */
     get<T>(url: string, params?: object, _object = {}): Promise<any> {
-        return this.service.get(url, { params, ..._object })
+        return this.service.get(url, { params, ..._object, paramsSerializer: params => qs.stringify(params) })
     }
     /* POST 方法 */
     post<T>(url: string, params?: object, _object = {}): Promise<any> {
