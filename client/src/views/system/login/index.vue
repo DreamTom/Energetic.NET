@@ -14,7 +14,7 @@
               ></lay-input>
             </lay-form-item>
           </lay-col>
-          <lay-col :md="6">
+          <lay-col :md="8">
             <lay-form-item label="登录时间" label-width="80">
               <lay-date-picker
                 size="sm"

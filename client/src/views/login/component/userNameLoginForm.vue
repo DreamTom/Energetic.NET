@@ -128,8 +128,6 @@ const loginSubmit = () => {
 						userStore.token = res.token
 						userStore.userInfo = res.userInfo
 						await userStore.loadResources()
-						//await userStore.loadMenus()
-						//await userStore.loadPermissions()
 						router.push('/')
 					})
 			}, 1000);

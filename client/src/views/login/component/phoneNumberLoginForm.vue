@@ -60,23 +60,6 @@ const toRefreshImg = async () => {
 const loginSubmit = async () => {
   layer.msg('暂不支持')
   return;
-  // loging.value = true;
-  // let res = await login(loginForm);
-  // if (!res.hasError) {
-  //   setTimeout(() => {
-  //     loging.value = false;
-  //     layer.msg('登录成功', { icon: 1 }, async () => {
-  //       userStore.token = res.token
-  //       await userStore.loadMenus()
-  //       await userStore.loadPermissions()
-  //       router.push('/')
-  //     })
-  //   }, 1000);
-  // }
-  // else {
-  //   loging.value = false;
-  //   toRefreshImg();
-  // }
 }
 
 const sendSms = async () => {
