@@ -27,7 +27,7 @@
           </lay-col>
           <lay-col :md="5">
             <lay-form-item label-width="20">
-              <lay-button v-permission="['sys:users:loginHistoryQuery']"
+              <lay-button v-permission="['sys:users:queryLoginHistories']"
                 style="margin-left: 20px"
                 type="normal"
                 size="sm"

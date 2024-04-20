@@ -69,13 +69,17 @@
       </p>
       <p>
         <span>Copyright © 2023-2024 Energetic.NET All Rights Reserved  </span>
-        <span><a href="https://beian.miit.gov.cn" target="_blank">鄂ICP备19006397号-1</a></span>
+        <span>
+          <img src="../../assets/beian.png" class="bei-an" />
+          <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002003079" rel="noreferrer" target="_blank">粤公网安备44030002003079</a>
+          &nbsp;&nbsp;<a href="https://beian.miit.gov.cn" target="_blank">鄂ICP备19006397号-1</a>
+        </span>
       </p>
       <p>
         鸣谢： 
-        <a href="https://gitee.com" style="color:#c71d23;font-weight:800;margin:0px 5px;">Gitee</a>
+        <a href="https://gitee.com/vintom/Energetic.NET" style="color:#c71d23;font-weight:800;margin:0px 5px;">Gitee</a>
         <a href="http://www.layui-vue.com/zh-CN/index" style="color:#16baaa;font-weight:800;margin:0px 5px;">layui-vue</a>
-        <a href="https://github.com" style="color:#9b16ff;font-weight:800;margin:0px 5px;">Github</a>
+        <a href="https://github.com/DreamTom/Energetic.NET" style="color:#9b16ff;font-weight:800;margin:0px 5px;">Github</a>
       </p>
     </div>
   </div>
@@ -288,5 +292,13 @@ const method = ref('0')
     font-weight: 300;
     font-size: 13.6px;
     /* background: #f9f9f9 */
+}
+
+.bei-an{
+  display: inline;
+   margin: 0 5px;
+   width: 16px;
+   vertical-align: middle;
+   border-style: none;
 }
 </style>

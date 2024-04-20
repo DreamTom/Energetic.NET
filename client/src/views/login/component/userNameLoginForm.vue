@@ -127,7 +127,6 @@ const loginSubmit = () => {
 				layer.msg('登录成功', { icon: 1 }, async () => {
 						userStore.token = res.token
 						userStore.userInfo = res.userInfo
-						await userStore.loadResources()
 						router.push('/')
 					})
 			}, 1000);

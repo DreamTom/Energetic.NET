@@ -22,7 +22,7 @@ export default [
         path: '/workspace/workbench',
         name: 'Workbench',
         component: () => import('../../views/workSpace/workbench/index.vue'),
-        meta: { title: '工作台', requireAuth: true, affix: true, closable: false },
+        meta: { title: '工作台', requireAuth: false, affix: true, closable: false },
       },
       {
         path: '/workspace/console',

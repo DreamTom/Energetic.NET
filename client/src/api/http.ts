@@ -47,13 +47,14 @@ class Http {
                 message = errResponse.data.errorCode == 0 ? errResponse.data.message : errCodeDic[errResponse.data.errorCode];
                 switch (errResponse.status) {
                     case 401:
+                        message = "会话超时, 请重新登录";
                         layer.msg(
                             message, 
                             { icon : 3}, function(){
                                 router.push('/login');
                                 layer.closeAll()
                             });
-                        return;
+                        return { hasError: true, message: message };;
                     case 503:
                     case 429:
                         message = "服务暂时不可用，请稍后再试"

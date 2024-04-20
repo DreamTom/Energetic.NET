@@ -35,7 +35,7 @@
     <!-- table -->
     <div class="table-box">
       <lay-table :height="`100%`" :loading="loading" children-column-name="children" :columns="columns"
-        :data-source="dataSource" :default-toolbar="true" :expand-index="0">
+        :data-source="dataSource" :default-toolbar="true" :default-expand-all="defaultExpandAll" :expand-index="0">
         <template #path="{ row }">
           {{ row.routePath ? row.routePath : row.apiUrl }} &nbsp;&nbsp;
           <div v-show="row.apiUrl">
@@ -50,6 +50,7 @@
             <lay-icon class="layui-icon-addition"></lay-icon>
             新增
           </lay-button>
+          <lay-button size="sm" @click="expandAll">{{ defaultExpandAll ? '收起全部':'全部展开'}}</lay-button>
         </template>
         <template #name="{ row }">
           <lay-icon :class="row.icon"></lay-icon> &nbsp;&nbsp;
@@ -162,6 +163,7 @@ import { layer } from '@layui/layui-vue'
 import { getResourceTree, getMenuTree, addResource, editResource, delResource } from '../../../api/module/resource'
 
 const loading = ref(false)
+const defaultExpandAll = ref(false)
 const dataSource = ref([]);
 const searchQuery = ref({
   name: '',
@@ -206,6 +208,10 @@ const columns = [
     customSlot: 'option'
   }
 ]
+
+const expandAll = ()=>{
+  defaultExpandAll.value = !defaultExpandAll.value;
+}
 
 const toReset = async () => {
   searchQuery.value = {
